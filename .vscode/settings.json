@@ -1,0 +1,15 @@
+{
+    "Lua.workspace.library": [
+        "typedef/reframework/dist/library/*",
+        "typedef/ace/*",
+        "deps/hb_draw/typedef/*"
+    ],
+    "Lua.workspace.ignoreSubmodules": false,
+    "editor.rulers": [
+        120,
+    ],
+    "editor.formatOnSave": true,
+    "[lua]": {
+        "editor.defaultFormatter": "sumneko.lua"
+    }
+}

@@ -1,0 +1,6 @@
+[submodule "deps/hb_draw"]
+	path = deps/hb_draw
+	url = https://github.com/kmy0/hb_draw.git
+[submodule "typedef/reframework"]
+	path = typedef/reframework
+	url = https://github.com/kmy0/REFrameworkLuaTypedef.git
