@@ -429,6 +429,8 @@ function this.draw()
 	draw_settings_header()
 	draw_hurtbox_info_header()
 	draw_attack_log_header()
+
+	imgui.end_window()
 end
 
 return this
