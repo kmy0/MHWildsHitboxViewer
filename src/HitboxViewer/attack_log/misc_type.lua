@@ -6,9 +6,26 @@ local this = {
 }
 ---@type table<string, fun(entry: AttackLogEntry): boolean>
 local types = {}
+local focus_hitboxes = {
+    [22474] = "Great Sword",
+    [22482] = "Long Sword",
+    [22476] = "SnS",
+    [22477] = "Dual Blades",
+    [22486] = "Hammer",
+    [22489] = "Hunting Horn",
+    [22490] = "Lance",
+    [22491] = "Gunlance",
+    [22492] = "Switch Axe",
+    [22496] = "Charge Blade",
+    [22499] = "Insect Glave"
+}
 
 function types._TerrainHitOnly(entry)
     return entry.more_data._TerrainHitOnly
+end
+
+function types.FocusMode(entry)
+    return focus_hitboxes[entry.attack_id] ~= nil
 end
 
 ---@param entry AttackLogEntry
