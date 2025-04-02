@@ -61,7 +61,6 @@ function this.log(entry)
 			table.insert(this.entries, entry)
 			this.row_count = this.row_count + 1
 		end
-		entry.misc_type = nil
 		this.this_tick[entry.attack_id] = true
 		return true
 	end

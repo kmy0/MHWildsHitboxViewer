@@ -32,7 +32,7 @@ this.load_data_enum = {
 local function update(self)
 	if config.current.hitboxes.use_one_color then
 		self.color = config.current.hitboxes.color.one_color
-	elseif config.current.hitboxes.misc_type.disable[self.log_entry.misc_type] then
+	elseif config.current.hitboxes.misc_type.color_enable[self.log_entry.misc_type] then
 		self.color = config.current.hitboxes.misc_type.color[self.log_entry.misc_type]
 	elseif config.current.hitboxes.guard_type.color_enable[self.log_entry.guard_type] then
 		self.color = config.current.hitboxes.guard_type.color[self.log_entry.guard_type]

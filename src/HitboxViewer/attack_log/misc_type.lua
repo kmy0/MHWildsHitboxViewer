@@ -31,6 +31,7 @@ end
 ---@param entry AttackLogEntry
 ---@return string?
 function this.check(entry)
+    entry.misc_type = nil
     for _, key in ipairs(this.sorted) do
         if types[key](entry) then
             entry.misc_type = key
