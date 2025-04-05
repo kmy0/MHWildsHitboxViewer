@@ -1,246 +1,246 @@
-local table_util = require("HitboxViewer.table_util")
-local config = require("HitboxViewer.config")
 local attack_misc_type = require("HitboxViewer.attack_log.misc_type")
+local config = require("HitboxViewer.config")
+local table_util = require("HitboxViewer.table_util")
 
 ---@class Data
 local this = {
-	---@type table<via.physics.ShapeType, string>
-	ace_shape_enum = {},
-	---@type table<app.Hit.ROD_EXTRACT, string>
-	ace_rod_enum = {},
-	---@type table<app.user_data.EmParamParts.MEAT_SLOT, string>
-	ace_meat_slot_enum = {},
-	---@type table<app.cEmModuleScar.cScarParts.STATE, string>
-	ace_scar_enum = {},
-	---@type table<integer, string>
-	ace_part_type_enum = {},
-	---@type table<string, string>
-	ace_part_type_fixed_enum = {},
-	---@type table<string, integer>
-	ace_part_type_fixed_to_part_type = {},
-	---@type table<app.HitDef.DAMAGE_TYPE, string>
-	ace_damage_type_enum = {},
-	---@type table<app.HitDef.CONDITION, string>
-	ace_attack_cond_enum = {},
-	---@type table<app.HitDef.DAMAGE_TYPE_CUSTOM, string>
-	ace_damage_type_custom_enum = {},
-	---@type table<app.HitDef.DAMAGE_ANGLE, string>
-	ace_damage_angle_enum = {},
-	---@type table<app.Hit.GUARD_TYPE, string>
-	ace_guard_type_enum = {},
-	---@type table<app.HitDef.ATTR, string>
-	ace_attack_attr_enum = {},
-	---@type table<app.Hit.ATTACK_PARAM_TYPE, string>
-	ace_attack_param_enum = {},
-	---@type table<app.HitDef.ACTION_TYPE, string>
-	ace_action_type_enum = {},
-	---@type table<app.HitDef.BATTLE_RIDING_ATTACK_TYPE, string>
-	ace_ride_attack_type_enum = {},
-	---@type table<app.EnemyDef.Damage.ENEMY_DAMAGE_TYPE, string>
-	ace_enemy_damage_type_enum = {},
-	---@type table<app.EnemyDef.ATTACK_FILTER_TYPE, string>
-	ace_enemy_attack_filter_type_enum = {},
-	---@type table<app.EnemyDef.Damage.FRIEND_HIT_TYPE, string>
-	ace_enemy_friend_hit_type_enum = {},
-	---@type table<app.OtomoDef.USE_OTOMO_TOOL_TYPE, string>
-	ace_otomo_tool_type_enum = {},
-	---@type table<app.user_data.EmParamParts.INDEX_CATEGORY, string>
-	ace_em_part_index_enum = {},
-	cMeatFields = sdk.find_type_definition("app.user_data.EmParamParts.cMeat"):get_fields(),
-	---@type via.Scene?
-	scene = nil,
-	---@type app.PlayerManager?
-	playman = nil,
-	---@type app.GameFlowManager?
-	flowman = nil,
-	---@type integer
-	tick_count = 0,
-	---@type string
-	name_missing = "???",
-	---@type string
-	data_missing = " - ",
-	---@type via.Language
-	language = nil,
-	---@type table<string, boolean>
-	missing_shapes = {}
+    ---@type table<via.physics.ShapeType, string>
+    ace_shape_enum = {},
+    ---@type table<app.Hit.ROD_EXTRACT, string>
+    ace_rod_enum = {},
+    ---@type table<app.user_data.EmParamParts.MEAT_SLOT, string>
+    ace_meat_slot_enum = {},
+    ---@type table<app.cEmModuleScar.cScarParts.STATE, string>
+    ace_scar_enum = {},
+    ---@type table<integer, string>
+    ace_part_type_enum = {},
+    ---@type table<string, string>
+    ace_part_type_fixed_enum = {},
+    ---@type table<string, integer>
+    ace_part_type_fixed_to_part_type = {},
+    ---@type table<app.HitDef.DAMAGE_TYPE, string>
+    ace_damage_type_enum = {},
+    ---@type table<app.HitDef.CONDITION, string>
+    ace_attack_cond_enum = {},
+    ---@type table<app.HitDef.DAMAGE_TYPE_CUSTOM, string>
+    ace_damage_type_custom_enum = {},
+    ---@type table<app.HitDef.DAMAGE_ANGLE, string>
+    ace_damage_angle_enum = {},
+    ---@type table<app.Hit.GUARD_TYPE, string>
+    ace_guard_type_enum = {},
+    ---@type table<app.HitDef.ATTR, string>
+    ace_attack_attr_enum = {},
+    ---@type table<app.Hit.ATTACK_PARAM_TYPE, string>
+    ace_attack_param_enum = {},
+    ---@type table<app.HitDef.ACTION_TYPE, string>
+    ace_action_type_enum = {},
+    ---@type table<app.HitDef.BATTLE_RIDING_ATTACK_TYPE, string>
+    ace_ride_attack_type_enum = {},
+    ---@type table<app.EnemyDef.Damage.ENEMY_DAMAGE_TYPE, string>
+    ace_enemy_damage_type_enum = {},
+    ---@type table<app.EnemyDef.ATTACK_FILTER_TYPE, string>
+    ace_enemy_attack_filter_type_enum = {},
+    ---@type table<app.EnemyDef.Damage.FRIEND_HIT_TYPE, string>
+    ace_enemy_friend_hit_type_enum = {},
+    ---@type table<app.OtomoDef.USE_OTOMO_TOOL_TYPE, string>
+    ace_otomo_tool_type_enum = {},
+    ---@type table<app.user_data.EmParamParts.INDEX_CATEGORY, string>
+    ace_em_part_index_enum = {},
+    cMeatFields = sdk.find_type_definition("app.user_data.EmParamParts.cMeat"):get_fields(),
+    ---@type via.Scene?
+    scene = nil,
+    ---@type app.PlayerManager?
+    playman = nil,
+    ---@type app.GameFlowManager?
+    flowman = nil,
+    ---@type integer
+    tick_count = 0,
+    ---@type string
+    name_missing = "???",
+    ---@type string
+    data_missing = " - ",
+    ---@type via.Language
+    language = nil,
+    ---@type table<string, boolean>
+    missing_shapes = {},
 }
 local reverse_lookup = {}
 
 ---@enum MeatTypeToField
 this.meat_type_to_field_name = {
-	["NORMAL"] = "_MeatGuidNormal",
-	["BREAK"] = "_MeatGuidBreak",
-	["CUSTOM1"] = "_MeatGuidCustom1",
-	["CUSTOM2"] = "_MeatGuidCustom2",
-	["CUSTOM3"] = "_MeatGuidCustom3",
+    ["NORMAL"] = "_MeatGuidNormal",
+    ["BREAK"] = "_MeatGuidBreak",
+    ["CUSTOM1"] = "_MeatGuidCustom1",
+    ["CUSTOM2"] = "_MeatGuidCustom2",
+    ["CUSTOM3"] = "_MeatGuidCustom3",
 }
 ---@enum CharTypeDefToBase
 this.char_type_to_name = {
-	["app.HunterCharacter"] = "Hunter",
-	["app.EnemyBossCharacter"] = "BigMonster",
-	["app.OtomoCharacter"] = "Pet",
-	["app.EnemyZakoCharacter"] = "SmallMonster",
+    ["app.HunterCharacter"] = "Hunter",
+    ["app.EnemyBossCharacter"] = "BigMonster",
+    ["app.OtomoCharacter"] = "Pet",
+    ["app.EnemyZakoCharacter"] = "SmallMonster",
 }
 ---@enum BaseCharType
 this.base_char_enum = {
-	["Hunter"] = 1,
-	["BigMonster"] = 2,
-	["Pet"] = 3,
-	["SmallMonster"] = 4,
-	["OtherSmallMonster"] = 5,
+    ["Hunter"] = 1,
+    ["BigMonster"] = 2,
+    ["Pet"] = 3,
+    ["SmallMonster"] = 4,
+    ["OtherSmallMonster"] = 5,
 }
 ---@enum ShapeType
 this.shape_enum = {
-	["Sphere"] = 1,
-	["Capsule"] = 2,
-	["Box"] = 3,
-	["Cylinder"] = 4,
-	["Triangle"] = 5,
-	["ContinuousCapsule"] = 6,
-	["ContinuousSphere"] = 7,
+    ["Sphere"] = 1,
+    ["Capsule"] = 2,
+    ["Box"] = 3,
+    ["Cylinder"] = 4,
+    ["Triangle"] = 5,
+    ["ContinuousCapsule"] = 6,
+    ["ContinuousSphere"] = 7,
 }
 ---@enum ShapeDummy
 this.shape_dummy = {
-	[1] = "Sphere",
-	[2] = "Capsule",
-	[3] = "Box",
-	[4] = "Cylinder",
-	[5] = "Triangle",
+    [1] = "Sphere",
+    [2] = "Capsule",
+    [3] = "Box",
+    [4] = "Cylinder",
+    [5] = "Triangle",
 }
 ---@enum CharType
 this.char_enum = {
-	["Player"] = 1,
-	["MasterPlayer"] = 2,
-	["SmallMonster"] = 3,
-	["BigMonster"] = 4,
-	["Pet"] = 5,
-	["Npc"] = 6,
+    ["Player"] = 1,
+    ["MasterPlayer"] = 2,
+    ["SmallMonster"] = 3,
+    ["BigMonster"] = 4,
+    ["Pet"] = 5,
+    ["Npc"] = 6,
 }
 ---@enum BoxType
 this.box_enum = {
-	["Hurtbox"] = 1,
-	["Hitbox"] = 2,
-	["Scarbox"] = 3,
+    ["Hurtbox"] = 1,
+    ["Hitbox"] = 2,
+    ["Scarbox"] = 3,
 }
 ---@enum ConditionType
 this.condition_type_enum = {
-	["Element"] = 1,
-	["Break"] = 2,
-	["Scar"] = 3,
-	["Weak"] = 4,
-	["Extract"] = 5,
+    ["Element"] = 1,
+    ["Break"] = 2,
+    ["Scar"] = 3,
+    ["Weak"] = 4,
+    ["Extract"] = 5,
 }
 ---@enum ElementType
 this.element_enum = {
-	["All"] = 1,
-	["Blow"] = 2,
-	["Dragon"] = 3,
-	["Fire"] = 4,
-	["Ice"] = 5,
-	["LightPlant"] = 6,
-	["Shot"] = 7,
-	["Slash"] = 8,
-	["Stun"] = 9,
-	["Thunder"] = 10,
-	["Water"] = 11,
+    ["All"] = 1,
+    ["Blow"] = 2,
+    ["Dragon"] = 3,
+    ["Fire"] = 4,
+    ["Ice"] = 5,
+    ["LightPlant"] = 6,
+    ["Shot"] = 7,
+    ["Slash"] = 8,
+    ["Stun"] = 9,
+    ["Thunder"] = 10,
+    ["Water"] = 11,
 }
 ---@enum ConditionState
 this.condition_state = {
-	["None"] = 1,
-	["Highlight"] = 2,
-	["Hide"] = 3,
+    ["None"] = 1,
+    ["Highlight"] = 2,
+    ["Hide"] = 3,
 }
 ---@enum ExtractType
 this.extract_enum = {
-	["RED"] = 1,
-	["WHITE"] = 2,
-	["ORANGE"] = 3,
-	["GREEN"] = 4,
+    ["RED"] = 1,
+    ["WHITE"] = 2,
+    ["ORANGE"] = 3,
+    ["GREEN"] = 4,
 }
 ---@enum ScarType
 this.scar_enum = {
-	["NORMAL"] = 1,
-	["RAW"] = 2,
-	["TEAR"] = 3,
-	["OLD"] = 4,
-	["HEAL"] = 5,
+    ["NORMAL"] = 1,
+    ["RAW"] = 2,
+    ["TEAR"] = 3,
+    ["OLD"] = 4,
+    ["HEAL"] = 5,
 }
 ---@enum BreakType
 this.break_enum = {
-	["Yes"] = 1,
-	["No"] = 2,
-	["Broken"] = 3,
+    ["Yes"] = 1,
+    ["No"] = 2,
+    ["Broken"] = 3,
 }
 ---@enum BoxState
 this.box_state = {
-	["None"] = 1,
-	["Draw"] = 2,
-	["Dead"] = 3,
+    ["None"] = 1,
+    ["Draw"] = 2,
+    ["Dead"] = 3,
 }
 ---@enum DefaultHurtboxState
 this.default_hurtbox_enum = {
-	["Draw"] = 1,
-	["Hide"] = 2,
+    ["Draw"] = 1,
+    ["Hide"] = 2,
 }
 ---@enum ConditionStateEnum
 this.condition_state_enum = {
-	["Highlight"] = 1,
-	["Hide"] = 2,
+    ["Highlight"] = 1,
+    ["Hide"] = 2,
 }
 ---@enum GuiColors
 this.colors = {
-	bad = 0xff1947ff,
-	good = 0xff47ff59,
-	info = 0xff27f3f5,
+    bad = 0xff1947ff,
+    good = 0xff47ff59,
+    info = 0xff27f3f5,
 }
 
 ---@param type_def_name string
 ---@param as_string boolean?
 ---@param ignore_values string[]?
 local function iter_fields(type_def_name, as_string, ignore_values)
-	local type_def = sdk.find_type_definition(type_def_name)
-	if not type_def then
-		return
-	end
+    local type_def = sdk.find_type_definition(type_def_name)
+    if not type_def then
+        return
+    end
 
-	local fields = type_def:get_fields()
-	for _, field in pairs(fields) do
-		local name = field:get_name()
+    local fields = type_def:get_fields()
+    for _, field in pairs(fields) do
+        local name = field:get_name()
 
-		if
-			string.lower(name) == "max"
-			or string.lower(name) == "value__"
-			or (ignore_values and table_util.table_contains(ignore_values, name))
-		then
-			goto continue
-		end
+        if
+            string.lower(name) == "max"
+            or string.lower(name) == "value__"
+            or (ignore_values and table_util.table_contains(ignore_values, name))
+        then
+            goto continue
+        end
 
-		local data = field:get_data()
-		if as_string then
-			data = tostring(data)
-		end
-		coroutine.yield(name, data)
-		::continue::
-	end
+        local data = field:get_data()
+        if as_string then
+            data = tostring(data)
+        end
+        coroutine.yield(name, data)
+        ::continue::
+    end
 end
 
 ---@param list string[]
 ---@param func (fun(s: string): string)?
 local function get_field_names(type_def_name, list, func)
-	local type_def = sdk.find_type_definition(type_def_name)
-	if not type_def then
-		return
-	end
+    local type_def = sdk.find_type_definition(type_def_name)
+    if not type_def then
+        return
+    end
 
-	local fields = type_def:get_fields()
-	for _, field in pairs(fields) do
-		local name = field:get_name()
-		if func then
-			name = func(name)
-		end
-		table.insert(list, name)
-	end
-	table.sort(list)
+    local fields = type_def:get_fields()
+    for _, field in pairs(fields) do
+        local name = field:get_name()
+        if func then
+            name = func(name)
+        end
+        table.insert(list, name)
+    end
+    table.sort(list)
 end
 
 ---@param type_def_name string
@@ -249,22 +249,22 @@ end
 ---@param as_string boolean?
 ---@param ignore_values string[]?
 local function write_fields_to_config(type_def_name, table, add_color_entry, as_string, ignore_values)
-	local co = coroutine.create(iter_fields)
-	local status = true
-	---@type integer
-	local data
-	---@type integer | string
-	local name
-	while status do
-		status, name, data = coroutine.resume(co, type_def_name, as_string, ignore_values)
-		if name and data then
-			table.disable[name] = false
-			if add_color_entry then
-				table.color[name] = config.default_color
-				table.color_enable[name] = false
-			end
-		end
-	end
+    local co = coroutine.create(iter_fields)
+    local status = true
+    ---@type integer
+    local data
+    ---@type integer | string
+    local name
+    while status do
+        status, name, data = coroutine.resume(co, type_def_name, as_string, ignore_values)
+        if name and data then
+            table.disable[name] = false
+            if add_color_entry then
+                table.color[name] = config.default_color
+                table.color_enable[name] = false
+            end
+        end
+    end
 end
 
 ---@param strings string[]
@@ -272,17 +272,17 @@ end
 ---@param add_color_entry boolean
 ---@param ignore_values string[]?
 local function write_strings_to_config(strings, table, add_color_entry, ignore_values)
-	for _, name in ipairs(strings) do
-		if (ignore_values and table_util.table_contains(ignore_values, name)) then
-			goto continue
-		end
-		table.disable[name] = false
-		if add_color_entry then
-			table.color[name] = config.default_color
-			table.color_enable[name] = false
-		end
-		::continue::
-	end
+    for _, name in ipairs(strings) do
+        if ignore_values and table_util.table_contains(ignore_values, name) then
+            goto continue
+        end
+        table.disable[name] = false
+        if add_color_entry then
+            table.color[name] = config.default_color
+            table.color_enable[name] = false
+        end
+        ::continue::
+    end
 end
 
 ---@param type_def_name string
@@ -290,83 +290,83 @@ end
 ---@param as_string boolean?
 ---@param ignore_values string[]?
 local function get_enum(type_def_name, table, as_string, ignore_values)
-	local co = coroutine.create(iter_fields)
-	local status = true
-	---@type integer
-	local data
-	---@type integer | string
-	local name
-	while status do
-		status, name, data = coroutine.resume(co, type_def_name, as_string, ignore_values)
-		if name and data then
-			table[data] = name
-		end
-	end
+    local co = coroutine.create(iter_fields)
+    local status = true
+    ---@type integer
+    local data
+    ---@type integer | string
+    local name
+    while status do
+        status, name, data = coroutine.resume(co, type_def_name, as_string, ignore_values)
+        if name and data then
+            table[data] = name
+        end
+    end
 end
 
 ---@return via.Scene
 function this.get_scene()
-	if not this.scene then
-		local type_def = sdk.find_type_definition("via.SceneManager")
-		if type_def then
-			this.scene =
-				sdk.call_native_func(sdk.get_native_singleton("via.SceneManager"), type_def, "get_CurrentScene()")
-		end
-	end
-	return this.scene
+    if not this.scene then
+        local type_def = sdk.find_type_definition("via.SceneManager")
+        if type_def then
+            this.scene =
+                sdk.call_native_func(sdk.get_native_singleton("via.SceneManager"), type_def, "get_CurrentScene()")
+        end
+    end
+    return this.scene
 end
 
 ---@return app.PlayerManager
 function this.get_playman()
-	if not this.playman then
-		local obj = sdk.get_managed_singleton("app.PlayerManager")
-		---@cast obj app.PlayerManager?
-		this.playman = obj
-	end
-	return this.playman
+    if not this.playman then
+        local obj = sdk.get_managed_singleton("app.PlayerManager")
+        ---@cast obj app.PlayerManager?
+        this.playman = obj
+    end
+    return this.playman
 end
 
 ---@return app.GameFlowManager
 function this.get_flowman()
-	if not this.flowman then
-		local obj = sdk.get_managed_singleton("app.GameFlowManager")
-		---@cast obj app.GameFlowManager?
-		this.flowman = obj
-	end
-	return this.flowman
+    if not this.flowman then
+        local obj = sdk.get_managed_singleton("app.GameFlowManager")
+        ---@cast obj app.GameFlowManager?
+        this.flowman = obj
+    end
+    return this.flowman
 end
 
 ---@return via.Language
 function this.get_language()
-	if not this.language then
-		local type_def = sdk.find_type_definition("via.gui.GUISystem")
-		if type_def then
-			this.language =
-				sdk.call_native_func(sdk.get_native_singleton("via.gui.GUISystem"), type_def, "get_MessageLanguage()")
-		end
-	end
-	return this.language
+    if not this.language then
+        local type_def = sdk.find_type_definition("via.gui.GUISystem")
+        if type_def then
+            this.language =
+                sdk.call_native_func(sdk.get_native_singleton("via.gui.GUISystem"), type_def, "get_MessageLanguage()")
+        end
+    end
+    return this.language
 end
 
 ---@return System.Array<via.Transform>
 function this.get_all_transforms()
-	return this.get_scene():call("findComponents(System.Type)", sdk.typeof("via.Transform"))
+    return this.get_scene():call("findComponents(System.Type)", sdk.typeof("via.Transform"))
 end
 
 ---@return boolean
 function this.in_game()
-	if not this.get_flowman() then
-		return false
-	end
-	return this.get_flowman():get_CurrentGameScene() > 0
+    if not this.get_flowman() then
+        return false
+    end
+    return this.get_flowman():get_CurrentGameScene() > 0
 end
 
 ---@return boolean
 function this.in_transition()
-	if not this.get_flowman() then
-		return true
-	end
-	return this.get_flowman():get_NextGameStateType() ~= nil
+    if not this.get_flowman() then
+        return true
+    end
+    return this.get_flowman():get_NextGameStateType() ~= nil
 end
 
 ---@generic K
@@ -375,59 +375,59 @@ end
 ---@param value V
 ---@return K?
 function this.reverse_lookup(table, value)
-	if not reverse_lookup[table] then
-		reverse_lookup[table] = {}
-		for k, v in pairs(table) do
-			reverse_lookup[table][v] = k
-		end
-	end
-	return reverse_lookup[table][value]
+    if not reverse_lookup[table] then
+        reverse_lookup[table] = {}
+        for k, v in pairs(table) do
+            reverse_lookup[table][v] = k
+        end
+    end
+    return reverse_lookup[table][value]
 end
 
 ---@return string?
 function this.get_missing_shapes()
-	local t = table_util.keys(this.missing_shapes, true)
-	if next(t) then
-		return table.concat(t, ", ")
-	end
+    local t = table_util.keys(this.missing_shapes, true)
+    if next(t) then
+        return table.concat(t, ", ")
+    end
 end
 
 function this.init()
-	get_enum("via.physics.ShapeType", this.ace_shape_enum)
-	get_enum("app.Hit.ROD_EXTRACT", this.ace_rod_enum)
-	get_enum("app.user_data.EmParamParts.MEAT_SLOT", this.ace_meat_slot_enum)
-	get_enum("app.cEmModuleScar.cScarParts.STATE", this.ace_scar_enum)
-	get_enum("app.HitDef.DAMAGE_TYPE", this.ace_damage_type_enum)
-	get_enum("app.HitDef.CONDITION", this.ace_attack_cond_enum)
-	get_enum("app.HitDef.DAMAGE_TYPE_CUSTOM", this.ace_damage_type_custom_enum)
-	get_enum("app.HitDef.DAMAGE_ANGLE", this.ace_damage_angle_enum)
-	get_enum("app.Hit.GUARD_TYPE", this.ace_guard_type_enum)
-	get_enum("app.HitDef.ATTR", this.ace_attack_attr_enum)
-	get_enum("app.Hit.ATTACK_PARAM_TYPE", this.ace_attack_param_enum)
-	get_enum("app.HitDef.ACTION_TYPE", this.ace_action_type_enum)
-	get_enum("app.HitDef.BATTLE_RIDING_ATTACK_TYPE", this.ace_ride_attack_type_enum)
-	get_enum("app.EnemyDef.Damage.ENEMY_DAMAGE_TYPE", this.ace_enemy_damage_type_enum)
-	get_enum("app.EnemyDef.ATTACK_FILTER_TYPE", this.ace_enemy_attack_filter_type_enum)
-	get_enum("app.EnemyDef.Damage.FRIEND_HIT_TYPE", this.ace_enemy_friend_hit_type_enum)
-	get_enum("app.OtomoDef.USE_OTOMO_TOOL_TYPE", this.ace_otomo_tool_type_enum)
-	get_enum("app.user_data.EmParamParts.INDEX_CATEGORY", this.ace_em_part_index_enum)
+    get_enum("via.physics.ShapeType", this.ace_shape_enum)
+    get_enum("app.Hit.ROD_EXTRACT", this.ace_rod_enum)
+    get_enum("app.user_data.EmParamParts.MEAT_SLOT", this.ace_meat_slot_enum)
+    get_enum("app.cEmModuleScar.cScarParts.STATE", this.ace_scar_enum)
+    get_enum("app.HitDef.DAMAGE_TYPE", this.ace_damage_type_enum)
+    get_enum("app.HitDef.CONDITION", this.ace_attack_cond_enum)
+    get_enum("app.HitDef.DAMAGE_TYPE_CUSTOM", this.ace_damage_type_custom_enum)
+    get_enum("app.HitDef.DAMAGE_ANGLE", this.ace_damage_angle_enum)
+    get_enum("app.Hit.GUARD_TYPE", this.ace_guard_type_enum)
+    get_enum("app.HitDef.ATTR", this.ace_attack_attr_enum)
+    get_enum("app.Hit.ATTACK_PARAM_TYPE", this.ace_attack_param_enum)
+    get_enum("app.HitDef.ACTION_TYPE", this.ace_action_type_enum)
+    get_enum("app.HitDef.BATTLE_RIDING_ATTACK_TYPE", this.ace_ride_attack_type_enum)
+    get_enum("app.EnemyDef.Damage.ENEMY_DAMAGE_TYPE", this.ace_enemy_damage_type_enum)
+    get_enum("app.EnemyDef.ATTACK_FILTER_TYPE", this.ace_enemy_attack_filter_type_enum)
+    get_enum("app.EnemyDef.Damage.FRIEND_HIT_TYPE", this.ace_enemy_friend_hit_type_enum)
+    get_enum("app.OtomoDef.USE_OTOMO_TOOL_TYPE", this.ace_otomo_tool_type_enum)
+    get_enum("app.user_data.EmParamParts.INDEX_CATEGORY", this.ace_em_part_index_enum)
 
-	--FIXME: couldnt get 'app.EnemyDef.getPARTS_TYPEFromFixed(app.EnemyDef.PARTS_TYPE_Fixed, app.EnemyDef.PARTS_TYPE)' to work
-	get_enum("app.EnemyDef.PARTS_TYPE_Fixed", this.ace_part_type_fixed_enum, true)
-	get_enum("app.EnemyDef.PARTS_TYPE", this.ace_part_type_enum)
-	for i, iname in pairs(this.ace_part_type_fixed_enum) do
-		for j, jname in pairs(this.ace_part_type_enum) do
-			if iname == jname then
-				this.ace_part_type_fixed_to_part_type[i] = j
-				break
-			end
-		end
-	end
+    --FIXME: couldnt get 'app.EnemyDef.getPARTS_TYPEFromFixed(app.EnemyDef.PARTS_TYPE_Fixed, app.EnemyDef.PARTS_TYPE)' to work
+    get_enum("app.EnemyDef.PARTS_TYPE_Fixed", this.ace_part_type_fixed_enum, true)
+    get_enum("app.EnemyDef.PARTS_TYPE", this.ace_part_type_enum)
+    for i, iname in pairs(this.ace_part_type_fixed_enum) do
+        for j, jname in pairs(this.ace_part_type_enum) do
+            if iname == jname then
+                this.ace_part_type_fixed_to_part_type[i] = j
+                break
+            end
+        end
+    end
 
-	write_fields_to_config("app.HitDef.DAMAGE_TYPE", config.default.hitboxes.damage_type, true)
-	write_fields_to_config("app.HitDef.DAMAGE_ANGLE", config.default.hitboxes.damage_angle, true)
-	write_fields_to_config("app.Hit.GUARD_TYPE", config.default.hitboxes.guard_type, true)
-	write_strings_to_config(attack_misc_type.sorted, config.default.hitboxes.misc_type, true)
+    write_fields_to_config("app.HitDef.DAMAGE_TYPE", config.default.hitboxes.damage_type, true)
+    write_fields_to_config("app.HitDef.DAMAGE_ANGLE", config.default.hitboxes.damage_angle, true)
+    write_fields_to_config("app.Hit.GUARD_TYPE", config.default.hitboxes.guard_type, true)
+    write_strings_to_config(attack_misc_type.sorted, config.default.hitboxes.misc_type, true)
 end
 
 return this

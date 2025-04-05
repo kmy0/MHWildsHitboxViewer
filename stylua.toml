@@ -1,0 +1,5 @@
+line_endings = "Windows"
+indent_type = "Spaces"
+syntax = "Lua53"
+[sort_requires]
+enabled = true

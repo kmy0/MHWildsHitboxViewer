@@ -84,161 +84,161 @@ this.sorted_conditions = {}
 ---@diagnostic disable-next-line: missing-fields
 this.current = {}
 this.default = {
-	enabled_hitboxes = true,
-	enabled_hurtboxes = true,
-	hurtboxes = {
-		disable = {
-			SmallMonster = false,
-			BigMonster = false,
-			Pet = false,
-			Player = false,
-			MasterPlayer = false,
-			Npc = false,
-		},
-		color = {
-			SmallMonster = this.default_color,
-			BigMonster = this.default_color,
-			Pet = this.default_color,
-			Player = this.default_color,
-			MasterPlayer = this.default_color,
-			Npc = this.default_color,
-			highlight = 1021633775,
-			one_color = this.default_color,
-		},
-		conditions = {
-			["1"] = {
-				color = 1011041213,
-				from = 45,
-				key = 1,
-				main_type = 3,
-				state = 1,
-				sub_type = 1,
-				to = 300,
-			},
-			["2"] = {
-				color = 1021633775,
-				from = 0,
-				key = 2,
-				main_type = 4,
-				state = 1,
-				sub_type = 8,
-				to = 300,
-			},
-		},
-		default_state = 1,
-		use_one_color = false,
-	},
-	hitboxes = {
-		disable = {
-			SmallMonster = false,
-			BigMonster = false,
-			Pet = false,
-			Player = false,
-			MasterPlayer = false,
-			Npc = false,
-		},
-		color = {
-			SmallMonster = this.default_color,
-			BigMonster = this.default_color,
-			Pet = this.default_color,
-			Player = this.default_color,
-			MasterPlayer = this.default_color,
-			Npc = this.default_color,
-			one_color = this.default_color,
-		},
-		damage_type = {
-			disable = {},
-			color = {},
-			color_enable = {},
-		},
-		damage_angle = {
-			disable = {},
-			color = {},
-			color_enable = {},
-		},
-		guard_type = {
-			disable = {},
-			color = {},
-			color_enable = {},
-		},
-		misc_type = {
-			disable = {},
-			color = {},
-			color_enable = {},
-		},
-		table_size = 25,
-		use_one_color = false,
-	},
-	draw = {
-		distance = 50,
-		outline = true,
-		outline_color = 4278190080,
-	},
-	gui = {
-		main = {
-			pos_x = 50,
-			pos_y = 50,
-			size_x = 800,
-			size_y = 700,
-		},
-		hurtbox_info = {
-			pos_x = 50,
-			pos_y = 50,
-			size_x = 800,
-			size_y = 700,
-			detach = false,
-		},
-		attack_log = {
-			pos_x = 50,
-			pos_y = 50,
-			size_x = 800,
-			size_y = 700,
-			detach = false,
-			pause = false,
-		},
-		dummy_shape = 1,
-	},
+    enabled_hitboxes = true,
+    enabled_hurtboxes = true,
+    hurtboxes = {
+        disable = {
+            SmallMonster = false,
+            BigMonster = false,
+            Pet = false,
+            Player = false,
+            MasterPlayer = false,
+            Npc = false,
+        },
+        color = {
+            SmallMonster = this.default_color,
+            BigMonster = this.default_color,
+            Pet = this.default_color,
+            Player = this.default_color,
+            MasterPlayer = this.default_color,
+            Npc = this.default_color,
+            highlight = 1021633775,
+            one_color = this.default_color,
+        },
+        conditions = {
+            ["1"] = {
+                color = 1011041213,
+                from = 45,
+                key = 1,
+                main_type = 3,
+                state = 1,
+                sub_type = 1,
+                to = 300,
+            },
+            ["2"] = {
+                color = 1021633775,
+                from = 0,
+                key = 2,
+                main_type = 4,
+                state = 1,
+                sub_type = 8,
+                to = 300,
+            },
+        },
+        default_state = 1,
+        use_one_color = false,
+    },
+    hitboxes = {
+        disable = {
+            SmallMonster = false,
+            BigMonster = false,
+            Pet = false,
+            Player = false,
+            MasterPlayer = false,
+            Npc = false,
+        },
+        color = {
+            SmallMonster = this.default_color,
+            BigMonster = this.default_color,
+            Pet = this.default_color,
+            Player = this.default_color,
+            MasterPlayer = this.default_color,
+            Npc = this.default_color,
+            one_color = this.default_color,
+        },
+        damage_type = {
+            disable = {},
+            color = {},
+            color_enable = {},
+        },
+        damage_angle = {
+            disable = {},
+            color = {},
+            color_enable = {},
+        },
+        guard_type = {
+            disable = {},
+            color = {},
+            color_enable = {},
+        },
+        misc_type = {
+            disable = {},
+            color = {},
+            color_enable = {},
+        },
+        table_size = 25,
+        use_one_color = false,
+    },
+    draw = {
+        distance = 50,
+        outline = true,
+        outline_color = 4278190080,
+    },
+    gui = {
+        main = {
+            pos_x = 50,
+            pos_y = 50,
+            size_x = 800,
+            size_y = 700,
+        },
+        hurtbox_info = {
+            pos_x = 50,
+            pos_y = 50,
+            size_x = 800,
+            size_y = 700,
+            detach = false,
+        },
+        attack_log = {
+            pos_x = 50,
+            pos_y = 50,
+            size_x = 800,
+            size_y = 700,
+            detach = false,
+            pause = false,
+        },
+        dummy_shape = 1,
+    },
 }
 
 function this.sort_conditions()
-	---@type Condition[]
-	local sorted = {}
-	this.sorted_conditions = {}
-	for _, v in pairs(this.current.hurtboxes.conditions) do
-		table.insert(sorted, v)
-	end
+    ---@type Condition[]
+    local sorted = {}
+    this.sorted_conditions = {}
+    for _, v in pairs(this.current.hurtboxes.conditions) do
+        table.insert(sorted, v)
+    end
 
-	table.sort(sorted, function(a, b)
-		return a.key < b.key
-	end)
+    table.sort(sorted, function(a, b)
+        return a.key < b.key
+    end)
 
-	for _, condition in ipairs(sorted) do
-		table.insert(this.sorted_conditions, condition)
-	end
+    for _, condition in ipairs(sorted) do
+        table.insert(this.sorted_conditions, condition)
+    end
 end
 
 function this.load()
-	local loaded_config = json.load_file(this.config_path)
-	if loaded_config then
-		this.current = table_util.table_merge(this.default, loaded_config)
-	else
-		this.current = table_util.table_deep_copy(this.default)
-	end
-	this.sort_conditions()
+    local loaded_config = json.load_file(this.config_path)
+    if loaded_config then
+        this.current = table_util.table_merge(this.default, loaded_config)
+    else
+        this.current = table_util.table_deep_copy(this.default)
+    end
+    this.sort_conditions()
 end
 
 function this.save()
-	json.dump_file(this.config_path, this.current)
+    json.dump_file(this.config_path, this.current)
 end
 
 function this.restore()
-	this.current = table_util.table_deep_copy(this.default)
-	this.save()
-	this.sort_conditions()
+    this.current = table_util.table_deep_copy(this.default)
+    this.save()
+    this.sort_conditions()
 end
 
 function this.init()
-	this.load()
+    this.load()
 end
 
 return this

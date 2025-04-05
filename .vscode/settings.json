@@ -10,6 +10,6 @@
     ],
     "editor.formatOnSave": true,
     "[lua]": {
-        "editor.defaultFormatter": "sumneko.lua"
+        "editor.defaultFormatter": "JohnnyMorganz.stylua"
     }
 }

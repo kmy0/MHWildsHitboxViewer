@@ -1,8 +1,8 @@
-local table_util = require "HitboxViewer.table_util"
+local table_util = require("HitboxViewer.table_util")
 
 local this = {
     ---@type string[]
-    sorted = {}
+    sorted = {},
 }
 ---@type table<string, fun(entry: AttackLogEntry): boolean>
 local types = {}
@@ -17,7 +17,7 @@ local focus_hitboxes = {
     [22491] = "Gunlance",
     [22492] = "Switch Axe",
     [22496] = "Charge Blade",
-    [22499] = "Insect Glave"
+    [22499] = "Insect Glave",
 }
 
 function types._TerrainHitOnly(entry)

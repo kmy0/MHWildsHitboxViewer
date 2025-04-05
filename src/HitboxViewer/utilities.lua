@@ -10,46 +10,46 @@ this.isCollidableValid = sdk.find_type_definition("ace.AceUtil"):get_method("isC
 ---@param obj REManagedObject
 ---@return boolean
 function this.is_only_my_ref(obj)
-	if obj:read_qword(0x8) <= 0 then
-		return true
-	end
-	local gameobject_addr = obj:read_qword(0x10)
-	if gameobject_addr == 0 then
-		return true
-	end
-	return false
+    if obj:read_qword(0x8) <= 0 then
+        return true
+    end
+    local gameobject_addr = obj:read_qword(0x10)
+    if gameobject_addr == 0 then
+        return true
+    end
+    return false
 end
 
 ---@param guid System.Guid
 ---@return string
 function this.format_guid(guid)
-	return string.format(
-		"%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
-		guid.mData1,
-		guid.mData2,
-		guid.mData3,
-		guid.mData4_0,
-		guid.mData4_1,
-		guid.mData4_2,
-		guid.mData4_3,
-		guid.mData4_4,
-		guid.mData4_5,
-		guid.mData4_6,
-		guid.mData4_7
-	)
+    return string.format(
+        "%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+        guid.mData1,
+        guid.mData2,
+        guid.mData3,
+        guid.mData4_0,
+        guid.mData4_1,
+        guid.mData4_2,
+        guid.mData4_3,
+        guid.mData4_4,
+        guid.mData4_5,
+        guid.mData4_6,
+        guid.mData4_7
+    )
 end
 
 ---@param game_object via.GameObject
 ---@param type_name string
 ---@return any | nil
 function this.get_component(game_object, type_name)
-	local t = sdk.typeof(type_name)
+    local t = sdk.typeof(type_name)
 
-	if t == nil then
-		return nil
-	end
+    if t == nil then
+        return nil
+    end
 
-	return game_object:call("getComponent(System.Type)", t)
+    return game_object:call("getComponent(System.Type)", t)
 end
 
 return this

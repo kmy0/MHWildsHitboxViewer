@@ -36,11 +36,11 @@
 ---@field _dmg_part app.cEmModuleParts.cDamageParts
 ---@field _break_parts app.cEmModuleParts.cBreakParts?
 
-local data = require("HitboxViewer.data")
-local utilities = require("HitboxViewer.utilities")
 local conditions = require("HitboxViewer.conditions")
 local config = require("HitboxViewer.config")
+local data = require("HitboxViewer.data")
 local scarbox = require("HitboxViewer.box.scar")
+local utilities = require("HitboxViewer.utilities")
 
 local this = {}
 
@@ -123,7 +123,7 @@ local function get_scar_parts(part_index, mc_holder, param_parts)
                     enabled = true,
                     condition_color = 0,
                     _scar = scar,
-                    _scar_part = scar_part
+                    _scar_part = scar_part,
                 }
                 o.box = scarbox.ctor(o, scar._ColSizeRadius)
                 table.insert(ret, o)
@@ -187,8 +187,6 @@ local function get_hitzones(cpart, param_parts)
     end
     return ret
 end
-
-
 
 ---@param fixed_part_type System.Int32
 ---@return string?
