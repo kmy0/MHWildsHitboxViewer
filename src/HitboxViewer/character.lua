@@ -47,6 +47,11 @@ local hitboxes
 ---@module "HitboxViewer.gui.menu"
 local config_menu
 
+local ace = data.ace
+local gui = data.gui
+local rt = data.runtime
+local rl = data.util.reverse_lookup
+
 ---@class CharController
 local this = {
     ---@type MasterPlayer?
@@ -79,11 +84,11 @@ local function get_hunter_name(hunter_extend)
     if hunter_extend:get_IsNpc() then
         ---@cast hunter_extend app.HunterCharacter.cHunterExtendNpc
         local id = get_npc_id(hunter_extend)
-        return utilities.getNpcName:call(nil, id) or data.name_missing
+        return utilities.getNpcName:call(nil, id) or gui.name_missing
     end
     ---@cast hunter_extend app.HunterCharacter.cHunterExtendPlayer
     local ctx_holder = hunter_extend._ContextHolder
-    return ctx_holder:get_Pl():get_PlayerName() or data.name_missing
+    return ctx_holder:get_Pl():get_PlayerName() or gui.name_missing
 end
 
 ---@param char_base app.HunterCharacter
@@ -95,7 +100,7 @@ local function get_hunter_data(char_base)
             ---@cast hunter_extend app.HunterCharacter.cHunterExtendNpc
             ---@type Npc
             return {
-                type = data.char_enum.Npc,
+                type = rt.enum.char.Npc,
                 base = char_base,
                 distance = 0,
                 name = get_hunter_name(hunter_extend),
@@ -110,7 +115,7 @@ local function get_hunter_data(char_base)
     ---@cast hunter_extend app.HunterCharacter.cHunterExtendPlayer
     ---@type Player
     local ret = {
-        type = data.char_enum.Player,
+        type = rt.enum.char.Player,
         base = char_base,
         is_master = char_base:get_IsMaster(),
         distance = 0,
@@ -123,7 +128,7 @@ local function get_hunter_data(char_base)
     }
     if ret.is_master then
         ---@cast ret MasterPlayer
-        ret.type = data.char_enum.MasterPlayer
+        ret.type = rt.enum.char.MasterPlayer
         ret.get_pos = get_pos
         ret.pos = ret:get_pos()
     end
@@ -140,7 +145,7 @@ local function get_pet_data(char_base)
     local hunter_extend = owner:get_HunterExtend()
     ---@type Pet
     return {
-        type = data.char_enum.Pet,
+        type = rt.enum.char.Pet,
         base = char_base,
         distance = 0,
         name = get_hunter_name(hunter_extend) .. " - Pet",
@@ -158,11 +163,11 @@ end
 local function get_enemy_data(base_char_type, char_base)
     local holder = char_base._Context
     local ctx = holder:get_Em()
-    if base_char_type == data.base_char_enum.BigMonster then
+    if base_char_type == rt.enum.base_char.BigMonster then
         ---@cast char_base app.EnemyBossCharacter
         ---@type BigEnemy
         return {
-            type = data.char_enum.BigMonster,
+            type = rt.enum.char.BigMonster,
             base = char_base,
             distance = 0,
             ctx = ctx,
@@ -170,7 +175,7 @@ local function get_enemy_data(base_char_type, char_base)
                 utilities.getEnemyNameGuid:call(nil, ctx:get_EmID()),
                 utilities.get_language(),
                 true
-            ) or data.name_missing,
+            ) or gui.name_missing,
             id = char_base:get_address(),
             parts = {},
             hurtboxes = {},
@@ -182,11 +187,11 @@ local function get_enemy_data(base_char_type, char_base)
         }
     end
 
-    if base_char_type == data.base_char_enum.SmallMonster then
+    if base_char_type == rt.enum.base_char.SmallMonster then
         ---@cast char_base app.EnemyZakoCharacter
         ---@type SmallEnemy
         return {
-            type = data.char_enum.SmallMonster,
+            type = rt.enum.char.SmallMonster,
             base = char_base,
             distance = 0,
             ctx = ctx,
@@ -194,7 +199,7 @@ local function get_enemy_data(base_char_type, char_base)
                 utilities.getEnemyNameGuid:call(nil, ctx:get_EmID()),
                 utilities.get_language(),
                 true
-            ) or data.name_missing,
+            ) or gui.name_missing,
             id = char_base:get_address(),
             hurtboxes = {},
             hitboxes = {},
@@ -208,17 +213,17 @@ end
 ---@param char_base app.CharacterBase
 ---@return CharObj?
 local function get_character_data(base_char_type, char_base)
-    if base_char_type == data.base_char_enum.Hunter then
+    if base_char_type == rt.enum.base_char.Hunter then
         ---@cast char_base app.HunterCharacter
         return get_hunter_data(char_base)
     end
 
-    if base_char_type == data.base_char_enum.Pet then
+    if base_char_type == rt.enum.base_char.Pet then
         ---@cast char_base app.OtomoCharacter
         return get_pet_data(char_base)
     end
 
-    if base_char_type == data.base_char_enum.BigMonster or base_char_type == data.base_char_enum.SmallMonster then
+    if base_char_type == rt.enum.base_char.BigMonster or base_char_type == rt.enum.base_char.SmallMonster then
         ---@cast char_base app.EnemyBossCharacter|app.EnemyZakoCharacter
         return get_enemy_data(base_char_type, char_base)
     end
@@ -246,7 +251,7 @@ function this.character_ctor(game_object, char_base)
         return
     end
 
-    local base_char_type = data.base_char_enum[data.char_type_to_name[char_base:get_type_definition():get_full_name()]]
+    local base_char_type = rt.enum.base_char[ace.map.char_type_to_name[char_base:get_type_definition():get_full_name()]]
     if base_char_type then
         this.characters[game_object] = get_character_data(base_char_type, char_base)
 
@@ -275,7 +280,7 @@ function this.get_attack_idx(args)
     if
         not char_obj
         or char_obj.distance > config.current.draw.distance
-        or config.current.hitboxes.disable[data.reverse_lookup(data.char_enum, char_obj.type)]
+        or config.current.hitboxes.disable[rl(rt.enum.char, char_obj.type)]
     then
         return
     end
@@ -333,7 +338,7 @@ function this.get_shell_post(retval)
     if
         not char_obj
         or char_obj.distance > config.current.draw.distance
-        or config.current.hitboxes.disable[data.reverse_lookup(data.char_enum, char_obj.type)]
+        or config.current.hitboxes.disable[rl(rt.enum.char, char_obj.type)]
     then
         return
     end
@@ -372,7 +377,7 @@ function this.get_base_post(retval)
         return
     end
     ---@cast char_base app.CharacterBase
-    table.insert(this.load_queue, { tick = data.tick_count, char_base = char_base })
+    table.insert(this.load_queue, { tick = rt.state.tick_count, char_base = char_base })
     return retval
 end
 
@@ -430,10 +435,10 @@ end
 ---@return MasterPlayer?
 function this.get_master_player()
     if not this.master_player or utilities.is_only_my_ref(this.master_player.base) then
-        if not data.get_playman() then
+        if not rt.get_playman() then
             return
         end
-        local player_info = data.get_playman():getMasterPlayer()
+        local player_info = rt.get_playman():getMasterPlayer()
         if player_info then
             local hunter_char = player_info:get_Character()
             local game_object = hunter_char:get_GameObject()
@@ -448,10 +453,10 @@ end
 --FIXME: when chars are created trough app.CharacterBase.doStart hook, some elements are not created yet
 -- and things throw exceptions, couldnt find anything better to hook
 function this.get()
-    if not data.in_transition() then
+    if not rt.in_transition() then
         local counter = 0
         for idx, load_data in pairs(this.load_queue) do
-            if data.tick_count - load_data.tick <= 60 then
+            if rt.state.tick_count - load_data.tick <= 60 then
                 goto continue
             end
 
@@ -473,7 +478,7 @@ function this.update()
     if
         (not config.current.enabled_hurtboxes and not config.current.enabled_hitboxes)
         or not this.get_master_player()
-        or data.in_transition()
+        or rt.in_transition()
     then
         return
     end
@@ -481,12 +486,12 @@ function this.update()
     local mp_pos = this.get_master_player():get_pos()
     local do_parts = config_menu.is_opened or next(config.sorted_conditions) ~= nil
     for char_type, characters in pairs(this.characters_grouped) do
-        local name = data.reverse_lookup(data.char_enum, char_type)
+        local name = rl(rt.enum.char, char_type)
         for game_object, char_obj in pairs(characters) do
             --FIXME: this sometimes throws, i guess its getting called when object is getting destroyed?
             local _, is_dead = pcall(function()
                 return not char_obj.base:get_Valid()
-                    or (char_obj.type == data.char_enum.BigMonster and char_obj.browser:get_IsDie())
+                    or (char_obj.type == rt.enum.char.BigMonster and char_obj.browser:get_IsDie())
             end)
 
             if utilities.is_only_my_ref(char_obj.base) or is_dead then
@@ -500,7 +505,7 @@ function this.update()
             end
 
             local pos = char_obj.base:get_Pos()
-            if pos and char_obj.type ~= data.char_enum.MasterPlayer then
+            if pos and char_obj.type ~= rt.enum.char.MasterPlayer then
                 char_obj.distance = (mp_pos - pos):length()
             end
 
@@ -509,12 +514,12 @@ function this.update()
             end
 
             if config.current.enabled_hurtboxes and not config.current.hurtboxes.disable[name] then
-                if char_obj.type == data.char_enum.BigMonster and do_parts then
+                if char_obj.type == rt.enum.char.BigMonster and do_parts then
                     for _, part in pairs(char_obj.parts) do
                         part:update()
                         if part.part_data.scars then
                             for _, scar in pairs(part.part_data.scars) do
-                                if scar.box_state == data.box_state.Draw then
+                                if scar.box_state == rt.enum.box_state.Draw then
                                     hbdraw.enqueue(scar.box)
                                 end
                             end
@@ -524,9 +529,9 @@ function this.update()
 
                 for idx, box in pairs(char_obj.hurtboxes) do
                     local state = box:update()
-                    if state == data.box_state.Dead then
+                    if state == rt.enum.box_state.Dead then
                         char_obj.hurtboxes[idx] = nil
-                    elseif state == data.box_state.Draw then
+                    elseif state == rt.enum.box_state.Draw then
                         hbdraw.enqueue(box)
                     end
                 end
@@ -535,9 +540,9 @@ function this.update()
             if config.current.enabled_hitboxes and not config.current.hitboxes.disable[name] then
                 for col, box in pairs(char_obj.hitboxes) do
                     local state = box:update()
-                    if state ~= data.box_state.Draw and box:is_done() then
+                    if state ~= rt.enum.box_state.Draw and box:is_done() then
                         char_obj.hitboxes[col] = nil
-                    elseif state == data.box_state.Draw then
+                    elseif state == rt.enum.box_state.Draw then
                         hbdraw.enqueue(box)
                         box.shown = true
                     end
@@ -551,7 +556,7 @@ end
 function this.init()
     hurtboxes = require("HitboxViewer.box.hurt")
     hitboxes = require("HitboxViewer.box.hit")
-    config_menu = require("HitboxViewer.gui.init")
+    config_menu = require("HitboxViewer.gui")
 end
 
 return this

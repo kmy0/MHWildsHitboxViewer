@@ -19,6 +19,11 @@
 local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
 
+local ace = data.ace
+local rt = data.runtime
+local gui = data.gui
+local rl = data.util.reverse_lookup
+
 ---@class AttackLog
 local this = {
     ---@type AttackLogEntry[]
@@ -51,8 +56,8 @@ end
 ---@param entry AttackLogEntry
 ---@return boolean
 function this.log(entry)
-    if data.tick_count ~= this.last_tick then
-        this.last_tick = data.tick_count
+    if rt.state.tick_count ~= this.last_tick then
+        this.last_tick = rt.state.tick_count
         this.this_tick = {}
         resize()
     end
@@ -94,35 +99,33 @@ function this.get_player_data(char_obj, userdata)
     if not char_obj.hitbox_userdata_cache[userdata] then
         char_obj.hitbox_userdata_cache[userdata] = {
             ---@diagnostic disable-next-line: assign-type-mismatch
-            char_type = data.char_enum.MasterPlayer == char_obj.type and "Self"
-                or data.reverse_lookup(data.char_enum, char_obj.type),
+            char_type = rt.enum.char.MasterPlayer == char_obj.type and "Self" or rl(rt.enum.char, char_obj.type),
             char_id = char_obj.id,
             char_name = char_obj.name,
             motion_value = userdata._Attack,
             element = userdata._StatusAttrRate,
             status = userdata._StatusConditionRate,
-            damage_type = data.ace_damage_type_enum[userdata:get_DamageType()],
-            damage_angle = data.ace_damage_angle_enum[userdata:get_DamageAngle()],
-            guard_type = data.ace_guard_type_enum[userdata:get_GuardType()],
+            damage_type = ace.enum.damage_type[userdata:get_DamageType()],
+            damage_angle = ace.enum.damage_angle[userdata:get_DamageAngle()],
+            guard_type = ace.enum.guard_type[userdata:get_GuardType()],
             part_break = userdata._PartsBreakRate,
             mount = userdata._RideDamage,
             stun = userdata._StunDamage,
             sharpness = userdata._CustomKireajiReduce / 10,
             attack_id = userdata._RuntimeData._AttackUniqueID,
             more_data = {
-                --FIXME: some of these seem to be runtime only
-                _DamageTypeCustom = data.ace_damage_type_custom_enum[userdata:get_DamageTypeCustom()],
-                _AttackAttr = data.ace_attack_attr_enum[userdata:get_AttackAttr()],
-                _AttackCond = data.ace_attack_cond_enum[userdata:get_AttackCond()],
-                _Type = data.ace_action_type_enum[userdata:get_Type()],
+                _DamageTypeCustom = ace.enum.damage_type_custom[userdata:get_DamageTypeCustom()],
+                _AttackAttr = ace.enum.attack_attr[userdata:get_AttackAttr()],
+                _AttackCond = ace.enum.attack_condition[userdata:get_AttackCond()],
+                _Type = ace.enum.action_type[userdata:get_Type()],
                 _AttrRate = userdata:get_AttrRate(),
                 _FixAttack = userdata._FixAttack,
                 _AttrValue = userdata._AttrValue,
                 _AttrLevel = userdata._AttrLevel,
                 _TerrainHitOnly = userdata._RuntimeData._TerrainHitOnly,
-                _ActionType = data.ace_action_type_enum[userdata:get_ActionType()],
-                _BattleRidingAttackType = data.ace_ride_attack_type_enum[userdata:get_BattleRidingAttackType()],
-                _FriendDamageType = data.ace_action_type_enum[userdata:get_FriendDamageType()],
+                _ActionType = ace.enum.action_type[userdata:get_ActionType()],
+                _BattleRidingAttackType = ace.enum.ride_attack_type[userdata:get_BattleRidingAttackType()],
+                _FriendDamageType = ace.enum.action_type[userdata:get_FriendDamageType()],
                 _ParryDamage = userdata._ParryDamage,
                 _RidingSuccessDamage = userdata._RidingSuccessDamage,
                 _RidingSuccessDamageRawScar = userdata._RidingSuccessDamageRawScar,
@@ -168,35 +171,35 @@ function this.get_enemy_data(char_obj, userdata)
     if not char_obj.hitbox_userdata_cache[userdata] then
         char_obj.hitbox_userdata_cache[userdata] = {
             ---@diagnostic disable-next-line: assign-type-mismatch
-            char_type = data.reverse_lookup(data.char_enum, char_obj.type),
+            char_type = rl(rt.enum.char, char_obj.type),
             char_id = char_obj.id,
             char_name = char_obj.name,
             motion_value = userdata._Attack,
-            element = data.data_missing,
-            status = data.data_missing,
-            part_break = data.data_missing,
-            mount = data.data_missing,
+            element = gui.data_missing,
+            status = gui.data_missing,
+            part_break = gui.data_missing,
+            mount = gui.data_missing,
             stun = userdata._StunDamage,
-            sharpness = data.data_missing,
-            damage_type = data.ace_damage_type_enum[userdata:get_DamageType()],
-            damage_angle = data.ace_damage_angle_enum[userdata:get_DamageAngle()],
-            guard_type = data.ace_guard_type_enum[userdata:get_GuardType()],
+            sharpness = gui.data_missing,
+            damage_type = ace.enum.damage_type[userdata:get_DamageType()],
+            damage_angle = ace.enum.damage_angle[userdata:get_DamageAngle()],
+            guard_type = ace.enum.guard_type[userdata:get_GuardType()],
             attack_id = userdata._RuntimeData._AttackUniqueID,
             more_data = {
-                _DamageTypeCustom = data.ace_damage_type_custom_enum[userdata:get_DamageTypeCustom()],
-                _AttackAttr = data.ace_attack_attr_enum[userdata:get_AttackAttr()],
-                _AttackCond = data.ace_attack_cond_enum[userdata:get_AttackCond()],
-                _Type = data.ace_action_type_enum[userdata:get_Type()],
+                _DamageTypeCustom = ace.enum.damage_type_custom[userdata:get_DamageTypeCustom()],
+                _AttackAttr = ace.enum.attack_attr[userdata:get_AttackAttr()],
+                _AttackCond = ace.enum.attack_condition[userdata:get_AttackCond()],
+                _Type = ace.enum.action_type[userdata:get_Type()],
                 _AttrRate = userdata:get_AttrRate(),
                 _FixAttack = userdata._FixAttack,
                 _AttrValue = userdata._AttrValue,
                 _AttrLevel = userdata._AttrLevel,
                 _TerrainHitOnly = userdata._RuntimeData._TerrainHitOnly,
-                _EnemyDamageType = data.ace_enemy_damage_type_enum[userdata:get_EnemyDamageType()],
+                _EnemyDamageType = ace.enum.enemy_damage_type[userdata:get_EnemyDamageType()],
                 _DamageLevel = userdata._DamageLevel,
                 _ToEmDamageRate = userdata._ToEmDamageRate,
                 _FrenzyOutbreakPoint = userdata._FrenzyOutbreakPoint,
-                _AttackFilterType = data.ace_enemy_attack_filter_type_enum[userdata._AttackFilterType],
+                _AttackFilterType = ace.enum.attack_filter_type[userdata._AttackFilterType],
                 _IsParryFix = userdata._IsParryFix,
                 _IsParryStockOnly = userdata._IsParryStockOnly,
                 _IsParryBreak = userdata._IsParryBreak,
@@ -216,7 +219,7 @@ function this.get_enemy_data(char_obj, userdata)
                 _IsForceStunEm = userdata._IsForceStunEm,
                 _EmRateAttack = userdata._EmRateAttack,
                 _LaserContinueDamageRate = userdata._LaserContinueDamageRate,
-                _FriendHitType = data.ace_enemy_friend_hit_type_enum[userdata._FriendHitType],
+                _FriendHitType = ace.enum.friend_hit_type[userdata._FriendHitType],
                 _IsEnergyAttack = userdata._IsEnergyAttack,
             },
         }
@@ -232,31 +235,31 @@ function this.get_pet_data(char_obj, userdata)
     if not char_obj.hitbox_userdata_cache[userdata] then
         char_obj.hitbox_userdata_cache[userdata] = {
             ---@diagnostic disable-next-line: assign-type-mismatch
-            char_type = data.reverse_lookup(data.char_enum, char_obj.type),
+            char_type = rl(rt.enum.char, char_obj.type),
             char_id = char_obj.id,
             char_name = char_obj.name,
             motion_value = userdata._Attack,
-            element = data.data_missing,
-            status = data.data_missing,
-            part_break = data.data_missing,
-            mount = data.data_missing,
+            element = gui.data_missing,
+            status = gui.data_missing,
+            part_break = gui.data_missing,
+            mount = gui.data_missing,
             stun = userdata._StunDamage,
-            sharpness = data.data_missing,
-            damage_type = data.ace_damage_type_enum[userdata:get_DamageType()],
-            damage_angle = data.ace_damage_angle_enum[userdata:get_DamageAngle()],
-            guard_type = data.ace_guard_type_enum[userdata:get_GuardType()],
+            sharpness = gui.data_missing,
+            damage_type = ace.enum.damage_type[userdata:get_DamageType()],
+            damage_angle = ace.enum.damage_angle[userdata:get_DamageAngle()],
+            guard_type = ace.enum.guard_type[userdata:get_GuardType()],
             attack_id = userdata._RuntimeData._AttackUniqueID,
             more_data = {
-                _DamageTypeCustom = data.ace_damage_type_custom_enum[userdata:get_DamageTypeCustom()],
-                _AttackAttr = data.ace_attack_attr_enum[userdata:get_AttackAttr()],
-                _AttackCond = data.ace_attack_cond_enum[userdata:get_AttackCond()],
-                _Type = data.ace_action_type_enum[userdata:get_Type()],
+                _DamageTypeCustom = ace.enum.damage_type_custom[userdata:get_DamageTypeCustom()],
+                _AttackAttr = ace.enum.attack_attr[userdata:get_AttackAttr()],
+                _AttackCond = ace.enum.attack_condition[userdata:get_AttackCond()],
+                _Type = ace.enum.action_type[userdata:get_Type()],
                 _AttrRate = userdata:get_AttrRate(),
                 _FixAttack = userdata._FixAttack,
                 _AttrValue = userdata._AttrValue,
                 _AttrLevel = userdata._AttrLevel,
                 _TerrainHitOnly = userdata._RuntimeData._TerrainHitOnly,
-                _ActionType = data.ace_action_type_enum[userdata:get_ActionType()],
+                _ActionType = ace.enum.action_type[userdata:get_ActionType()],
                 _IsUseFixedActionType = userdata._IsUseFixedActionType,
                 _IsUseFixedAttributeType = userdata._IsUseFixedAttributeType,
                 _IsUseFixedBadConditionRate = userdata._IsUseFixedBadConditionRate,

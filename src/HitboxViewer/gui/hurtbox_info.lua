@@ -4,6 +4,9 @@ local data = require("HitboxViewer.data")
 local table_util = require("HitboxViewer.table_util")
 local util = require("HitboxViewer.gui.util")
 
+local rt = data.runtime
+local gui = data.gui
+
 local this = {}
 this.is_opened = false
 
@@ -87,7 +90,7 @@ local function draw_scar_rows(scars, row)
                 -- 	end
                 -- 	imgui.spacing()
             elseif header == "Enabled" or header == "Extract" or header == "Weak" or header == "Break" then
-                imgui.text(data.data_missing)
+                imgui.text(gui.data_missing)
             else
                 imgui.text(scar.hitzone[table_data.header_to_key[header]] --[[@as string]])
             end
@@ -188,7 +191,7 @@ function this.draw_condition(key)
         "##combo_type_" .. key,
         config.current.hurtboxes.conditions[key],
         "main_type",
-        table_util.keys(data.condition_type_enum)
+        table_util.keys(rt.enum.condition_type)
     ) or save
 
     imgui.same_line()
@@ -196,18 +199,18 @@ function this.draw_condition(key)
         "##condition_state_" .. key,
         config.current.hurtboxes.conditions[key],
         "state",
-        table_util.keys(data.condition_state_enum)
+        table_util.keys(rt.enum.condition_state)
     ) or save
     imgui.pop_item_width()
 
-    if config.current.hurtboxes.conditions[key].main_type == data.condition_type_enum.Element then
+    if config.current.hurtboxes.conditions[key].main_type == rt.enum.condition_type.Element then
         imgui.same_line()
         imgui.push_item_width(200)
         save = util.combo(
             "##combo_element" .. key,
             config.current.hurtboxes.conditions[key],
             "sub_type",
-            table_util.keys(data.element_enum)
+            table_util.keys(rt.enum.element)
         ) or save
         imgui.pop_item_width()
 
@@ -242,27 +245,27 @@ function this.draw_condition(key)
         end
 
         imgui.pop_item_width()
-    elseif config.current.hurtboxes.conditions[key].main_type == data.condition_type_enum.Extract then
+    elseif config.current.hurtboxes.conditions[key].main_type == rt.enum.condition_type.Extract then
         imgui.push_item_width(200)
         imgui.same_line()
         save = util.combo(
             "##combo_extract" .. key,
             config.current.hurtboxes.conditions[key],
             "sub_type",
-            table_util.keys(data.extract_enum)
+            table_util.keys(rt.enum.extract)
         ) or save
         imgui.pop_item_width()
-    elseif config.current.hurtboxes.conditions[key].main_type == data.condition_type_enum.Break then
+    elseif config.current.hurtboxes.conditions[key].main_type == rt.enum.condition_type.Break then
         imgui.push_item_width(200)
         imgui.same_line()
         save = util.combo(
             "##combo_break" .. key,
             config.current.hurtboxes.conditions[key],
             "sub_type",
-            table_util.keys(data.break_enum)
+            table_util.keys(rt.enum.break_state)
         ) or save
         imgui.pop_item_width()
-    elseif config.current.hurtboxes.conditions[key].main_type == data.condition_type_enum.Scar then
+    elseif config.current.hurtboxes.conditions[key].main_type == rt.enum.condition_type.Scar then
         config.current.hurtboxes.conditions[key].sub_type = 2
         -- imgui.push_item_width(200)
         -- imgui.same_line()
@@ -275,7 +278,7 @@ function this.draw_condition(key)
         -- imgui.pop_item_width()
     end
 
-    if config.current.hurtboxes.conditions[key].state == data.condition_state_enum.Highlight then
+    if config.current.hurtboxes.conditions[key].state == rt.enum.condition_state.Highlight then
         imgui.push_item_width(616)
         save = util.color_edit("##color" .. key, config.current.hurtboxes.conditions[key], "color") or save
         imgui.pop_item_width()
@@ -294,10 +297,10 @@ function this.draw()
     if
         config.current.enabled_hurtboxes
         and not config.current.hurtboxes.disable.BigMonster
-        and character.characters_grouped[data.char_enum.BigMonster]
-        and next(character.characters_grouped[data.char_enum.BigMonster])
+        and character.characters_grouped[rt.enum.char.BigMonster]
+        and next(character.characters_grouped[rt.enum.char.BigMonster])
     then
-        local sorted_monsters = character.get_sorted_chars(data.char_enum.BigMonster)
+        local sorted_monsters = character.get_sorted_chars(rt.enum.char.BigMonster)
         if not sorted_monsters then
             return
         end
@@ -314,11 +317,11 @@ function this.draw()
                 imgui.same_line()
                 imgui.text_colored(
                     in_draw_distance and "Yes" or "No",
-                    in_draw_distance and data.colors.good or data.colors.bad
+                    in_draw_distance and gui.colors.good or gui.colors.bad
                 )
                 imgui.text("Distance: ")
                 imgui.same_line()
-                imgui.text_colored(string.format("%.3f", monster.distance), data.colors.info)
+                imgui.text_colored(string.format("%.3f", monster.distance), gui.colors.info)
                 imgui.end_rect(5, 10)
                 imgui.spacing()
 

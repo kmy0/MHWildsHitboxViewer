@@ -12,11 +12,13 @@
 ---@field sub_colliders System.Array<via.physics.Collidable>
 ---@field shellcolhit app.mcShellColHit
 
-local attack_log = require("HitboxViewer.attack_log.init")
-local attack_misc_type = require("HitboxViewer.attack_log.misc_type")
-local box = require("HitboxViewer.box.init")
+local attack_log = require("HitboxViewer.attack_log")
+local box = require("HitboxViewer.box")
 local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
+
+local rt = data.runtime
+local rl = data.util.reverse_lookup
 
 local this = {}
 ---@type HitLoadData[]
@@ -41,10 +43,10 @@ local function update(self)
     elseif config.current.hitboxes.damage_type.color_enable[self.log_entry.damage_type] then
         self.color = config.current.hitboxes.damage_type.color[self.log_entry.damage_type]
     else
-        self.color = config.current.hitboxes.color[data.reverse_lookup(data.char_enum, self.parent.type)]
+        self.color = config.current.hitboxes.color[rl(rt.enum.char, self.parent.type)]
     end
 
-    return data.box_state.Draw
+    return rt.enum.box_state.Draw
 end
 
 ---@param collider via.physics.Collidable
@@ -63,7 +65,7 @@ local function box_insert(collider, char_obj, shellcolhit)
     end
 
     if
-        config.current.hitboxes.misc_type.disable[attack_misc_type.check(log_entry)]
+        config.current.hitboxes.misc_type.disable[data.custom_attack_type.check(log_entry)]
         or config.current.hitboxes.guard_type.disable[log_entry.guard_type]
         or config.current.hitboxes.damage_angle.disable[log_entry.damage_angle]
         or config.current.hitboxes.damage_type.disable[log_entry.damage_type]
@@ -79,7 +81,7 @@ local function box_insert(collider, char_obj, shellcolhit)
 end
 
 function this.get()
-    if config.current.enabled_hitboxes and not data.in_transition() then
+    if config.current.enabled_hitboxes and not rt.in_transition() then
         for idx, load_data in pairs(this.load_queue) do
             if load_data.type == this.load_data_enum.rsc then
                 ---@cast load_data HitLoadDataRsc

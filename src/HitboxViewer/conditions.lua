@@ -14,6 +14,9 @@
 local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
 
+local rt = data.runtime
+local rl = data.util.reverse_lookup
+
 local this = {}
 
 ---@return ElementCondition
@@ -35,10 +38,10 @@ function this.ctor()
         key = tonumber(key),
         from = 0,
         to = 300,
-        state = data.condition_state_enum.Highlight,
-        main_type = data.condition_type_enum.Element,
+        state = rt.enum.condition_state.Highlight,
+        main_type = rt.enum.condition_type.Element,
         color = config.default.hurtboxes.color.highlight,
-        sub_type = data.element_enum.Slash,
+        sub_type = rt.enum.element.Slash,
     }
 end
 
@@ -57,14 +60,14 @@ end
 ---@param scar_state string
 ---@return ConditionState, integer
 function this.check_scar(scar_state)
-    local state = data.condition_state.None
+    local state = rt.enum.condition_state.None
     --FIXME: scar conditions should be evaluated differently?
     for _, condition in pairs(config.sorted_conditions) do
-        if condition.main_type == data.condition_type_enum.Scar then
-            local match = data.reverse_lookup(data.scar_enum, condition.sub_type)
+        if condition.main_type == rt.enum.condition_type.Scar then
+            local match = rl(rt.enum.scar, condition.sub_type)
             if match == scar_state then
-                state = condition.state == data.condition_state_enum.Highlight and data.condition_state.Highlight
-                    or data.condition_state.Hide
+                state = condition.state == rt.enum.condition_state.Highlight and rt.enum.condition_state.Highlight
+                    or rt.enum.condition_state.Hide
                 return state, condition.color
             end
         end
@@ -75,39 +78,37 @@ end
 ---@param part_data PartData
 ---@return ConditionState, integer
 function this.check(part_data)
-    local state = data.condition_state.None
+    local state = rt.enum.condition_state.None
     for _, condition in pairs(config.sorted_conditions) do
         if
-            (condition.main_type == data.condition_type_enum.Weak and part_data.is_weak)
+            (condition.main_type == rt.enum.condition_type.Weak and part_data.is_weak)
             or (
-                condition.main_type == data.condition_type_enum.Extract
-                and data.reverse_lookup(data.extract_enum, condition.sub_type) == part_data.extract
+                condition.main_type == rt.enum.condition_type.Extract
+                and rl(rt.enum.extract, condition.sub_type) == part_data.extract
             )
         then
-            state = condition.state == data.condition_state_enum.Highlight and data.condition_state.Highlight
-                or data.condition_state.Hide
+            state = condition.state == rt.enum.condition_state.Highlight and rt.enum.condition_state.Highlight
+                or rt.enum.condition_state.Hide
             return state, condition.color
-        elseif condition.main_type == data.condition_type_enum.Break then
+        elseif condition.main_type == rt.enum.condition_type.Break then
             local match = (part_data.can_break and (part_data.is_broken and "Broken" or "Yes")) or "No"
-            if match == data.reverse_lookup(data.break_enum, condition.sub_type) then
-                state = condition.state == data.condition_state_enum.Highlight and data.condition_state.Highlight
-                    or data.condition_state.Hide
+            if match == rl(rt.enum.break_state, condition.sub_type) then
+                state = condition.state == rt.enum.condition_state.Highlight and rt.enum.condition_state.Highlight
+                    or rt.enum.condition_state.Hide
                 return state, condition.color
             end
-        elseif
-            condition.main_type == data.condition_type_enum.Element and condition.sub_type ~= data.element_enum.All
-        then
-            local value = part_data.hitzone[data.reverse_lookup(data.element_enum, condition.sub_type)]
+        elseif condition.main_type == rt.enum.condition_type.Element and condition.sub_type ~= rt.enum.element.All then
+            local value = part_data.hitzone[rl(rt.enum.element, condition.sub_type)]
             if value >= condition.from and value <= condition.to then
-                state = condition.state == data.condition_state_enum.Highlight and data.condition_state.Highlight
-                    or data.condition_state.Hide
+                state = condition.state == rt.enum.condition_state.Highlight and rt.enum.condition_state.Highlight
+                    or rt.enum.condition_state.Hide
                 return state, condition.color
             end
-        elseif condition.main_type == data.condition_type_enum.Element then
+        elseif condition.main_type == rt.enum.condition_type.Element then
             for _, value in pairs(part_data.hitzone) do
                 if value >= condition.from and value <= condition.to then
-                    state = condition.state == data.condition_state_enum.Highlight and data.condition_state.Highlight
-                        or data.condition_state.Hide
+                    state = condition.state == rt.enum.condition_state.Highlight and rt.enum.condition_state.Highlight
+                        or rt.enum.condition_state.Hide
                     return state, condition.color
                 end
             end

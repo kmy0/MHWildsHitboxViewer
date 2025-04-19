@@ -42,6 +42,10 @@ local data = require("HitboxViewer.data")
 local scarbox = require("HitboxViewer.box.scar")
 local utilities = require("HitboxViewer.utilities")
 
+local gui = data.gui
+local ace = data.ace
+local rt = data.runtime
+
 local this = {}
 
 ---@param self PartGroup
@@ -56,7 +60,7 @@ local function update(self)
 
     if self.part_data.scars then
         for _, scar in pairs(self.part_data.scars) do
-            scar.state = data.ace_scar_enum[scar._scar_part:get_State()]
+            scar.state = ace.enum.scar[scar._scar_part:get_State()]
             scar.enabled = not scar._scar_part:get_IsForceDisableCollision()
             scar.box_state = scar.box:update()
             scar.condition, scar.condition_color = conditions.check_scar(scar.state)
@@ -84,7 +88,7 @@ local function get_hitzone(meat_guid, param_parts)
 
     ---@type table<string, integer>
     local meat_data = {}
-    for _, field in ipairs(data.cMeatFields) do
+    for _, field in ipairs(ace.map.cMeatFields) do
         meat_data[field:get_name():sub(2)] = field:get_data(meat_list[meat_index._Value])
     end
     return meat_data
@@ -114,12 +118,12 @@ local function get_scar_parts(part_index, mc_holder, param_parts)
                 ---@cast scar app.EnemyScar
                 scar_part = scar:get_Parts()
                 local o = {
-                    state = data.ace_scar_enum[scar_part:get_State()],
+                    state = ace.enum.scar[scar_part:get_State()],
                     show = false,
                     highlight = false,
                     hitzone = get_hitzone(scar_part._MeatGuid_1, param_parts),
-                    box_state = data.box_state.None,
-                    condition = data.condition_state.None,
+                    box_state = rt.enum.box_state.None,
+                    condition = rt.enum.condition_state.None,
                     enabled = true,
                     condition_color = 0,
                     _scar = scar,
@@ -164,8 +168,8 @@ local function get_hitzones(cpart, param_parts)
 
     ---@type table<app.user_data.EmParamParts.MEAT_SLOT, table<string, integer>>
     local ret = {}
-    for i, name in pairs(data.ace_meat_slot_enum) do
-        local field_name = data.meat_type_to_field_name[name]
+    for i, name in pairs(ace.enum.meat_slot) do
+        local field_name = ace.map.meat_type_to_field_name[name]
         if not field_name then
             goto continue
         end
@@ -179,7 +183,7 @@ local function get_hitzones(cpart, param_parts)
 
         ---@type table<string, integer>
         local meat_data = {}
-        for _, field in ipairs(data.cMeatFields) do
+        for _, field in ipairs(ace.map.cMeatFields) do
             meat_data[field:get_name():sub(2)] = field:get_data(meat_list[meat_index._Value])
         end
         ret[i] = meat_data
@@ -206,7 +210,7 @@ function this.add_part_group(parent, enemy_hurtbox)
     local cruntime = enemy_hurtbox.meat_data:get_RuntimeData()
     local part_guid = userdata_cpart:get_PartsGuid()
     local part_index = cruntime._PartsIndex
-    local is_weak = data.ace_em_part_index_enum[userdata_cpart:get_Category()] == "WEAK_POINT"
+    local is_weak = ace.enum.em_part_index[userdata_cpart:get_Category()] == "WEAK_POINT"
 
     local formated_guid = utilities.format_guid(part_guid)
     local part_group = parent.parts[formated_guid]
@@ -233,19 +237,19 @@ function this.add_part_group(parent, enemy_hurtbox)
             dmg_part = enemy_hurtbox.parent.ctx.Parts:get_WeakPointParts()[part_index]
             weak_hitzone = get_hitzone(param_parts:get_WeakPointList()[part_index]._MeatGuid, param_parts)
             ---FIXME: does it even have a name?
-            name = data.name_missing
+            name = gui.name_missing
         else
             dmg_part = enemy_hurtbox.parent.ctx.Parts:get_DmgParts()[part_index]
             break_part, is_lost = get_break_parts(part_index, enemy_hurtbox.parent.ctx, enemy_hurtbox.parent.ctx.Parts)
             scars = get_scar_parts(part_index, enemy_hurtbox.parent.mc_holder, param_parts)
             cpart = param_parts:get_PartsList()[part_index]
-            name = get_part_name(cpart._PartsType:get_Value()) or data.name_missing
+            name = get_part_name(cpart._PartsType:get_Value()) or gui.name_missing
             hitzones = get_hitzones(cpart, param_parts)
         end
 
         ---@type PartGroup
         parent.parts[formated_guid] = {
-            show = config.current.hurtboxes.default_state == data.default_hurtbox_enum.Draw,
+            show = config.current.hurtboxes.default_state == rt.enum.default_hurtbox_state.Draw,
             highlight = false,
             name = name,
             scars_open = false,
@@ -253,7 +257,7 @@ function this.add_part_group(parent, enemy_hurtbox)
             part_data = {
                 guid = formated_guid,
                 enabled = false,
-                extract = data.ace_rod_enum[cruntime._RodExtract],
+                extract = ace.enum.rod[cruntime._RodExtract],
                 can_break = break_part ~= nil,
                 is_weak = is_weak,
                 is_broken = false,
@@ -266,7 +270,7 @@ function this.add_part_group(parent, enemy_hurtbox)
                 _meat_slot = dmg_part:get_MeatSlot(),
                 _break_parts = break_part,
             },
-            condition = data.condition_state.None,
+            condition = rt.enum.condition_state.None,
             condition_color = 0,
             update = update,
         }

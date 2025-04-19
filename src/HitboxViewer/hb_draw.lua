@@ -1,6 +1,8 @@
 local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
 
+local rt = data.runtime
+
 ---@type BoxObj[]
 local draw_queue = {}
 
@@ -13,7 +15,7 @@ end
 
 ---@param box BoxObj
 local function draw_shape(box)
-    if box.shape_type == data.shape_enum.Capsule or box.shape_type == data.shape_enum.ContinuousCapsule then
+    if box.shape_type == rt.enum.shape.Capsule or box.shape_type == rt.enum.shape.ContinuousCapsule then
         hb_draw.capsule(
             box.shape_data.pos_a,
             box.shape_data.pos_b,
@@ -22,7 +24,7 @@ local function draw_shape(box)
             config.current.draw.outline,
             config.current.draw.outline_color
         )
-    elseif box.shape_type == data.shape_enum.Sphere or box.shape_type == data.shape_enum.ContinuousSphere then
+    elseif box.shape_type == rt.enum.shape.Sphere or box.shape_type == rt.enum.shape.ContinuousSphere then
         hb_draw.sphere(
             box.shape_data.pos,
             box.shape_data.radius,
@@ -30,7 +32,7 @@ local function draw_shape(box)
             config.current.draw.outline,
             config.current.draw.outline_color
         )
-    elseif box.shape_type == data.shape_enum.Box then
+    elseif box.shape_type == rt.enum.shape.Box then
         hb_draw.box(
             box.shape_data.pos,
             box.shape_data.extent,
@@ -39,7 +41,7 @@ local function draw_shape(box)
             config.current.draw.outline,
             config.current.draw.outline_color
         )
-    elseif box.shape_type == data.shape_enum.Cylinder then
+    elseif box.shape_type == rt.enum.shape.Cylinder then
         hb_draw.cylinder(
             box.shape_data.pos_a,
             box.shape_data.pos_b,
@@ -48,7 +50,7 @@ local function draw_shape(box)
             config.current.draw.outline,
             config.current.draw.outline_color
         )
-    elseif box.shape_type == data.shape_enum.Triangle then
+    elseif box.shape_type == rt.enum.shape.Triangle then
         hb_draw.triangle(
             box.shape_data.pos,
             box.shape_data.extent,
@@ -67,7 +69,7 @@ local function sort_boxes(x, y)
     if x.distance > y.distance then
         return true
     elseif x.distance == y.distance then
-        if x.type == data.box_enum.Hurtbox and y.type == data.box_enum.Hitbox then
+        if x.type == rt.enum.box.Hurtbox and y.type == rt.enum.box.Hitbox then
             return true
         elseif x.type == y.type then
             return x.sort < y.sort

@@ -12,36 +12,38 @@ local data = require("HitboxViewer.data")
 local hb_draw = require("HitboxViewer.hb_draw")
 local table_util = require("HitboxViewer.table_util")
 
+local rt = data.runtime
+
 local this = {}
 
 ---@type table<ShapeType, DummyBox>
 local active_dummies = {}
 local dummy_shapes = {
     ---@type SphereShape
-    [data.shape_enum.Sphere] = {
+    [rt.enum.shape.Sphere] = {
         pos = Vector3f.new(0, 1, 0),
         radius = 2,
     },
     ---@type CylinderShape
-    [data.shape_enum.Cylinder] = {
+    [rt.enum.shape.Cylinder] = {
         pos_a = Vector3f.new(-1, 2, 0),
         pos_b = Vector3f.new(3, 1, 0),
         radius = 2,
     },
     ---@type CylinderShape
-    [data.shape_enum.Capsule] = {
+    [rt.enum.shape.Capsule] = {
         pos_a = Vector3f.new(-1, 2, 0),
         pos_b = Vector3f.new(3, 1, 0),
         radius = 2,
     },
     ---@type BoxShape
-    [data.shape_enum.Box] = {
+    [rt.enum.shape.Box] = {
         pos = Vector3f.new(0, 2, 0),
         extent = Vector3f.new(3, 1, 2),
         rot = Matrix4x4f.new(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1),
     },
     ---@type BoxShape
-    [data.shape_enum.Triangle] = {
+    [rt.enum.shape.Triangle] = {
         pos = Vector3f.new(0, 2, 0),
         extent = Vector3f.new(3, 1, 2),
         rot = Matrix4x4f.new(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1),
@@ -88,7 +90,7 @@ function this.spawn(shape_enum)
     }
     local pos = mp:get_pos()
     if pos then
-        if shape_enum == data.shape_enum.Cylinder or shape_enum == data.shape_enum.Capsule then
+        if shape_enum == rt.enum.shape.Cylinder or shape_enum == rt.enum.shape.Capsule then
             dummy_box.shape_data.pos_a = dummy_box.shape_data.pos_a + pos
             dummy_box.shape_data.pos_b = dummy_box.shape_data.pos_b + pos
             dummy_box.pos = (dummy_box.shape_data.pos_a + dummy_box.shape_data.pos_b) * 0.5

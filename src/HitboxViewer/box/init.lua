@@ -62,13 +62,16 @@ local character = require("HitboxViewer.character")
 local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
 
+local rt = data.runtime
+local ace = data.ace
+
 local this = {}
 
 ---@param self BoxObj
 ---@return BoxState
 local function update(self)
     if
-        self.type ~= data.box_enum.Scarbox
+        self.type ~= rt.enum.box.Scarbox
         and (
             self.collidable:get_reference_count() <= 1
             -- For whatever reason shell collidable reference count sometimes stays forever at 2.
@@ -80,13 +83,13 @@ local function update(self)
             or self.shellcolhit and self.shellcolhit:get_reference_count() <= 1
         )
     then
-        return data.box_state.Dead
+        return rt.enum.box_state.Dead
     end
 
-    if self:_update_data() == data.box_state.Draw then
+    if self:_update_data() == rt.enum.box_state.Draw then
         return self:_update_shape()
     end
-    return data.box_state.None
+    return rt.enum.box_state.None
 end
 
 ---@param self Box
@@ -95,9 +98,9 @@ local function update_shape(self)
     self.enabled = self.collidable:read_byte(0x10) ~= 0
     if self.enabled then
         if
-            self.shape_type == data.shape_enum.Capsule
-            or self.shape_type == data.shape_enum.Cylinder
-            or self.shape_type == data.shape_enum.ContinuousCapsule
+            self.shape_type == rt.enum.shape.Capsule
+            or self.shape_type == rt.enum.shape.Cylinder
+            or self.shape_type == rt.enum.shape.ContinuousCapsule
         then
             self.shape_data.pos_a.x = self.shape:read_float(0x60)
             self.shape_data.pos_a.y = self.shape:read_float(0x64)
@@ -108,14 +111,14 @@ local function update_shape(self)
             self.shape_data.radius = self.shape:read_float(0x80)
 
             self.pos = (self.shape_data.pos_a + self.shape_data.pos_b) * 0.5
-        elseif self.shape_type == data.shape_enum.Sphere or self.shape_type == data.shape_enum.ContinuousSphere then
+        elseif self.shape_type == rt.enum.shape.Sphere or self.shape_type == rt.enum.shape.ContinuousSphere then
             self.shape_data.pos.x = self.shape:read_float(0x60)
             self.shape_data.pos.y = self.shape:read_float(0x64)
             self.shape_data.pos.z = self.shape:read_float(0x68)
             self.shape_data.radius = self.shape:read_float(0x6c)
 
             self.pos = self.shape_data.pos
-        elseif self.shape_type == data.shape_enum.Box or self.shape_type == data.shape_enum.Triangle then
+        elseif self.shape_type == rt.enum.shape.Box or self.shape_type == rt.enum.shape.Triangle then
             self.shape_data.pos.x = self.shape:read_float(0x90)
             self.shape_data.pos.y = self.shape:read_float(0x94)
             self.shape_data.pos.z = self.shape:read_float(0x98)
@@ -136,9 +139,9 @@ local function update_shape(self)
         end
 
         self.distance = (character.get_master_player().pos - self.pos):length()
-        return data.box_state.Draw
+        return rt.enum.box_state.Draw
     end
-    return data.box_state.None
+    return rt.enum.box_state.None
 end
 
 ---@param collidable via.physics.Collidable
@@ -147,11 +150,11 @@ end
 ---@return Box?
 function this.box_ctor(collidable, parent, update_data_func)
     local shape = collidable:get_TransformedShape()
-    local shape_name = data.ace_shape_enum[shape:get_ShapeType()]
-    local shape_type = data.shape_enum[shape_name]
+    local shape_name = ace.enum.shape[shape:get_ShapeType()]
+    local shape_type = rt.enum.shape[shape_name]
 
     if not shape_type then
-        data.missing_shapes[shape_name] = true
+        rt.state.missing_shapes[shape_name] = true
         return
     end
 
@@ -164,7 +167,7 @@ function this.box_ctor(collidable, parent, update_data_func)
         pos = Vector3f.new(0, 0, 0),
         distance = 0,
         shape = shape,
-        type = data.box_enum.Hurtbox,
+        type = rt.enum.box.Hurtbox,
         userdata = collidable:get_UserData(),
         color = config.default_color,
         shape_type = shape_type,
@@ -176,17 +179,17 @@ function this.box_ctor(collidable, parent, update_data_func)
     }
 
     if
-        shape_type == data.shape_enum.Capsule
-        or shape_type == data.shape_enum.Cylinder
-        or shape_type == data.shape_enum.ContinuousCapsule
+        shape_type == rt.enum.shape.Capsule
+        or shape_type == rt.enum.shape.Cylinder
+        or shape_type == rt.enum.shape.ContinuousCapsule
     then
         ret.shape_data.pos_a = Vector3f.new(0, 0, 0)
         ret.shape_data.pos_b = Vector3f.new(0, 0, 0)
         ret.shape_data.radius = 0
-    elseif shape_type == data.shape_enum.Sphere or shape_type == data.shape_enum.ContinuousSphere then
+    elseif shape_type == rt.enum.shape.Sphere or shape_type == rt.enum.shape.ContinuousSphere then
         ret.shape_data.pos = Vector3f.new(0, 0, 0)
         ret.shape_data.radius = 0
-    elseif shape_type == data.shape_enum.Box or shape_type == data.shape_enum.Triangle then
+    elseif shape_type == rt.enum.shape.Box or shape_type == rt.enum.shape.Triangle then
         ret.shape_data.pos = Vector3f.new(0, 0, 0)
         ret.shape_data.extent = Vector3f.new(0, 0, 0)
         ret.shape_data.rot = Matrix4x4f.new(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1)
@@ -206,12 +209,12 @@ function this.hitbox_ctor(collidable, parent, update_data_func, log_entry, shell
     if hitbox then
         ---@cast hitbox Hitbox
         hitbox.log_entry = log_entry
-        hitbox.type = data.box_enum.Hitbox
+        hitbox.type = rt.enum.box.Hitbox
         hitbox.shellcolhit = shellcolhit
         hitbox.shown = false
-        hitbox.tick = data.tick_count
+        hitbox.tick = rt.state.tick_count
         hitbox.is_done = function(self)
-            return self.shown or (not self.shown and data.tick_count - self.tick > 1200)
+            return self.shown or (not self.shown and rt.state.tick_count - self.tick > 1200)
         end
     end
     return hitbox
@@ -245,9 +248,9 @@ function this.scarbox_ctor(scar, radius, update_data_func, update_shape_func)
         pos = Vector3f.new(0, 0, 0),
         distance = 0,
         scar = scar,
-        type = data.box_enum.Scarbox,
+        type = rt.enum.box.Scarbox,
         color = config.default_color,
-        shape_type = data.shape_enum.Sphere,
+        shape_type = rt.enum.shape.Sphere,
         shape_data = {
             pos = Vector3f.new(0, 0, 0),
             radius = radius,

@@ -2,10 +2,13 @@
 ---@field char_obj CharObj
 ---@field rsc via.physics.RequestSetCollider
 
-local box = require("HitboxViewer.box.init")
+local box = require("HitboxViewer.box")
 local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
 local meat = require("HitboxViewer.meat")
+
+local rt = data.runtime
+local rl = data.util.reverse_lookup
 
 local this = {}
 ---@type HurtLoadData[]
@@ -14,22 +17,22 @@ this.load_queue = {}
 ---@param self Hurtbox
 ---@return BoxState
 local function update(self)
-    local big_ok = self.parent.type == data.char_enum.BigMonster and self.part_group
-    if big_ok and not self.part_group.show and self.part_group.condition ~= data.condition_state.Highlight then
-        return data.box_state.None
+    local big_ok = self.parent.type == rt.enum.char.BigMonster and self.part_group
+    if big_ok and not self.part_group.show and self.part_group.condition ~= rt.enum.condition_state.Highlight then
+        return rt.enum.box_state.None
     end
 
     if config.current.hurtboxes.use_one_color then
         self.color = config.current.hurtboxes.color.one_color
     elseif big_ok and self.part_group.highlight then
         self.color = config.current.hurtboxes.color.highlight
-    elseif big_ok and self.part_group.condition == data.condition_state.Highlight then
+    elseif big_ok and self.part_group.condition == rt.enum.condition_state.Highlight then
         self.color = self.part_group.condition_color
     else
-        self.color = config.current.hurtboxes.color[data.reverse_lookup(data.char_enum, self.parent.type)]
+        self.color = config.current.hurtboxes.color[rl(rt.enum.char, self.parent.type)]
     end
 
-    return data.box_state.Draw
+    return rt.enum.box_state.Draw
 end
 
 ---@param collidable via.physics.Collidable
@@ -47,25 +50,25 @@ end
 local function add_enemy_hurtbox(collidable, parent, userdata)
     local hurtbox = box.enemy_hurtbox_ctor(collidable, parent, update, userdata)
     if hurtbox then
-        if parent.type == data.char_enum.BigMonster then
+        if parent.type == rt.enum.char.BigMonster then
             ---@cast parent BigEnemy
             meat.add_part_group(parent, hurtbox)
             if hurtbox.part_group then
                 table.insert(parent.hurtboxes, hurtbox)
             end
-        elseif parent.type == data.char_enum.SmallMonster then
+        elseif parent.type == rt.enum.char.SmallMonster then
             table.insert(parent.hurtboxes, hurtbox)
         end
     end
 end
 
 function this.get()
-    if not data.in_transition() then
+    if not rt.in_transition() then
         local counter = 0
 
         for idx, load_data in pairs(this.load_queue) do
             local char_obj = load_data.char_obj
-            if char_obj.type == data.char_enum.Player or char_obj.type == data.char_enum.MasterPlayer then
+            if char_obj.type == rt.enum.char.Player or char_obj.type == rt.enum.char.MasterPlayer then
                 --TODO: not sure which collidables are damage ones when riding, maybe Seikret has them?
                 for j = 1, 2 do
                     ---@type via.physics.Collidable?
@@ -98,11 +101,11 @@ function this.get()
 							-- stylua: ignore start
                             if
                                 (
-                                    char_obj.type == data.char_enum.Pet
+                                    char_obj.type == rt.enum.char.Pet
                                     and data_type:is_a("app.col_user_data.DamageParamOt")
                                 )
                                 or (
-                                    char_obj.type == data.char_enum.Npc
+                                    char_obj.type == rt.enum.char.Npc
                                     and (
                                         data_type:is_a("app.col_user_data.DamageParamNpc")
                                         ---@diagnostic disable-next-line: cast-type-mismatch
@@ -116,8 +119,8 @@ function this.get()
                                 add_hurtbox(col, char_obj)
                             elseif
                                 (
-                                    char_obj.type == data.char_enum.BigMonster
-                                    or char_obj.type == data.char_enum.SmallMonster
+                                    char_obj.type == rt.enum.char.BigMonster
+                                    or char_obj.type == rt.enum.char.SmallMonster
                                 ) and data_type:is_a("app.col_user_data.DamageParamEm")
                             then
                                 ---@cast char_obj Enemy

@@ -8,6 +8,8 @@ local hurtbox_info = require("HitboxViewer.gui.hurtbox_info")
 local table_util = require("HitboxViewer.table_util")
 local util = require("HitboxViewer.gui.util")
 
+local rt = data.runtime
+
 local this = {
     is_opened = false,
 }
@@ -72,12 +74,12 @@ local function draw_hurtboxes_header()
                     "Default Hurtbox State",
                     config.current.hurtboxes,
                     "default_state",
-                    table_util.keys(data.default_hurtbox_enum)
+                    table_util.keys(rt.enum.default_hurtbox_state)
                 )
             then
-                for _, monster in pairs(character.characters_grouped[data.char_enum.BigMonster]) do
+                for _, monster in pairs(character.characters_grouped[rt.enum.char.BigMonster]) do
                     for _, part in pairs(monster.parts) do
-                        part.show = config.current.hurtboxes.default_state == data.default_hurtbox_enum.Draw
+                        part.show = config.current.hurtboxes.default_state == rt.enum.default_hurtbox_state.Draw
                     end
                 end
             end
@@ -134,7 +136,7 @@ local function draw_settings_header()
         imgui.indent(10)
 
         imgui.push_item_width(250)
-        util.combo("Shape Spawner", config.current.gui, "dummy_shape", data.shape_dummy)
+        util.combo("Shape Spawner", config.current.gui, "dummy_shape", rt.enum.shape_dummy)
         imgui.pop_item_width()
         imgui.same_line()
 
@@ -424,7 +426,7 @@ function this.draw()
 
     util.checkbox("Draw Hitboxes", config.current, "enabled_hitboxes")
     local changed = util.checkbox("Draw Hurtboxes", config.current, "enabled_hurtboxes")
-    if changed and config.current.enabled_hurtboxes and data.in_game() then
+    if changed and config.current.enabled_hurtboxes and rt.in_game() then
         character.get_all_chars()
     end
 

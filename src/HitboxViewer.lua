@@ -1,6 +1,6 @@
 local character = require("HitboxViewer.character")
 local config = require("HitboxViewer.config")
-local config_menu = require("HitboxViewer.gui.init")
+local config_menu = require("HitboxViewer.gui")
 local data = require("HitboxViewer.data")
 local drawing = require("HitboxViewer.hb_draw")
 local dummies = require("HitboxViewer.box.dummy")
@@ -10,6 +10,8 @@ local hurtboxes = require("HitboxViewer.box.hurt")
 data.init()
 config.init()
 character.init()
+
+local rt = data.runtime
 
 sdk.hook(
     sdk.find_type_definition("app.CharacterBase"):get_method("doStart") --[[@as REMethodDefinition]],
@@ -28,7 +30,7 @@ sdk.hook(
     character.get_shell_post
 )
 
-if config.current.enabled_hurtboxes and data.in_game() then
+if config.current.enabled_hurtboxes and rt.in_game() then
     character.get_all_chars()
 end
 
@@ -37,7 +39,7 @@ re.on_draw_ui(function()
         config_menu.is_opened = not config_menu.is_opened
     end
 
-    local missing_shapes = data.get_missing_shapes()
+    local missing_shapes = rt.get_missing_shapes()
     if missing_shapes then
         imgui.same_line()
         imgui.text("Missing Shapes: " .. missing_shapes)
@@ -46,8 +48,8 @@ end)
 
 ---@diagnostic disable-next-line: param-type-mismatch name has too many possibilities so ls fails to find it??
 re.on_application_entry("EndRendering", function()
-    if data.in_game() then
-        data.tick_count = data.tick_count + 1
+    if rt.in_game() then
+        rt.state.tick_count = rt.state.tick_count + 1
         character.get()
         hurtboxes.get()
         hitboxes.get()
@@ -55,7 +57,7 @@ re.on_application_entry("EndRendering", function()
         character.update()
         drawing.draw()
     else
-        data.tick_count = 0
+        rt.state.tick_count = 0
         character.clear()
         dummies.clear()
     end

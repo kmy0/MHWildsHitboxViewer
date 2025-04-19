@@ -1,4 +1,4 @@
-local attack_log = require("HitboxViewer.attack_log.init")
+local attack_log = require("HitboxViewer.attack_log")
 local config = require("HitboxViewer.config")
 local table_util = require("HitboxViewer.table_util")
 local util = require("HitboxViewer.gui.util")
