@@ -30,7 +30,7 @@ local this = {
 }
 
 function this.types._TerrainHitOnly(entry)
-    return entry.more_data._TerrainHitOnly
+    return entry.more_data._TerrainHitOnly == "true"
 end
 
 function this.types.FocusMode(entry)
