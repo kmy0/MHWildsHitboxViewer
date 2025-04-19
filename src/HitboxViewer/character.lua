@@ -166,10 +166,10 @@ local function get_enemy_data(base_char_type, char_base)
             base = char_base,
             distance = 0,
             ctx = ctx,
-            name = utilities.getMessageLocal:call(
-                nil,
+            name = utilities.get_message_local(
                 utilities.getEnemyNameGuid:call(nil, ctx:get_EmID()),
-                data.get_language()
+                utilities.get_language(),
+                true
             ) or data.name_missing,
             id = char_base:get_address(),
             parts = {},
@@ -190,10 +190,10 @@ local function get_enemy_data(base_char_type, char_base)
             base = char_base,
             distance = 0,
             ctx = ctx,
-            name = utilities.getMessageLocal:call(
-                nil,
+            name = utilities.get_message_local(
                 utilities.getEnemyNameGuid:call(nil, ctx:get_EmID()),
-                data.get_language()
+                utilities.get_language(),
+                true
             ) or data.name_missing,
             id = char_base:get_address(),
             hurtboxes = {},
@@ -233,7 +233,7 @@ function this.character_ctor(game_object, char_base)
     end
 
     if not char_base then
-        char_base = utilities.get_component(game_object, "app.CharacterBase")
+        char_base = utilities.get_component(game_object, "app.CharacterBase") --[[@as app.CharacterBase?]]
     end
 
     if not char_base or not char_base:get_Started() or not char_base:get_Valid() then
@@ -241,7 +241,7 @@ function this.character_ctor(game_object, char_base)
     end
 
     ---@type via.physics.RequestSetCollider?
-    local rsc = utilities.get_component(game_object, "via.physics.RequestSetCollider")
+    local rsc = utilities.get_component(game_object, "via.physics.RequestSetCollider") --[[@as via.physics.RequestSetCollider?]]
     if not rsc then
         return
     end
@@ -350,7 +350,7 @@ function this.get_shell_post(retval)
 end
 
 function this.get_all_chars()
-    local transforms = data.get_all_transforms()
+    local transforms = utilities.get_all_components()
     local size = transforms:get_Count()
 
     for i = 0, size - 1 do

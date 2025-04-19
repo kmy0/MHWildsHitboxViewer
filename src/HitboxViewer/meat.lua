@@ -191,9 +191,9 @@ end
 ---@param fixed_part_type System.Int32
 ---@return string?
 local function get_part_name(fixed_part_type)
-    local part_type_enum = data.ace_part_type_fixed_to_part_type[tostring(fixed_part_type)]
+    local part_type_enum = utilities.get_part_type(fixed_part_type)
     local guid = utilities.EmPartsName(nil, part_type_enum)
-    local ret = utilities.getMessageLocal(nil, guid, data.get_language())
+    local ret = utilities.get_message_local(guid, utilities.get_language(), true)
     if string.len(ret) > 0 then
         return ret
     end

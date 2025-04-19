@@ -12,12 +12,6 @@ local this = {
     ace_meat_slot_enum = {},
     ---@type table<app.cEmModuleScar.cScarParts.STATE, string>
     ace_scar_enum = {},
-    ---@type table<integer, string>
-    ace_part_type_enum = {},
-    ---@type table<string, string>
-    ace_part_type_fixed_enum = {},
-    ---@type table<string, integer>
-    ace_part_type_fixed_to_part_type = {},
     ---@type table<app.HitDef.DAMAGE_TYPE, string>
     ace_damage_type_enum = {},
     ---@type table<app.HitDef.CONDITION, string>
@@ -47,8 +41,6 @@ local this = {
     ---@type table<app.user_data.EmParamParts.INDEX_CATEGORY, string>
     ace_em_part_index_enum = {},
     cMeatFields = sdk.find_type_definition("app.user_data.EmParamParts.cMeat"):get_fields(),
-    ---@type via.Scene?
-    scene = nil,
     ---@type app.PlayerManager?
     playman = nil,
     ---@type app.GameFlowManager?
@@ -59,8 +51,6 @@ local this = {
     name_missing = "???",
     ---@type string
     data_missing = " - ",
-    ---@type via.Language
-    language = nil,
     ---@type table<string, boolean>
     missing_shapes = {},
 }
@@ -224,25 +214,6 @@ local function iter_fields(type_def_name, as_string, ignore_values)
     end
 end
 
----@param list string[]
----@param func (fun(s: string): string)?
-local function get_field_names(type_def_name, list, func)
-    local type_def = sdk.find_type_definition(type_def_name)
-    if not type_def then
-        return
-    end
-
-    local fields = type_def:get_fields()
-    for _, field in pairs(fields) do
-        local name = field:get_name()
-        if func then
-            name = func(name)
-        end
-        table.insert(list, name)
-    end
-    table.sort(list)
-end
-
 ---@param type_def_name string
 ---@param table table
 ---@param add_color_entry boolean
@@ -304,18 +275,6 @@ local function get_enum(type_def_name, table, as_string, ignore_values)
     end
 end
 
----@return via.Scene
-function this.get_scene()
-    if not this.scene then
-        local type_def = sdk.find_type_definition("via.SceneManager")
-        if type_def then
-            this.scene =
-                sdk.call_native_func(sdk.get_native_singleton("via.SceneManager"), type_def, "get_CurrentScene()")
-        end
-    end
-    return this.scene
-end
-
 ---@return app.PlayerManager
 function this.get_playman()
     if not this.playman then
@@ -334,23 +293,6 @@ function this.get_flowman()
         this.flowman = obj
     end
     return this.flowman
-end
-
----@return via.Language
-function this.get_language()
-    if not this.language then
-        local type_def = sdk.find_type_definition("via.gui.GUISystem")
-        if type_def then
-            this.language =
-                sdk.call_native_func(sdk.get_native_singleton("via.gui.GUISystem"), type_def, "get_MessageLanguage()")
-        end
-    end
-    return this.language
-end
-
----@return System.Array<via.Transform>
-function this.get_all_transforms()
-    return this.get_scene():call("findComponents(System.Type)", sdk.typeof("via.Transform"))
 end
 
 ---@return boolean
@@ -411,18 +353,6 @@ function this.init()
     get_enum("app.EnemyDef.Damage.FRIEND_HIT_TYPE", this.ace_enemy_friend_hit_type_enum)
     get_enum("app.OtomoDef.USE_OTOMO_TOOL_TYPE", this.ace_otomo_tool_type_enum)
     get_enum("app.user_data.EmParamParts.INDEX_CATEGORY", this.ace_em_part_index_enum)
-
-    --FIXME: couldnt get 'app.EnemyDef.getPARTS_TYPEFromFixed(app.EnemyDef.PARTS_TYPE_Fixed, app.EnemyDef.PARTS_TYPE)' to work
-    get_enum("app.EnemyDef.PARTS_TYPE_Fixed", this.ace_part_type_fixed_enum, true)
-    get_enum("app.EnemyDef.PARTS_TYPE", this.ace_part_type_enum)
-    for i, iname in pairs(this.ace_part_type_fixed_enum) do
-        for j, jname in pairs(this.ace_part_type_enum) do
-            if iname == jname then
-                this.ace_part_type_fixed_to_part_type[i] = j
-                break
-            end
-        end
-    end
 
     write_fields_to_config("app.HitDef.DAMAGE_TYPE", config.default.hitboxes.damage_type, true)
     write_fields_to_config("app.HitDef.DAMAGE_ANGLE", config.default.hitboxes.damage_angle, true)

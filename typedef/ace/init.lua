@@ -417,3 +417,5 @@
 
 ---@class app.col_user_data.DamageParamNpc : app.col_user_data.DamageParam
 ---@field _IsAttackDetector System.Boolean
+
+---@class app.EnemyDef.PARTS_TYPE_Fixed : System.Enum

@@ -14,6 +14,7 @@ local this = {
 local window = {
     flags = 0,
     condition = 1 << 1,
+    font = nil,
 }
 
 local function draw_hurtboxes_header()
@@ -387,8 +388,6 @@ local function draw_attack_log_header()
 end
 
 function this.draw()
-    local changed = false
-
     imgui.set_next_window_pos(
         Vector2f.new(config.current.gui.main.pos_x, config.current.gui.main.pos_y),
         window.condition
@@ -397,6 +396,15 @@ function this.draw()
         Vector2f.new(config.current.gui.main.size_x, config.current.gui.main.size_y),
         window.condition
     )
+
+    if not this.font then
+        ---@diagnostic disable-next-line: param-type-mismatch
+        this.font = imgui.load_font(nil, 16, { 0x1, 0xFFFF, 0 })
+    end
+
+    if this.font then
+        imgui.push_font(this.font)
+    end
 
     this.is_opened =
         imgui.begin_window(string.format("%s %s", config.name, config.version), this.is_opened, window.flags)
@@ -414,8 +422,8 @@ function this.draw()
     imgui.spacing()
     imgui.indent(10)
 
-    changed, config.current.enabled_hitboxes = imgui.checkbox("Draw Hitboxes", config.current.enabled_hitboxes)
-    changed, config.current.enabled_hurtboxes = imgui.checkbox("Draw Hurtboxes", config.current.enabled_hurtboxes)
+    util.checkbox("Draw Hitboxes", config.current, "enabled_hitboxes")
+    local changed = util.checkbox("Draw Hurtboxes", config.current, "enabled_hurtboxes")
     if changed and config.current.enabled_hurtboxes and data.in_game() then
         character.get_all_chars()
     end
@@ -429,6 +437,10 @@ function this.draw()
     draw_settings_header()
     draw_hurtbox_info_header()
     draw_attack_log_header()
+
+    if this.font then
+        imgui.pop_font()
+    end
 
     imgui.end_window()
 end
