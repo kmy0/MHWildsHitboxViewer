@@ -1,10 +1,6 @@
 ---@class CustomAttackType
 ---@field types table<string, fun(entry: AttackLogEntry): boolean>
 ---@field sorted string[]
----@field custom_data CustomAttackTypeData
-
----@class (exact) CustomAttackTypeData
----@field focus_hitboxes table<integer, string>
 
 local table_util = require("HitboxViewer.table_util")
 
@@ -12,29 +8,14 @@ local table_util = require("HitboxViewer.table_util")
 local this = {
     types = {},
     sorted = {},
-    custom_data = {
-        focus_hitboxes = {
-            [315] = "Great Sword",
-            [319] = "Long Sword",
-            [317] = "SnS",
-            [318] = "Dual Blades",
-            [320] = "Hammer",
-            [324] = "Hunting Horn",
-            [327] = "Lance",
-            [329] = "Gunlance",
-            [332] = "Switch Axe",
-            [335] = "Charge Blade",
-            [339] = "Insect Glave",
-        },
-    },
 }
 
 function this.types._TerrainHitOnly(entry)
     return entry.more_data._TerrainHitOnly == "true"
 end
 
-function this.types.FocusMode(entry)
-    return this.custom_data.focus_hitboxes[entry.attack_id] ~= nil
+function this.types.NoMotionValue(entry)
+    return entry.motion_value == 0
 end
 
 ---@param entry AttackLogEntry
