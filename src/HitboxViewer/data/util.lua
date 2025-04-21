@@ -35,6 +35,7 @@ function this.iter_fields(type_def_name, as_string, ignore_values)
         if
             string.lower(name) == "max"
             or string.lower(name) == "value__"
+            or string.lower(name) == "invalid"
             or (ignore_values and table_util.table_contains(ignore_values, name))
         then
             goto continue

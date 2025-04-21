@@ -286,7 +286,9 @@ local function draw_hitboxes_header()
         util.tooltip("Evaluated from top to bottom")
         if node then
             imgui.spacing()
-            util.box_type_setup(config.current.hitboxes, "misc_type")
+            util.box_type_setup(config.current.hitboxes, "misc_type", function(t, i, j)
+                return table_util.table_contains(data.custom_attack_type.sorted, t[i])
+            end)
             imgui.tree_pop()
         end
         imgui.unindent(10)

@@ -121,8 +121,14 @@ end
 
 ---@param config_entry table<string, any>
 ---@param config_entry_name string
-function this.box_type_setup(config_entry, config_entry_name)
+---@param predicate (fun(t: table, i: integer, j:integer) : boolean)?
+function this.box_type_setup(config_entry, config_entry_name, predicate)
     local keys = table_util.keys(config_entry[config_entry_name].disable, true)
+
+    if predicate then
+        keys = table_util.table_remove(keys, predicate)
+    end
+
     imgui.begin_rect()
     imgui.push_item_width(250)
     for _, key in ipairs(keys) do
