@@ -1,42 +1,41 @@
-local character = require("HitboxViewer.character")
+local box = require("HitboxViewer.box")
+local char = require("HitboxViewer.character")
 local config = require("HitboxViewer.config")
 local config_menu = require("HitboxViewer.gui")
 local data = require("HitboxViewer.data")
-local drawing = require("HitboxViewer.hb_draw")
-local dummies = require("HitboxViewer.box.dummy")
-local hitboxes = require("HitboxViewer.box.hit")
-local hurtboxes = require("HitboxViewer.box.hurt")
+local hb_draw = require("HitboxViewer.hb_draw")
+local update = require("HitboxViewer.update")
 
 data.init()
 config.init()
-character.init()
+box.hurtbox.conditions:init()
 
 local rt = data.runtime
 
 sdk.hook(
     sdk.find_type_definition("app.CharacterBase"):get_method("doStart") --[[@as REMethodDefinition]],
-    character.get_base_pre,
-    character.get_base_post
+    char.hook.get_base_pre,
+    char.hook.get_base_post
 )
 sdk.hook(
     sdk.find_type_definition("app.ColliderSwitcher"):get_method(
         "activateAttack(System.Boolean, System.UInt32, System.UInt32, System.Nullable`1<System.Boolean>, app.Hit.HIT_ID_GROUP, System.Nullable`1<System.Single>, System.Nullable`1<System.Single>)"
     ) --[[@as REMethodDefinition]],
-    character.get_attack_idx
+    box.hitbox.hook.get_attack_pre
 )
 sdk.hook(
     sdk.find_type_definition("app.mcShellColHit"):get_method("setupCollision") --[[@as REMethodDefinition]],
-    character.get_shell_pre,
-    character.get_shell_post
+    box.hitbox.hook.get_shell_pre,
+    box.hitbox.hook.get_shell_post
 )
 
 if config.current.enabled_hurtboxes and rt.in_game() then
-    character.get_all_chars()
+    char.create_all_chars()
 end
 
 re.on_draw_ui(function()
     if imgui.button(string.format("%s %s", config.name, config.version)) then
-        config_menu.is_opened = not config_menu.is_opened
+        config.current.gui.main.is_opened = not config.current.gui.main.is_opened
     end
 
     local missing_shapes = rt.get_missing_shapes()
@@ -49,26 +48,20 @@ end)
 ---@diagnostic disable-next-line: param-type-mismatch name has too many possibilities so ls fails to find it??
 re.on_application_entry("EndRendering", function()
     if rt.in_game() then
-        rt.state.tick_count = rt.state.tick_count + 1
-        character.get()
-        hurtboxes.get()
-        hitboxes.get()
-        dummies.get()
-        character.update()
-        drawing.draw()
+        update.queues()
+        update.characters()
+        hb_draw.draw()
     else
-        rt.state.tick_count = 0
-        character.clear()
-        dummies.clear()
+        update.clear()
     end
 end)
 
 re.on_frame(function()
     if not reframework:is_drawing_ui() then
-        config_menu.is_opened = false
+        config.current.gui.main.is_opened = false
     end
 
-    if config_menu.is_opened then
+    if config.current.gui.main.is_opened then
         config_menu.draw()
     end
 end)

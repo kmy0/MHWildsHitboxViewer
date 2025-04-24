@@ -5,11 +5,15 @@
         "deps/hb_draw/typedef/*"
     ],
     "Lua.workspace.ignoreSubmodules": false,
+    "Lua.diagnostics.groupFileStatus": {
+        "strict": "Any",
+        "strong": "Any",
+    },
     "editor.rulers": [
         120,
     ],
     "editor.formatOnSave": true,
     "[lua]": {
         "editor.defaultFormatter": "JohnnyMorganz.stylua"
-    }
+    },
 }

@@ -1,3 +1,4 @@
+local config = require("HitboxViewer.config")
 local table_util = require("HitboxViewer.table_util")
 
 local this = {}
@@ -22,6 +23,7 @@ function this.spaced_string(str, x)
         table.insert(t, i)
     end
     if #t > 1 then
+        ---@diagnostic disable-next-line: no-unknown
         t[1] = string.rep(" ", x) .. t[1] .. string.rep(" ", x)
         return table.concat(t, "##")
     end
@@ -57,54 +59,51 @@ function this.popup_yesno(str, key)
 end
 
 ---@param name string
----@param config_entry table<string, any>
----@param config_entry_name string
----@param func function
+---@param config_key string
+---@param func fun(...): boolean, any
 ---@return boolean
-function this.generic_config(name, config_entry, config_entry_name, func, ...)
-    local changed
-    changed, config_entry[config_entry_name] = func(name, config_entry[config_entry_name], ...)
+function this.generic_config(name, config_key, func, ...)
+    local changed, value
+    changed, value = func(name, config.get(config_key), ...)
+    if changed then
+        config.set(config_key, value)
+    end
     return changed
 end
 
 ---@param name string
----@param config_entry table<string, any>
----@param config_entry_name string
+---@param config_key string
 ---@return boolean
-function this.checkbox(name, config_entry, config_entry_name)
-    return this.generic_config(name, config_entry, config_entry_name, imgui.checkbox)
+function this.checkbox(name, config_key)
+    return this.generic_config(name, config_key, imgui.checkbox)
 end
 
 ---@param name string
----@param config_entry table<string, any>
----@param config_entry_name string
+---@param config_key string
 ---@return boolean
-function this.combo(name, config_entry, config_entry_name, ...)
-    return this.generic_config(name, config_entry, config_entry_name, imgui.combo, ...)
+function this.combo(name, config_key, ...)
+    return this.generic_config(name, config_key, imgui.combo, ...)
 end
 
 ---@param name string
----@param config_entry table<string, any>
----@param config_entry_name string
+---@param config_key string
 ---@return boolean
-function this.color_edit(name, config_entry, config_entry_name, ...)
-    return this.generic_config(name, config_entry, config_entry_name, imgui.color_edit, ...)
+function this.color_edit(name, config_key, ...)
+    return this.generic_config(name, config_key, imgui.color_edit, ...)
 end
 
 ---@param name string
----@param config_entry table<string, any>
----@param config_entry_name string
+---@param config_key string
 ---@return boolean
-function this.slider_float(name, config_entry, config_entry_name, ...)
-    return this.generic_config(name, config_entry, config_entry_name, imgui.slider_float, ...)
+function this.slider_float(name, config_key, ...)
+    return this.generic_config(name, config_key, imgui.slider_float, ...)
 end
 
 ---@param name string
----@param config_entry table<string, any>
----@param config_entry_name string
+---@param config_key string
 ---@return boolean
-function this.slider_int(name, config_entry, config_entry_name, ...)
-    return this.generic_config(name, config_entry, config_entry_name, imgui.slider_int, ...)
+function this.slider_int(name, config_key, ...)
+    return this.generic_config(name, config_key, imgui.slider_int, ...)
 end
 
 ---@param text string
@@ -119,23 +118,25 @@ function this.tooltip(text, seperate)
     end
 end
 
----@param config_entry table<string, any>
----@param config_entry_name string
+---@param box_type HitboxType
+---@param box_config_key string
+---@param type_name string
 ---@param predicate (fun(t: table, i: integer, j:integer) : boolean)?
-function this.box_type_setup(config_entry, config_entry_name, predicate)
-    local keys = table_util.keys(config_entry[config_entry_name].disable, true)
+function this.box_type_setup(box_type, box_config_key, type_name, predicate)
+    local keys = table_util.keys(box_type.disable)
+    ---@cast keys string[]
 
     if predicate then
         keys = table_util.table_remove(keys, predicate)
     end
 
+    table.sort(keys)
     imgui.begin_rect()
     imgui.push_item_width(250)
     for _, key in ipairs(keys) do
         this.checkbox(
-            string.format("Disable %s##%s_disable_%s", key, config_entry_name, key),
-            config_entry[config_entry_name].disable,
-            key
+            string.format("Disable %s##%s_disable_%s", key, type_name, key),
+            string.format("%s.disable.%s", box_config_key, key)
         )
     end
     imgui.pop_item_width()
@@ -148,22 +149,16 @@ function this.box_type_setup(config_entry, config_entry_name, predicate)
     imgui.push_item_width(250)
     for _, key in ipairs(keys) do
         this.checkbox(
-            string.format("##%s_enable_color_%s", config_entry_name, key),
-            config_entry[config_entry_name].color_enable,
-            key
+            string.format("##%s_enable_color_%s", type_name, key),
+            string.format("%s.color_enable.%s", box_config_key, key)
         )
-        if not config_entry[config_entry_name].color_enable[key] then
-            imgui.push_style_var(0, 0.4)
-        end
+        imgui.begin_disabled(not box_type.color_enable[key])
         imgui.same_line()
         this.color_edit(
-            string.format("%s##%s_color_%s", key, config_entry_name, key),
-            config_entry[config_entry_name].color,
-            key
+            string.format("%s##%s_color_%s", key, type_name, key),
+            string.format("%s.color.%s", box_config_key, key)
         )
-        if not config_entry[config_entry_name].color_enable[key] then
-            imgui.pop_style_var(1)
-        end
+        imgui.end_disabled()
     end
     imgui.pop_item_width()
     imgui.end_rect(5, 10)

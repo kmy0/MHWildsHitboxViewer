@@ -30,5 +30,6 @@ function this.check(entry)
     end
 end
 
-this.sorted = table_util.keys(this.types, true)
+this.sorted = table_util.keys(this.types)
+table.sort(this.sorted)
 return this

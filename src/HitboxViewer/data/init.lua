@@ -1,3 +1,5 @@
+---@diagnostic disable: no-unknown
+
 local config = require("HitboxViewer.config")
 local table_util = require("HitboxViewer.table_util")
 

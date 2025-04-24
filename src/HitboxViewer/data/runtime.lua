@@ -52,9 +52,11 @@ this.enum.char = {
 }
 ---@enum BoxType
 this.enum.box = {
-    Hurtbox = 1,
-    Hitbox = 2,
-    Scarbox = 3,
+    HurtBox = 1,
+    HitBox = 2,
+    ScarBox = 3,
+    GuardBox = 4,
+    DummyBox = 5,
 }
 ---@enum ConditionType
 this.enum.condition_type = {
@@ -78,8 +80,8 @@ this.enum.element = {
     Thunder = 10,
     Water = 11,
 }
----@enum ConditionState
-this.enum.condition_state = {
+---@enum ConditionResult
+this.enum.condition_result = {
     None = 1,
     Highlight = 2,
     Hide = 3,
@@ -116,10 +118,15 @@ this.enum.default_hurtbox_state = {
     Draw = 1,
     Hide = 2,
 }
----@enum ConditionStateEnum
+---@enum ConditionState
 this.enum.condition_state = {
     Highlight = 1,
     Hide = 2,
+}
+---@enum HitBoxLoadDataType
+this.enum.hitbox_load_data = {
+    rsc = 1,
+    shell = 2,
 }
 
 ---@return app.GameFlowManager
@@ -160,7 +167,8 @@ end
 
 ---@return string?
 function this.get_missing_shapes()
-    local t = table_util.keys(this.state.missing_shapes, true)
+    local t = table_util.keys(this.state.missing_shapes)
+    table.sort(t)
     if next(t) then
         return table.concat(t, ", ")
     end

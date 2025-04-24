@@ -16,6 +16,14 @@
 ---@field attack_id integer
 ---@field more_data table<string, any>
 
+---@class AttackLog
+---@field entries AttackLogEntry[]
+---@field this_tick table<integer, boolean>
+---@field open_entries table<integer, boolean>
+---@field last_tick integer
+---@field entries_start integer
+---@field row_count integer
+
 local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
 
@@ -26,59 +34,14 @@ local rl = data.util.reverse_lookup
 
 ---@class AttackLog
 local this = {
-    ---@type AttackLogEntry[]
     entries = {},
-    ---@type table<integer, boolean>
     this_tick = {},
-    ---@type table<integer, boolean>
     open_entries = {},
     last_tick = -1,
     entries_start = 1,
     row_count = 0,
 }
 local actual_max = config.max_table_size + 50
-
-local function resize()
-    local size = #this.entries
-    if size >= config.max_table_size then
-        this.entries_start = size - config.max_table_size + 2
-    end
-    if size > actual_max then
-        local t = {}
-        for i = size - config.max_table_size + 2, size do
-            table.insert(t, this.entries[i])
-        end
-        this.entries_start = 1
-        this.entries = t
-    end
-end
-
----@param entry AttackLogEntry
----@return boolean
-function this.log(entry)
-    if rt.state.tick_count ~= this.last_tick then
-        this.last_tick = rt.state.tick_count
-        this.this_tick = {}
-        resize()
-    end
-    if not this.this_tick[entry.attack_id] then
-        if not config.current.gui.attack_log.pause then
-            table.insert(this.entries, entry)
-            this.row_count = this.row_count + 1
-        end
-        this.this_tick[entry.attack_id] = true
-        return true
-    end
-    return false
-end
-
-function this.clear()
-    this.entries = {}
-    this.this_tick = {}
-    this.open_entries = {}
-    this.last_tick = -1
-    this.row_count = 0
-end
 
 ---@param t table<string, any>
 local function fix_data(t)
@@ -93,15 +56,58 @@ local function fix_data(t)
     end
 end
 
----@param char_obj CharObj
+---@protected
+function this:_resize()
+    local size = #self.entries
+    if size >= config.max_table_size then
+        self.entries_start = size - config.max_table_size + 2
+    end
+    if size > actual_max then
+        local t = {}
+        for i = size - config.max_table_size + 2, size do
+            table.insert(t, self.entries[i])
+        end
+        self.entries_start = 1
+        self.entries = t
+    end
+end
+
+---@param entry AttackLogEntry
+---@return boolean
+function this:log(entry)
+    if rt.state.tick_count ~= self.last_tick then
+        self.last_tick = rt.state.tick_count
+        self.this_tick = {}
+        self:_resize()
+    end
+    if not self.this_tick[entry.attack_id] then
+        if not config.current.gui.attack_log.pause then
+            table.insert(self.entries, entry)
+            self.row_count = self.row_count + 1
+        end
+        self.this_tick[entry.attack_id] = true
+        return true
+    end
+    return false
+end
+
+function this:clear()
+    self.entries = {}
+    self.this_tick = {}
+    self.open_entries = {}
+    self.last_tick = -1
+    self.row_count = 0
+end
+
+---@param char Character
 ---@param userdata app.col_user_data.AttackParamPl
-function this.get_player_data(char_obj, userdata)
-    if not char_obj.hitbox_userdata_cache[userdata] then
-        char_obj.hitbox_userdata_cache[userdata] = {
+function this.get_player_data(char, userdata)
+    if not char.hitbox_userdata_cache[userdata] then
+        char.hitbox_userdata_cache[userdata] = {
             ---@diagnostic disable-next-line: assign-type-mismatch
-            char_type = rt.enum.char.MasterPlayer == char_obj.type and "Self" or rl(rt.enum.char, char_obj.type),
-            char_id = char_obj.id,
-            char_name = char_obj.name,
+            char_type = rt.enum.char.MasterPlayer == char.type and "Self" or rl(rt.enum.char, char.type),
+            char_id = char.id,
+            char_name = char.name,
             motion_value = userdata._Attack,
             element = userdata._StatusAttrRate,
             status = userdata._StatusConditionRate,
@@ -159,21 +165,21 @@ function this.get_player_data(char_obj, userdata)
                 _CustomShockAbsorberRate = userdata._CustomShockAbsorberRate,
             },
         }
-        fix_data(char_obj.hitbox_userdata_cache[userdata])
-        fix_data(char_obj.hitbox_userdata_cache[userdata].more_data)
+        fix_data(char.hitbox_userdata_cache[userdata])
+        fix_data(char.hitbox_userdata_cache[userdata].more_data)
     end
-    return char_obj.hitbox_userdata_cache[userdata]
+    return char.hitbox_userdata_cache[userdata]
 end
 
----@param char_obj CharObj
+---@param char Character
 ---@param userdata app.col_user_data.AttackParamEm
-function this.get_enemy_data(char_obj, userdata)
-    if not char_obj.hitbox_userdata_cache[userdata] then
-        char_obj.hitbox_userdata_cache[userdata] = {
+function this.get_enemy_data(char, userdata)
+    if not char.hitbox_userdata_cache[userdata] then
+        char.hitbox_userdata_cache[userdata] = {
             ---@diagnostic disable-next-line: assign-type-mismatch
-            char_type = rl(rt.enum.char, char_obj.type),
-            char_id = char_obj.id,
-            char_name = char_obj.name,
+            char_type = rl(rt.enum.char, char.type),
+            char_id = char.id,
+            char_name = char.name,
             motion_value = userdata._Attack,
             element = gui.data_missing,
             status = gui.data_missing,
@@ -223,21 +229,21 @@ function this.get_enemy_data(char_obj, userdata)
                 _IsEnergyAttack = userdata._IsEnergyAttack,
             },
         }
-        fix_data(char_obj.hitbox_userdata_cache[userdata])
-        fix_data(char_obj.hitbox_userdata_cache[userdata].more_data)
+        fix_data(char.hitbox_userdata_cache[userdata])
+        fix_data(char.hitbox_userdata_cache[userdata].more_data)
     end
-    return char_obj.hitbox_userdata_cache[userdata]
+    return char.hitbox_userdata_cache[userdata]
 end
 
----@param char_obj CharObj
+---@param char Character
 ---@param userdata app.col_user_data.AttackParamOt
-function this.get_pet_data(char_obj, userdata)
-    if not char_obj.hitbox_userdata_cache[userdata] then
-        char_obj.hitbox_userdata_cache[userdata] = {
+function this.get_pet_data(char, userdata)
+    if not char.hitbox_userdata_cache[userdata] then
+        char.hitbox_userdata_cache[userdata] = {
             ---@diagnostic disable-next-line: assign-type-mismatch
-            char_type = rl(rt.enum.char, char_obj.type),
-            char_id = char_obj.id,
-            char_name = char_obj.name,
+            char_type = rl(rt.enum.char, char.type),
+            char_id = char.id,
+            char_name = char.name,
             motion_value = userdata._Attack,
             element = gui.data_missing,
             status = gui.data_missing,
@@ -273,16 +279,16 @@ function this.get_pet_data(char_obj, userdata)
                 _IsStealAttack = userdata._IsStealAttack,
             },
         }
-        fix_data(char_obj.hitbox_userdata_cache[userdata])
-        fix_data(char_obj.hitbox_userdata_cache[userdata].more_data)
+        fix_data(char.hitbox_userdata_cache[userdata])
+        fix_data(char.hitbox_userdata_cache[userdata].more_data)
     end
-    return char_obj.hitbox_userdata_cache[userdata]
+    return char.hitbox_userdata_cache[userdata]
 end
 
----@param char_obj CharObj
+---@param char Character
 ---@param userdata via.physics.RequestSetColliderUserData
 ---@return AttackLogEntry?
-function this.get_log_entry(char_obj, userdata)
+function this.get_log_entry(char, userdata)
     local p_data = userdata:get_ParentUserData()
     local t_def = p_data:get_type_definition()
 
@@ -291,13 +297,13 @@ function this.get_log_entry(char_obj, userdata)
     end
     if t_def:is_a("app.col_user_data.AttackParamPl") or t_def:is_a("app.col_user_data.AttackParamPlShell") then
         ---@cast p_data app.col_user_data.AttackParamPl
-        return this.get_player_data(char_obj, p_data)
+        return this.get_player_data(char, p_data)
     elseif t_def:is_a("app.col_user_data.AttackParamEm") then
         ---@cast p_data app.col_user_data.AttackParamEm
-        return this.get_enemy_data(char_obj, p_data)
+        return this.get_enemy_data(char, p_data)
     elseif t_def:is_a("app.col_user_data.AttackParamOt") then
         ---@cast p_data app.col_user_data.AttackParamOt
-        return this.get_pet_data(char_obj, p_data)
+        return this.get_pet_data(char, p_data)
     end
 end
 

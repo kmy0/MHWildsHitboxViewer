@@ -1,3 +1,5 @@
+---@diagnostic disable: no-unknown
+
 local table_util = require("HitboxViewer.table_util")
 
 local this = {}

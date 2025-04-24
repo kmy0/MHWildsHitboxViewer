@@ -4,7 +4,6 @@ local table_util = require("HitboxViewer.table_util")
 local util = require("HitboxViewer.gui.util")
 
 local this = {}
-this.is_opened = false
 
 local table_data = {
     name = "attack_log",
@@ -55,7 +54,9 @@ local function draw_more_data(more_data, title, row)
         imgui.table_setup_column("Key")
         imgui.table_setup_column("Value")
 
-        local keys = table_util.keys(more_data, true)
+        local keys = table_util.keys(more_data)
+        ---@cast keys string[]
+        table.sort(keys)
         for _, k in ipairs(keys) do
             imgui.table_next_row()
             imgui.table_set_column_index(0)
@@ -74,7 +75,7 @@ function this.draw()
     end
 
     if imgui.button(util.spaced_string("Clear", 3) .. "##clear_attack_log") then
-        attack_log.clear()
+        attack_log:clear()
     end
     imgui.same_line()
     if
