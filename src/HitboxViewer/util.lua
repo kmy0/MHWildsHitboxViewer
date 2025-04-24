@@ -16,6 +16,30 @@ this.getPARTS_TYPEFromFixed = sdk.find_type_definition("app.EnemyDef"):get_metho
     "getPARTS_TYPEFromFixed(app.EnemyDef.PARTS_TYPE_Fixed, app.EnemyDef.PARTS_TYPE)"
 ) --[[@as REMethodDefinition]]
 
+---@generic T
+---@param array System.Array<T>
+---@return System.ArrayEnumerator<T>
+function this.get_array_enum(array)
+    local enum
+    local success, arr = pcall(function()
+        return array:ToArray()
+    end)
+
+    if not success then
+        arr = array
+    end
+
+    success, enum = pcall(function()
+        return arr:GetEnumerator()
+    end)
+
+    if not success then
+        enum = sdk.create_instance("System.ArrayEnumerator", true) --[[@as System.ArrayEnumerator]]
+        enum:call(".ctor", arr)
+    end
+    return enum
+end
+
 ---@param part_fixed app.EnemyDef.PARTS_TYPE_Fixed
 ---@return app.EnemyDef.PARTS_TYPE
 function this.get_part_type(part_fixed)
@@ -101,7 +125,7 @@ end
 ---@param fallback boolean?
 ---@return string
 function this.get_message_local_from_name(guid_name, lang, fallback)
-    local msg_guid = this.getGuidByName:call(nil, guid_name)
+    local msg_guid = this.getGuidByName:call(nil, guid_name) --[[@as System.Guid]]
     return this.get_message_local(msg_guid, lang, fallback)
 end
 
@@ -130,6 +154,35 @@ function this.get_message_local(guid, lang, fallback)
         return ""
     end
     return msg
+end
+
+---@generic T
+---@param system_array System.Array<T>
+---@return T[]
+function this.system_array_to_lua(system_array)
+    local ret = {}
+    local enum = this.get_array_enum(system_array)
+
+    while enum:MoveNext() do
+        local o = enum:get_Current()
+        table.insert(ret, o)
+    end
+    return ret
+end
+
+---@param s string
+---@param sep string?
+---@return string[]
+function this.split_string(s, sep)
+    if not sep then
+        sep = "%s"
+    end
+
+    local ret = {}
+    for i in string.gmatch(s, "([^" .. sep .. "]+)") do
+        table.insert(ret, i)
+    end
+    return ret
 end
 
 return this

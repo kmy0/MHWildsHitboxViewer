@@ -1,11 +1,4 @@
----@class DummyBox
----@field sort integer
----@field distance integer
----@field color integer
----@field pos Vector3f
----@field shape_data ShapeData
----@field shape_type ShapeType
-
+local box_base = require("HitboxViewer.box.box_base")
 local character = require("HitboxViewer.character")
 local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
@@ -50,21 +43,56 @@ local dummy_shapes = {
     },
 }
 
-function this.get()
-    local mp = character.get_master_player()
-    if not next(active_dummies) or not mp then
-        return
+---@class DummyBox : BoxBase
+local DummyBox = {}
+DummyBox.__index = DummyBox
+setmetatable(DummyBox, { __index = box_base })
+
+---@param box_type BoxType
+---@param shape_type ShapeType
+---@return DummyBox
+function DummyBox:new(box_type, shape_type)
+    local o = box_base.new(self, box_type, shape_type)
+    ---@cast o DummyBox
+    setmetatable(o, self)
+    local pos = character.get_master_player():get_pos()
+
+    o.shape_data = table_util.table_copy(dummy_shapes[shape_type]) --[[@as ShapeData]]
+    if o.shape_type == rt.enum.shape.Cylinder or o.shape_type == rt.enum.shape.Capsule then
+        o.shape_data.pos_a = o.shape_data.pos_a + pos
+        o.shape_data.pos_b = o.shape_data.pos_b + pos
+        o.pos = (o.shape_data.pos_a + o.shape_data.pos_b) * 0.5
+    else
+        o.shape_data.pos = o.shape_data.pos + pos
+        o.pos = o.shape_data.pos
+    end
+    return o
+end
+
+function DummyBox:update_data()
+    self.color = config.current.hurtboxes.color.MasterPlayer
+    return rt.enum.box_state.Draw
+end
+
+function DummyBox:update_shape()
+    local master_player = character.get_master_player()
+    if not master_player then
+        return rt.enum.box_state.None
     end
 
-    local pos = mp:get_pos()
-    for _, col_data in pairs(active_dummies) do
-        if (col_data.pos - pos):length() > config.current.draw.distance then
-            goto next
-        end
+    local pos = master_player:get_pos()
+    if (self.pos - pos):length() > config.current.draw.distance then
+        return rt.enum.box_state.None
+    end
+    return rt.enum.box_state.Draw
+end
 
-        ---@diagnostic disable-next-line: param-type-mismatch
-        hb_draw.enqueue(col_data)
-        ::next::
+function this.get()
+    for _, dummy_box in pairs(active_dummies) do
+        local box_state, box = dummy_box:update()
+        if box_state == rt.enum.box_state.Draw then
+            hb_draw.enqueue(box)
+        end
     end
 end
 
@@ -74,33 +102,10 @@ end
 
 ---@param shape_enum ShapeType
 function this.spawn(shape_enum)
-    local mp = character.get_master_player()
-    if not mp then
+    if not character.get_master_player() then
         return
     end
-
-    ---@type DummyBox
-    local dummy_box = {
-        sort = 0,
-        distance = 0,
-        pos = Vector3f.new(0, 0, 0),
-        color = config.current.hurtboxes.color.MasterPlayer,
-        shape_data = table_util.table_copy(dummy_shapes[shape_enum]),
-        shape_type = shape_enum,
-    }
-    local pos = mp:get_pos()
-    if pos then
-        if shape_enum == rt.enum.shape.Cylinder or shape_enum == rt.enum.shape.Capsule then
-            dummy_box.shape_data.pos_a = dummy_box.shape_data.pos_a + pos
-            dummy_box.shape_data.pos_b = dummy_box.shape_data.pos_b + pos
-            dummy_box.pos = (dummy_box.shape_data.pos_a + dummy_box.shape_data.pos_b) * 0.5
-        else
-            dummy_box.shape_data.pos = dummy_box.shape_data.pos + pos
-            dummy_box.pos = dummy_box.shape_data.pos
-        end
-
-        active_dummies[shape_enum] = dummy_box
-    end
+    active_dummies[shape_enum] = DummyBox:new(rt.enum.box.DummyBox, shape_enum)
 end
 
 return this

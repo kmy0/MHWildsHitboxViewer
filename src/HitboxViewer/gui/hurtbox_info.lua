@@ -1,4 +1,5 @@
-local character = require("HitboxViewer.character")
+local char = require("HitboxViewer.character")
+local conditions = require("HitboxViewer.box.hurt.conditions")
 local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
 local table_util = require("HitboxViewer.table_util")
@@ -8,7 +9,6 @@ local rt = data.runtime
 local gui = data.gui
 
 local this = {}
-this.is_opened = false
 
 local table_data = {
     name = "hurtbox_info",
@@ -56,39 +56,18 @@ local table_data = {
     },
 }
 
----@param scars Scar[]
----@param row integer
-local function draw_scar_rows(scars, row)
-    for subrow, scar in ipairs(scars) do
+---@param scars ScarBox[]
+local function draw_scar_rows(scars)
+    for _, scar in ipairs(scars) do
         imgui.table_next_row()
 
         for col = 1, table_data.col_count do
             imgui.table_set_column_index(col - 1)
             imgui.table_set_bg_color(1, 1011830607, col - 1)
             local header = table_data.headers[col]
-            -- local value
 
             if header == "Part Name" then
                 imgui.text(scar.state)
-                --FIXME: scar position is not updated when its not in RAW state, which makes sense i guess
-
-                -- elseif header == "Show" or header == "Highlight" then
-                -- 	value = scar[table_data.header_to_key[header]]
-                -- 	imgui.spacing()
-                -- 	if
-                -- 		imgui.button(
-                -- 			string.format(
-                -- 				"%s##%s_%s_%s",
-                -- 				util.spaced_string(not value and "No" or "Yes", 3),
-                -- 				subrow - 1,
-                -- 				header,
-                -- 				row - 1
-                -- 			)
-                -- 		)
-                -- 	then
-                -- 		scar[table_data.header_to_key[header]] = not value
-                -- 	end
-                -- 	imgui.spacing()
             elseif header == "Enabled" or header == "Extract" or header == "Weak" or header == "Break" then
                 imgui.text(gui.data_missing)
             else
@@ -100,8 +79,7 @@ end
 
 ---@param monster BigEnemy
 local function draw_table(monster)
-    local sorted_parts = character.get_sorted_part_groups(monster)
-
+    local sorted_parts = monster:get_sorted_part_groups()
     for _, header in ipairs(table_data.headers) do
         imgui.table_setup_column(header)
     end
@@ -114,24 +92,26 @@ local function draw_table(monster)
         for col = 1, table_data.col_count do
             imgui.table_set_column_index(col - 1)
             local header = table_data.headers[col]
+            ---@diagnostic disable-next-line: no-unknown
             local value
 
             if header == "Part Name" then
                 imgui.text(part.name)
             elseif header == "Show" or header == "Highlight" then
-                value = part[table_data.header_to_key[header]]
+                value = part[table_data.header_to_key[header]] --[[@as boolean]]
                 imgui.spacing()
                 if
                     imgui.button(
                         string.format(
                             "%s##%s_%s_%s",
                             util.spaced_string(not value and "No" or "Yes", 3),
-                            part.part_data.guid,
+                            part.guid,
                             header,
                             row - 1
                         )
                     )
                 then
+                    ---@diagnostic disable-next-line: no-unknown
                     part[table_data.header_to_key[header]] = not value
                 end
                 imgui.spacing()
@@ -146,7 +126,7 @@ local function draw_table(monster)
             elseif header == "Extract" then
                 imgui.text(part.part_data[table_data.header_to_key[header]])
             elseif header == "Scars" then
-                if part.part_data.scars then
+                if part.part_data.scar_boxes then
                     imgui.spacing()
                     if imgui.arrow_button("##scars_click" .. row, part.scars_open and 3 or 1) then
                         part.scars_open = not part.scars_open
@@ -159,148 +139,157 @@ local function draw_table(monster)
         end
 
         if part.scars_open then
-            draw_scar_rows(part.part_data.scars, row)
+            draw_scar_rows(part.part_data.scar_boxes)
         end
     end
 end
 
----@param key string
----@return boolean?
-function this.draw_condition(key)
+---@param cond ConditionBase
+function this.draw_condition(cond)
     ---@type boolean
     local changed, save
+    ---@type any
+    local value
+    ---@type boolean?
     local dir
-    if imgui.button(string.format("%s##remove_%s", util.spaced_string("Remove", 3), key)) then
-        config.current.hurtboxes.conditions[key] = nil
-        config.save()
-        config.sort_conditions()
-        return
+    local remove = false
+
+    if imgui.button(string.format("%s##remove_%s", util.spaced_string("Remove", 3), cond.key)) then
+        remove = true
     end
+
     imgui.same_line()
-    if imgui.arrow_button(string.format("##up_%s", key), 2) then
+    if imgui.arrow_button(string.format("##up_%s", cond.key), 2) then
         dir = true
     end
+
     imgui.same_line()
-    if imgui.arrow_button(string.format("##down_%s", key), 3) then
+    if imgui.arrow_button(string.format("##down_%s", cond.key), 3) then
         dir = false
     end
 
     imgui.same_line()
     imgui.push_item_width(200)
-    save = util.combo(
-        "##combo_type_" .. key,
-        config.current.hurtboxes.conditions[key],
-        "main_type",
-        table_util.keys(rt.enum.condition_type)
-    ) or save
+    changed, value = imgui.combo(
+        "##combo_type_" .. cond.key,
+        cond.type,
+        table_util.sort(table_util.keys(rt.enum.condition_type), function(a, b)
+            return rt.enum.condition_type[a] < rt.enum.condition_type[b]
+        end)
+    )
+    save = changed or save
+
+    if changed then
+        cond = conditions:swap_condition(cond, value)
+    end
 
     imgui.same_line()
-    save = util.combo(
-        "##condition_state_" .. key,
-        config.current.hurtboxes.conditions[key],
-        "state",
-        table_util.keys(rt.enum.condition_state)
-    ) or save
+    changed, cond.state = imgui.combo(
+        "##condition_state_" .. cond.key,
+        cond.state,
+        table_util.sort(table_util.keys(rt.enum.condition_state), function(a, b)
+            return rt.enum.condition_state[a] < rt.enum.condition_state[b]
+        end)
+    )
+    save = changed or save
     imgui.pop_item_width()
 
-    if config.current.hurtboxes.conditions[key].main_type == rt.enum.condition_type.Element then
+    if cond.type == rt.enum.condition_type.Element then
+        ---@cast cond ElementCondition
         imgui.same_line()
         imgui.push_item_width(200)
-        save = util.combo(
-            "##combo_element" .. key,
-            config.current.hurtboxes.conditions[key],
-            "sub_type",
-            table_util.keys(rt.enum.element)
-        ) or save
+        changed, cond.sub_type = imgui.combo(
+            "##combo_element" .. cond.key,
+            cond.sub_type,
+            table_util.sort(table_util.keys(rt.enum.element), function(a, b)
+                return rt.enum.element[a] < rt.enum.element[b]
+            end)
+        )
+        save = changed or save
         imgui.pop_item_width()
 
         imgui.push_item_width(304)
-        changed = util.slider_int(
-            "##from_" .. key,
-            config.current.hurtboxes.conditions[key],
-            "from",
-            0,
-            300,
-            "From " .. config.current.hurtboxes.conditions[key].from
-        )
+        changed, cond.from = imgui.slider_int("##from_" .. cond.key, cond.from, 0, 300, "From " .. cond.from)
         save = changed or save
 
-        if changed and config.current.hurtboxes.conditions[key].from > config.current.hurtboxes.conditions[key].to then
-            config.current.hurtboxes.conditions[key].to = config.current.hurtboxes.conditions[key].from
+        if changed and cond.from > cond.to then
+            cond.to = cond.from
         end
 
         imgui.same_line()
-        changed = util.slider_int(
-            "##to_" .. key,
-            config.current.hurtboxes.conditions[key],
-            "to",
-            0,
-            300,
-            "To " .. config.current.hurtboxes.conditions[key].to
-        )
+        changed, cond.to = imgui.slider_int("##to_" .. cond.key, cond.to, 0, 300, "To " .. cond.to)
         save = changed or save
 
-        if changed and config.current.hurtboxes.conditions[key].to < config.current.hurtboxes.conditions[key].from then
-            config.current.hurtboxes.conditions[key].from = config.current.hurtboxes.conditions[key].to
+        if changed and cond.to < cond.from then
+            cond.from = cond.to
         end
-
         imgui.pop_item_width()
-    elseif config.current.hurtboxes.conditions[key].main_type == rt.enum.condition_type.Extract then
+    elseif cond.type == rt.enum.condition_type.Extract then
+        ---@cast cond ExtractCondition
         imgui.push_item_width(200)
         imgui.same_line()
-        save = util.combo(
-            "##combo_extract" .. key,
-            config.current.hurtboxes.conditions[key],
-            "sub_type",
-            table_util.keys(rt.enum.extract)
-        ) or save
+        changed, cond.sub_type = imgui.combo(
+            "##combo_extract" .. cond.key,
+            cond.sub_type,
+            table_util.sort(table_util.keys(rt.enum.extract), function(a, b)
+                return rt.enum.extract[a] < rt.enum.extract[b]
+            end)
+        )
+        save = changed or save
         imgui.pop_item_width()
-    elseif config.current.hurtboxes.conditions[key].main_type == rt.enum.condition_type.Break then
+    elseif cond.type == rt.enum.condition_type.Break then
+        ---@cast cond BreakCondition
         imgui.push_item_width(200)
         imgui.same_line()
-        save = util.combo(
-            "##combo_break" .. key,
-            config.current.hurtboxes.conditions[key],
-            "sub_type",
-            table_util.keys(rt.enum.break_state)
-        ) or save
+        changed, cond.sub_type = imgui.combo(
+            "##combo_break" .. cond.key,
+            cond.sub_type,
+            table_util.sort(table_util.keys(rt.enum.break_state), function(a, b)
+                return rt.enum.break_state[a] < rt.enum.break_state[b]
+            end)
+        )
+        save = changed or save
         imgui.pop_item_width()
-    elseif config.current.hurtboxes.conditions[key].main_type == rt.enum.condition_type.Scar then
-        config.current.hurtboxes.conditions[key].sub_type = 2
-        -- imgui.push_item_width(200)
-        -- imgui.same_line()
-        -- save = util.combo(
-        -- 	"##combo_scar" .. key,
-        -- 	config.current.hurtboxes.conditions[key],
-        -- 	"sub_type",
-        -- 	misc.keys(data.scar_enum)
-        -- ) or save
-        -- imgui.pop_item_width()
+    elseif cond.type == rt.enum.condition_type.Scar then
+        ---@cast cond ScarCondition
+        cond.sub_type = 2
     end
 
-    if config.current.hurtboxes.conditions[key].state == rt.enum.condition_state.Highlight then
+    if cond.state == rt.enum.condition_state.Highlight then
         imgui.push_item_width(616)
-        save = util.color_edit("##color" .. key, config.current.hurtboxes.conditions[key], "color") or save
+        changed, cond.color = imgui.color_edit("##color" .. cond.key, cond.color)
+        save = changed or save
         imgui.pop_item_width()
     end
 
     imgui.separator()
+    if dir ~= nil then
+        local index = table_util.index(conditions.sorted, cond) --[[@as integer]]
+        if dir then
+            index = index - 1
+        else
+            index = index + 1
+        end
+
+        if conditions:swap_order(cond, conditions.sorted[index]) then
+            save = false
+        end
+    end
 
     if save then
-        config.save()
-        config.sort_conditions()
+        conditions:save()
+    elseif remove then
+        conditions:remove(cond)
     end
-    return dir
 end
 
 function this.draw()
     if
         config.current.enabled_hurtboxes
         and not config.current.hurtboxes.disable.BigMonster
-        and character.characters_grouped[rt.enum.char.BigMonster]
-        and next(character.characters_grouped[rt.enum.char.BigMonster])
+        and not char.cache:is_empty(rt.enum.char.BigMonster)
     then
-        local sorted_monsters = character.get_sorted_chars(rt.enum.char.BigMonster)
+        local sorted_monsters = char.get_sorted_chars(rt.enum.char.BigMonster)
         if not sorted_monsters then
             return
         end

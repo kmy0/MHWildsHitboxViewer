@@ -3,17 +3,24 @@ local data = require("HitboxViewer.data")
 
 local rt = data.runtime
 
----@type BoxObj[]
+---@type BoxBase[]
 local draw_queue = {}
 
 local this = {}
 
----@param box BoxObj
-function this.enqueue(box)
-    table.insert(draw_queue, box)
+---@param boxes BoxBase[]?
+function this.enqueue(boxes)
+    if not boxes then
+        return
+    end
+    table.move(boxes, 1, #boxes, #draw_queue + 1, draw_queue)
 end
 
----@param box BoxObj
+function this.clear()
+    draw_queue = {}
+end
+
+---@param box BoxBase
 local function draw_shape(box)
     if box.shape_type == rt.enum.shape.Capsule or box.shape_type == rt.enum.shape.ContinuousCapsule then
         hb_draw.capsule(
@@ -62,14 +69,14 @@ local function draw_shape(box)
     end
 end
 
----@param x BoxObj
----@param y BoxObj
+---@param x BoxBase
+---@param y BoxBase
 ---@return boolean
 local function sort_boxes(x, y)
     if x.distance > y.distance then
         return true
     elseif x.distance == y.distance then
-        if x.type == rt.enum.box.Hurtbox and y.type == rt.enum.box.Hitbox then
+        if x.type == rt.enum.box.HurtBox and y.type == rt.enum.box.HitBox then
             return true
         elseif x.type == y.type then
             return x.sort < y.sort

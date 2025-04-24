@@ -4,13 +4,13 @@
 ---@field use_one_color boolean
 
 ---@class (exact) HurtboxSettings : BoxSettings
----@field conditions table<string, Condition>
+---@field conditions table<string, table<string, any>>
 ---@field default_state DefaultHurtboxState
 
 ---@class (exact) HitboxType
 ---@field disable table<string, boolean>
 ---@field color table<string, integer>
----@field color_enable table<string, integer>
+---@field color_enable table<string, boolean>
 
 ---@class (exact) HitboxSettings : BoxSettings
 ---@field damage_type HitboxType
@@ -29,6 +29,7 @@
 ---@field pos_y integer
 ---@field size_x integer
 ---@field size_y integer
+---@field is_opened boolean
 
 ---@class (exact) MonitorState : WindowState
 ---@field detach boolean
@@ -57,17 +58,22 @@
 ---@field default_color integer
 ---@field default_highlight_color integer
 ---@field max_table_size integer
----@field max_updates integer
----@field sorted_conditions Condition[]
+---@field max_char_loads integer
+---@field max_char_updates integer
+---@field min_char_interval integer
+---@field max_char_interval integer
+---@field max_char_creates integer
 ---@field default Settings
 ---@field current Settings
 ---@field init fun()
----@field sort_conditions fun()
 ---@field load fun()
 ---@field save fun()
 ---@field restore fun()
+---@field get fun(key: string): any
+---@field set fun(key: string, value: any)
 
 local table_util = require("HitboxViewer.table_util")
+local util = require("HitboxViewer.util")
 
 ---@class Config
 local this = {}
@@ -78,8 +84,11 @@ this.config_path = this.name .. "/config.json"
 this.default_color = 1020343074
 this.default_highlight_color = 1021633775
 this.max_table_size = 100
-this.max_updates = 1
-this.sorted_conditions = {}
+this.max_char_loads = 1
+this.max_char_updates = 3
+this.max_char_creates = 3
+this.min_char_interval = 10
+this.max_char_interval = 60
 
 ---@diagnostic disable-next-line: missing-fields
 this.current = {}
@@ -106,23 +115,18 @@ this.default = {
             one_color = this.default_color,
         },
         conditions = {
-            ["1"] = {
+            {
                 color = 1011041213,
-                from = 45,
                 key = 1,
-                main_type = 3,
+                type = 3,
                 state = 1,
-                sub_type = 1,
-                to = 300,
+                sub_type = 2,
             },
-            ["2"] = {
+            {
                 color = 1021633775,
-                from = 0,
                 key = 2,
-                main_type = 4,
+                type = 4,
                 state = 1,
-                sub_type = 8,
-                to = 300,
             },
         },
         default_state = 1,
@@ -180,6 +184,7 @@ this.default = {
             pos_y = 50,
             size_x = 800,
             size_y = 700,
+            is_opened = false,
         },
         hurtbox_info = {
             pos_x = 50,
@@ -187,6 +192,7 @@ this.default = {
             size_x = 800,
             size_y = 700,
             detach = false,
+            is_opened = false,
         },
         attack_log = {
             pos_x = 50,
@@ -195,36 +201,51 @@ this.default = {
             size_y = 700,
             detach = false,
             pause = false,
+            is_opened = false,
         },
         dummy_shape = 1,
     },
 }
 
-function this.sort_conditions()
-    ---@type Condition[]
-    local sorted = {}
-    this.sorted_conditions = {}
-    for _, v in pairs(this.current.hurtboxes.conditions) do
-        table.insert(sorted, v)
+---@param key string
+---@return any
+function this.get(key)
+    local ret = this.current
+    if not key:find(".") then
+        return ret[key]
     end
 
-    table.sort(sorted, function(a, b)
-        return a.key < b.key
-    end)
-
-    for _, condition in ipairs(sorted) do
-        table.insert(this.sorted_conditions, condition)
+    local keys = util.split_string(key, "%.")
+    for i = 1, #keys do
+        ret = ret[keys[i]] --[[@as any]]
     end
+    return ret
+end
+
+---@param key string
+---@param value any
+function this.set(key, value)
+    local t = this.current
+    if not key:find(".") then
+        ---@diagnostic disable-next-line: no-unknown
+        t[key] = value
+        return
+    end
+    table_util.set_nested_value(t, util.split_string(key, "%."), value)
 end
 
 function this.load()
     local loaded_config = json.load_file(this.config_path)
     if loaded_config then
+        if not loaded_config.hurtboxes.conditions then
+            loaded_config.hurtboxes.conditions = {}
+        end
+        ---@diagnostic disable-next-line: assign-type-mismatch
         this.current = table_util.table_merge(this.default, loaded_config)
     else
+        ---@diagnostic disable-next-line: assign-type-mismatch
         this.current = table_util.table_deep_copy(this.default)
     end
-    this.sort_conditions()
 end
 
 function this.save()
@@ -232,9 +253,9 @@ function this.save()
 end
 
 function this.restore()
+    ---@diagnostic disable-next-line: assign-type-mismatch
     this.current = table_util.table_deep_copy(this.default)
     this.save()
-    this.sort_conditions()
 end
 
 function this.init()
