@@ -261,7 +261,7 @@ function this:update()
         end
     end
 
-    self.condition, self.condition_color = conditions:check_part_group(self)
+    self.condition, self.condition_color = conditions.check_part_group(self)
     if not table_util.empty(ret) then
         return ret
     end

@@ -69,7 +69,7 @@ end
 function this:update()
     self.state = ace.enum.scar[self._scar_part:get_State()]
     self.is_enabled = not self._scar_part:get_IsForceDisableCollision()
-    self.condition, self.condition_color = conditions:check_scar(self.state)
+    self.condition, self.condition_color = conditions.check_scar(self.state)
     return box_base.update(self)
 end
 

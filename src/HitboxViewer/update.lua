@@ -49,7 +49,7 @@ function this.characters()
             then
                 character.last_update_tick = tick
                 if character:is_dead() then
-                    char.cache:remove(character)
+                    char.cache.remove(character)
                     goto continue
                 end
 

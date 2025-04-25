@@ -8,7 +8,7 @@ local update = require("HitboxViewer.update")
 
 data.init()
 config.init()
-box.hurtbox.conditions:init()
+box.hurtbox.conditions.init()
 
 local rt = data.runtime
 

@@ -36,7 +36,7 @@ function this.get()
             load_data.game_object = load_data.char_base:get_GameObject()
         end
 
-        this.cache:get_char(load_data.game_object, load_data.char_base)
+        this.cache.get_char(load_data.game_object, load_data.char_base)
         ::continue::
     end
 end

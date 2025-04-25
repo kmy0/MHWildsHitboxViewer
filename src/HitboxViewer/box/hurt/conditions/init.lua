@@ -22,36 +22,36 @@ local this = {
     by_type = {},
 }
 
-function this:sort()
-    self.by_type = {}
-    table.sort(self.sorted, function(a, b)
+function this.sort()
+    this.by_type = {}
+    table.sort(this.sorted, function(a, b)
         return a.key < b.key
     end)
-    for i = 1, #self.sorted do
-        local cond = self.sorted[i]
-        table_util.insert_nested_value(self.by_type, { cond.type }, cond)
+    for i = 1, #this.sorted do
+        local cond = this.sorted[i]
+        table_util.insert_nested_value(this.by_type, { cond.type }, cond)
     end
 end
 
-function this:init()
+function this.init()
     for _, condition_struct in pairs(config.current.hurtboxes.conditions) do
         if not condition_struct.type or not condition_ctor[condition_struct.type] then
-            self:restore_default()
+            this.restore_default()
             return
         end
-        self:new_condition(condition_struct.type, condition_struct)
+        this.new_condition(condition_struct.type, condition_struct)
     end
 end
 
-function this:restore_default()
+function this.restore_default()
     config.current.hurtboxes.conditions = config.default.hurtboxes.conditions
-    self:clear()
-    self:init()
+    this.clear()
+    this.init()
 end
 
 ---@param cond ConditionBase
 ---@return table<string, any>
-function this:_serialize(cond)
+function this._serialize(cond)
     ---@type table<string, any>
     local ret = {}
     ---@diagnostic disable-next-line: no-unknown
@@ -63,12 +63,12 @@ function this:_serialize(cond)
     return ret
 end
 
-function this:save()
+function this.save()
     ---@type table<string, table<string, any>>
     local t = {}
-    for _, cond in pairs(self.sorted) do
+    for _, cond in pairs(this.sorted) do
         ---@type table<string, any>
-        table.insert(t, self:_serialize(cond))
+        table.insert(t, this._serialize(cond))
     end
     config.current.hurtboxes.conditions = t
     config.save()
@@ -76,9 +76,9 @@ end
 
 ---@param part_group PartGroup
 ---@return ConditionResult, integer
-function this:check_part_group(part_group)
-    for i = 1, #self.sorted do
-        local cond = self.sorted[i]
+function this.check_part_group(part_group)
+    for i = 1, #this.sorted do
+        local cond = this.sorted[i]
         if cond.type ~= rt.enum.condition_type.Scar then
             local state, color = cond:check(part_group)
             if state ~= rt.enum.condition_result.None then
@@ -91,8 +91,8 @@ end
 
 ---@param scar_state string
 ---@return ConditionResult, integer
-function this:check_scar(scar_state)
-    local t = self.by_type[rt.enum.condition_type.Scar] or {}
+function this.check_scar(scar_state)
+    local t = this.by_type[rt.enum.condition_type.Scar] or {}
     for i = 1, #t do
         local cond = t[i]
         ---@cast cond ScarCondition
@@ -107,7 +107,7 @@ end
 ---@param cond_a ConditionBase?
 ---@param cond_b ConditionBase?
 ---@return boolean
-function this:swap_order(cond_a, cond_b)
+function this.swap_order(cond_a, cond_b)
     if not cond_a or not cond_b then
         return false
     end
@@ -116,24 +116,24 @@ function this:swap_order(cond_a, cond_b)
     local key_b = cond_b.key
     cond_b.key = key_a
     cond_a.key = key_b
-    self:sort()
-    self:save()
+    this.sort()
+    this.save()
     return true
 end
 
 ---@param old_cond ConditionBase
 ---@param new_cond_type ConditionType
 ---@return ConditionBase
-function this:swap_condition(old_cond, new_cond_type)
-    local args = self:_serialize(old_cond)
-    self:remove(old_cond)
-    return self:new_condition(new_cond_type, args)
+function this.swap_condition(old_cond, new_cond_type)
+    local args = this._serialize(old_cond)
+    this.remove(old_cond)
+    return this.new_condition(new_cond_type, args)
 end
 
 ---@param cond_type ConditionType
 ---@param serial table<string, any>?
 ---@return ConditionBase
-function this:new_condition(cond_type, serial)
+function this.new_condition(cond_type, serial)
     local ctor = condition_ctor[cond_type]
     ---@type ConditionBase
     local cond
@@ -143,31 +143,31 @@ function this:new_condition(cond_type, serial)
         ---@diagnostic disable-next-line: missing-parameter
         cond = ctor:new()
     end
-    table.insert(self.sorted, cond)
-    self:sort()
-    self:save()
+    table.insert(this.sorted, cond)
+    this.sort()
+    this.save()
     return cond
 end
 
 ---@param cond ConditionBase
-function this:remove(cond)
-    table_util.table_remove(self.sorted, function(t, i, j)
+function this.remove(cond)
+    table_util.table_remove(this.sorted, function(t, i, j)
         return t[i] ~= cond
     end)
-    table_util.table_remove(self.by_type[cond.type], function(t, i, j)
+    table_util.table_remove(this.by_type[cond.type], function(t, i, j)
         return t[i] ~= cond
     end)
-    self:save()
+    this.save()
 end
 
 ---@boolean
-function this:empty()
-    return table_util.empty(self.sorted)
+function this.empty()
+    return table_util.empty(this.sorted)
 end
 
-function this:clear()
-    self.sorted = {}
-    self.by_type = {}
+function this.clear()
+    this.sorted = {}
+    this.by_type = {}
 end
 
 return this

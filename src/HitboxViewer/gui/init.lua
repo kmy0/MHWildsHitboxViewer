@@ -54,7 +54,7 @@ local function draw_hurtboxes_header()
 
         if imgui.tree_node("Conditions") then
             if imgui.button(util.spaced_string("Create", 3)) then
-                conditions:new_condition(rt.enum.condition_type.Element)
+                conditions.new_condition(rt.enum.condition_type.Element)
             end
             imgui.same_line()
             imgui.push_item_width(200)

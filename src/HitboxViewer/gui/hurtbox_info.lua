@@ -180,7 +180,7 @@ function this.draw_condition(cond)
     save = changed or save
 
     if changed then
-        cond = conditions:swap_condition(cond, value)
+        cond = conditions.swap_condition(cond, value)
     end
 
     imgui.same_line()
@@ -271,7 +271,7 @@ function this.draw_condition(cond)
             index = index + 1
         end
 
-        if conditions:swap_order(cond, conditions.sorted[index]) then
+        if conditions.swap_order(cond, conditions.sorted[index]) then
             save = false
         end
     end
@@ -279,7 +279,7 @@ function this.draw_condition(cond)
     if save then
         conditions:save()
     elseif remove then
-        conditions:remove(cond)
+        conditions.remove(cond)
     end
 end
 
@@ -287,7 +287,7 @@ function this.draw()
     if
         config.current.enabled_hurtboxes
         and not config.current.hurtboxes.disable.BigMonster
-        and not char.cache:is_empty(rt.enum.char.BigMonster)
+        and not char.cache.is_empty(rt.enum.char.BigMonster)
     then
         local sorted_monsters = char.get_sorted_chars(rt.enum.char.BigMonster)
         if not sorted_monsters then

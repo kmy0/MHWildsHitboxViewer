@@ -46,7 +46,7 @@ function this.get_shell_post(retval)
     end
 
     local actual_owner = shell_transform:get_GameObject()
-    local char = char_cache:get_char(actual_owner)
+    local char = char_cache.get_char(actual_owner)
 
     if
         not char
@@ -74,7 +74,7 @@ function this.get_attack_pre(args)
     local collider_switcher = sdk.to_managed_object(args[2])
     ---@cast collider_switcher app.ColliderSwitcher
     local game_object = collider_switcher._HitController:get_Owner()
-    local char = char_cache:get_char(game_object)
+    local char = char_cache.get_char(game_object)
 
     if
         not char
