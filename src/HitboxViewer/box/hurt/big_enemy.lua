@@ -39,6 +39,7 @@ function this:new(collidable, parent, meat_data)
     return o
 end
 
+---@return BoxState
 function this:update_data()
     if not self.part_group.is_show and self.part_group.condition ~= rt.enum.condition_result.Highlight then
         return rt.enum.box_state.None

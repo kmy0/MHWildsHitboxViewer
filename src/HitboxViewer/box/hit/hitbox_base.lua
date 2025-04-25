@@ -38,6 +38,7 @@ function this:new(collidable, parent, log_entry, shellcolhit)
     return o
 end
 
+---@return BoxState
 function this:update_data()
     if config.current.hitboxes.use_one_color then
         self.color = config.current.hitboxes.color.one_color

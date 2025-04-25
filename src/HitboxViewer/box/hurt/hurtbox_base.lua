@@ -28,6 +28,7 @@ function this:new(collidable, parent)
     return o
 end
 
+---@return BoxState
 function this:update_data()
     if config.current.hurtboxes.use_one_color then
         self.color = config.current.hurtboxes.color.one_color
