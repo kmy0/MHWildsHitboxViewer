@@ -2,10 +2,14 @@
 ---@field playman app.PlayerManager?
 ---@field flowman app.GameFlowManager?
 ---@field state State
+---@field map Map
 
----@class State
+---@class (exact) State
 ---@field missing_shapes table<string, boolean>
 ---@field tick_count integer
+
+---@class (exact) Map
+---@field update_order CharType[]
 
 local table_util = require("HitboxViewer.table_util")
 
@@ -13,6 +17,8 @@ local table_util = require("HitboxViewer.table_util")
 local this = {
     state = { missing_shapes = {}, tick_count = 0 },
     enum = {},
+    ---@diagnostic disable-next-line: missing-fields
+    map = {},
 }
 
 ---@enum BaseCharType
@@ -127,6 +133,14 @@ this.enum.condition_state = {
 this.enum.hitbox_load_data = {
     rsc = 1,
     shell = 2,
+}
+this.map.update_order = {
+    this.enum.char.MasterPlayer,
+    this.enum.char.BigMonster,
+    this.enum.char.Player,
+    this.enum.char.Pet,
+    this.enum.char.Npc,
+    this.enum.char.SmallMonster,
 }
 
 ---@return app.GameFlowManager

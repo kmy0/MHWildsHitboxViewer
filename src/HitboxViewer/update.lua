@@ -7,14 +7,6 @@ local hb_draw = require("HitboxViewer.hb_draw")
 local rt = data.runtime
 
 local this = {}
-local update_order = {
-    rt.enum.char.MasterPlayer,
-    rt.enum.char.BigMonster,
-    rt.enum.char.Player,
-    rt.enum.char.Pet,
-    rt.enum.char.Npc,
-    rt.enum.char.SmallMonster,
-}
 
 function this.characters()
     if
@@ -26,6 +18,7 @@ function this.characters()
     end
 
     local tick = rt.state.tick_count
+    local update_order = rt.map.update_order
     local updated = 0
     local force_updated = 0
     local master_player_pos = char.get_master_player():get_pos()
