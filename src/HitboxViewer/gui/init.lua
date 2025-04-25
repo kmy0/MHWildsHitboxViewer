@@ -70,7 +70,7 @@ local function draw_hurtboxes_header()
                 for _, monster in pairs(char.cache.by_type_by_gameobject[rt.enum.char.BigMonster]) do
                     ---@cast monster BigEnemy
                     for _, part in pairs(monster.parts) do
-                        part.show = config.current.hurtboxes.default_state == rt.enum.default_hurtbox_state.Draw
+                        part.is_show = config.current.hurtboxes.default_state == rt.enum.default_hurtbox_state.Draw
                     end
                 end
             end

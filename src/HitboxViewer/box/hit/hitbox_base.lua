@@ -1,7 +1,7 @@
 ---@class (exact) HitBoxBase : CollidableBase
 ---@field log_entry AttackLogEntry
 ---@field shellcolhit app.mcShellColHit?
----@field shown boolean
+---@field is_shown boolean
 ---@field tick integer
 
 local colldable_base = require("HitboxViewer.box.collidable_base")
@@ -33,7 +33,7 @@ function this:new(collidable, parent, log_entry, shellcolhit)
     setmetatable(o, self)
     o.log_entry = log_entry
     o.shellcolhit = shellcolhit
-    o.shown = false
+    o.is_shown = false
     o.tick = rt.state.tick_count
     return o
 end
@@ -60,15 +60,15 @@ end
 function this:update()
     if
         self.shellcolhit and self.shellcolhit:get_reference_count() <= 1
-        or not self.shown and rt.state.tick_count - self.tick > 1200
+        or not self.is_shown and rt.state.tick_count - self.tick > 1200
     then
         return rt.enum.box_state.Dead, { self }
     end
 
     local box_state, boxes = colldable_base.update(self)
     if box_state == rt.enum.box_state.Draw then
-        self.shown = true
-    elseif box_state == rt.enum.box_state.None and self.shown then
+        self.is_shown = true
+    elseif box_state == rt.enum.box_state.None and self.is_shown then
         box_state = rt.enum.box_state.Dead
     end
     return box_state, boxes

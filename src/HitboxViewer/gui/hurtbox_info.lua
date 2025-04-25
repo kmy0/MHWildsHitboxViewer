@@ -128,8 +128,8 @@ local function draw_table(monster)
             elseif header == "Scars" then
                 if part.part_data.scar_boxes then
                     imgui.spacing()
-                    if imgui.arrow_button("##scars_click" .. row, part.scars_open and 3 or 1) then
-                        part.scars_open = not part.scars_open
+                    if imgui.arrow_button("##scars_click" .. row, part.part_data.is_scar_gui_open and 3 or 1) then
+                        part.part_data.is_scar_gui_open = not part.part_data.is_scar_gui_open
                     end
                     imgui.spacing()
                 end
@@ -138,7 +138,7 @@ local function draw_table(monster)
             end
         end
 
-        if part.scars_open then
+        if part.part_data.is_scar_gui_open then
             draw_scar_rows(part.part_data.scar_boxes)
         end
     end

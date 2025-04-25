@@ -49,7 +49,7 @@ function this:update_shape()
 end
 
 function this:update_data()
-    if not self.enabled or (not self.show and self.condition ~= rt.enum.condition_result.Highlight) then
+    if not self.is_enabled or (not self.show and self.condition ~= rt.enum.condition_result.Highlight) then
         return rt.enum.box_state.None
     end
 
@@ -68,7 +68,7 @@ end
 ---@return BoxState, BoxBase[]?
 function this:update()
     self.state = ace.enum.scar[self._scar_part:get_State()]
-    self.enabled = not self._scar_part:get_IsForceDisableCollision()
+    self.is_enabled = not self._scar_part:get_IsForceDisableCollision()
     self.condition, self.condition_color = conditions:check_scar(self.state)
     return box_base.update(self)
 end

@@ -1,5 +1,5 @@
 ---@class (exact) BoxBase
----@field enabled boolean
+---@field is_enabled boolean
 ---@field sort integer
 ---@field pos Vector3f
 ---@field distance number

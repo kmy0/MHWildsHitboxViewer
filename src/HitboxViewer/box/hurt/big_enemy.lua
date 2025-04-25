@@ -40,11 +40,11 @@ function this:new(collidable, parent, meat_data)
 end
 
 function this:update_data()
-    if not self.part_group.show and self.part_group.condition ~= rt.enum.condition_result.Highlight then
+    if not self.part_group.is_show and self.part_group.condition ~= rt.enum.condition_result.Highlight then
         return rt.enum.box_state.None
     end
 
-    if self.part_group.highlight then
+    if self.part_group.is_highlight then
         self.color = config.current.hurtboxes.color.highlight
     elseif self.part_group.condition == rt.enum.condition_result.Highlight then
         self.color = self.part_group.condition_color

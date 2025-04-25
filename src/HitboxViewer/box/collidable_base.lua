@@ -46,8 +46,8 @@ end
 
 ---@return BoxState
 function this:update_shape()
-    self.enabled = self.collidable:read_byte(0x10) ~= 0
-    if self.enabled then
+    self.is_enabled = self.collidable:read_byte(0x10) ~= 0
+    if self.is_enabled then
         if
             self.shape_type == rt.enum.shape.Capsule
             or self.shape_type == rt.enum.shape.Cylinder
