@@ -44,7 +44,7 @@ end
 function this:update_shape()
     self.shape_data.pos = self._scar:get_Pos()
     self.pos = self.shape_data.pos
-    self.distance = (char.get_master_player().pos - self.pos):length()
+    self.distance = (rt.camera.origin - self.pos):length()
     return rt.enum.box_state.Draw
 end
 

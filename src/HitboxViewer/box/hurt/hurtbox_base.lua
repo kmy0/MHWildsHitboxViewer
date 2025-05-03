@@ -15,9 +15,12 @@ setmetatable(this, { __index = colldable_base })
 
 ---@param collidable via.physics.Collidable
 ---@param parent Character
+---@param resource_idx integer
+---@param set_idx integer
+---@param collidable_idx integer
 ---@return HurtBoxBase?
-function this:new(collidable, parent)
-    local o = colldable_base.new(self, collidable, parent, rt.enum.box.HurtBox)
+function this:new(collidable, parent, resource_idx, set_idx, collidable_idx)
+    local o = colldable_base.new(self, collidable, parent, rt.enum.box.HurtBox, resource_idx, set_idx, collidable_idx)
 
     if not o then
         return

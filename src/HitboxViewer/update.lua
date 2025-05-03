@@ -21,7 +21,8 @@ function this.characters()
     local update_order = rt.map.update_order
     local updated = 0
     local force_updated = 0
-    local master_player_pos = char.get_master_player():get_pos()
+
+    rt.update_camera()
     for i = 1, #update_order do
         local char_type = update_order[i]
         local characters = char.cache.by_type_by_gameobject[char_type]
@@ -46,7 +47,7 @@ function this.characters()
                     goto continue
                 end
 
-                out_of_range = not character:update_distance(master_player_pos)
+                out_of_range = not character:update_distance(rt.camera.origin)
                 if not force_update then
                     updated = updated + 1
                 else

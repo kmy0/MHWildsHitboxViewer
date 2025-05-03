@@ -66,6 +66,17 @@ local function draw_shape(box)
             config.current.draw.outline,
             config.current.draw.outline_color
         )
+    elseif box.shape_type == rt.enum.shape.SlicedCylinder then
+        hb_draw.sliced_cylinder(
+            box.shape_data.pos_a,
+            box.shape_data.pos_b,
+            box.shape_data.radius,
+            box.shape_data.direction,
+            box.shape_data.degrees,
+            box.color,
+            config.current.draw.outline,
+            config.current.draw.outline_color
+        )
     end
 end
 
@@ -76,11 +87,7 @@ local function sort_boxes(x, y)
     if x.distance > y.distance then
         return true
     elseif x.distance == y.distance then
-        if x.type == rt.enum.box.HurtBox and y.type == rt.enum.box.HitBox then
-            return true
-        elseif x.type == y.type then
-            return x.sort < y.sort
-        end
+        return x.sort < y.sort
     end
     return false
 end

@@ -18,14 +18,14 @@ local this = {
 
 ---@param char Character
 ---@param rsc via.physics.RequestSetCollider
----@return fun(): via.physics.Collidable, via.physics.UserData
+---@return fun(): via.physics.Collidable, via.physics.UserData, integer, integer, integer
 local function get_collidable(char, rsc)
     return coroutine.wrap(function()
         if char.type == rt.enum.char.Player or char.type == rt.enum.char.MasterPlayer then
             for j = 1, 2 do
                 local col = rsc:getCollidableFromIndex(0, j, 0)
                 if col then
-                    coroutine.yield(col, col:get_UserData())
+                    coroutine.yield(col, col:get_UserData(), 0, j, 0)
                 end
             end
         else
@@ -44,7 +44,7 @@ local function get_collidable(char, rsc)
                             goto continue
                         end
 
-                        coroutine.yield(col, p_data)
+                        coroutine.yield(col, p_data, i, j, k)
                         ::continue::
                     end
                 end
@@ -63,7 +63,7 @@ function this.get()
     for load_data in queue:get() do
         local char = load_data.char
 
-        for col, userdata in get_collidable(char, load_data.rsc) do
+        for col, userdata, resource_idx, set_idx, collidable_idx in get_collidable(char, load_data.rsc) do
             local data_type = userdata:get_type_definition() --[[@as RETypeDefinition]]
 
             -- stylua: ignore start
@@ -78,20 +78,20 @@ function this.get()
             -- stylua: ignore end
             then
                 ---@cast char Npc
-                box = friend.npc:new(col, char)
+                box = friend.npc:new(col, char, resource_idx, set_idx, collidable_idx)
             elseif char.type == rt.enum.char.Player or char.type == rt.enum.char.MasterPlayer then
                 ---@cast char Player
-                box = friend.player:new(col, char)
+                box = friend.player:new(col, char, resource_idx, set_idx, collidable_idx)
             elseif char.type == rt.enum.char.Pet and data_type:is_a("app.col_user_data.DamageParamOt") then
                 ---@cast char Pet
-                box = friend.pet:new(col, char)
+                box = friend.pet:new(col, char, resource_idx, set_idx, collidable_idx)
             elseif char.type == rt.enum.char.BigMonster and data_type:is_a("app.col_user_data.DamageParamEm") then
                 ---@cast char BigEnemy
                 ---@cast userdata app.col_user_data.DamageParamEm
-                box = enemy.big_enemy:new(col, char, userdata)
+                box = enemy.big_enemy:new(col, char, resource_idx, set_idx, collidable_idx, userdata)
             elseif char.type == rt.enum.char.SmallMonster and data_type:is_a("app.col_user_data.DamageParamEm") then
                 ---@cast char SmallEnemy
-                box = enemy.small_enemy:new(col, char)
+                box = enemy.small_enemy:new(col, char, resource_idx, set_idx, collidable_idx)
             end
 
             if box then

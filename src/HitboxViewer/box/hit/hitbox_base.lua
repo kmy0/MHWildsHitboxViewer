@@ -19,11 +19,14 @@ setmetatable(this, { __index = colldable_base })
 
 ---@param collidable via.physics.Collidable
 ---@param parent Character
+---@param resource_idx integer
+---@param set_idx integer
+---@param collidable_idx integer
 ---@param log_entry AttackLogEntry
 ---@param shellcolhit app.mcShellColHit?
 ---@return HitBoxBase?
-function this:new(collidable, parent, log_entry, shellcolhit)
-    local o = colldable_base.new(self, collidable, parent, rt.enum.box.HitBox)
+function this:new(collidable, parent, resource_idx, set_idx, collidable_idx, log_entry, shellcolhit)
+    local o = colldable_base.new(self, collidable, parent, rt.enum.box.HitBox, resource_idx, set_idx, collidable_idx)
 
     if not o then
         return

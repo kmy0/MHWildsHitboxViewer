@@ -18,6 +18,11 @@ function this.types.NoMotionValue(entry)
     return entry.motion_value == 0
 end
 
+function this.types.Parry(entry)
+    local parry_damage = entry.more_data._ParryDamage
+    return parry_damage and parry_damage > 0
+end
+
 ---@param entry AttackLogEntry
 ---@return string?
 function this.check(entry)

@@ -5,6 +5,9 @@
 ---@field collidable via.physics.Collidable
 ---@field shape via.physics.Shape
 ---@field userdata via.physics.UserData
+---@field resource_idx integer
+---@field set_idx integer
+---@field collidable_idx integer
 
 local box_base = require("HitboxViewer.box.box_base")
 local char = require("HitboxViewer.character")
@@ -22,17 +25,14 @@ setmetatable(this, { __index = box_base })
 ---@param collidable via.physics.Collidable
 ---@param parent Character
 ---@param box_type BoxType
+---@param resource_idx integer
+---@param set_idx integer
+---@param collidable_idx integer
 ---@return CollidableBase?
-function this:new(collidable, parent, box_type)
+function this:new(collidable, parent, box_type, resource_idx, set_idx, collidable_idx)
     local shape = collidable:get_TransformedShape()
     local shape_name = ace.enum.shape[shape:get_ShapeType()]
     local shape_type = rt.enum.shape[shape_name]
-
-    --FIXME: remove this at some point
-    if not shape_type then
-        rt.state.missing_shapes[shape_name] = true
-        return
-    end
 
     local o = box_base.new(self, box_type, shape_type)
     setmetatable(o, self)
@@ -41,6 +41,9 @@ function this:new(collidable, parent, box_type)
     o.parent = parent
     o.shape = shape
     o.userdata = collidable:get_UserData()
+    o.resource_idx = resource_idx
+    o.set_idx = set_idx
+    o.collidable_idx = collidable_idx
     return o
 end
 
@@ -89,7 +92,7 @@ function this:update_shape()
             self.pos = self.shape_data.pos
         end
 
-        self.distance = (char.get_master_player().pos - self.pos):length()
+        self.distance = (rt.camera.origin - self.pos):length()
         return rt.enum.box_state.Draw
     end
     return rt.enum.box_state.None

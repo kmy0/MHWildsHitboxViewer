@@ -11,7 +11,8 @@ this.getNpcName = sdk.find_type_definition("app.NpcUtil"):get_method("getNpcName
 this.getMessage = sdk.find_type_definition("via.gui.message"):get_method("get(System.Guid)") --[[@as REMethodDefinition]]
 this.getMessageLocal = sdk.find_type_definition("via.gui.message"):get_method("get(System.Guid, via.Language)") --[[@as REMethodDefinition]]
 this.EmPartsName = sdk.find_type_definition("app.EnemyDef"):get_method("EmPartsName(app.EnemyDef.PARTS_TYPE)") --[[@as REMethodDefinition]]
-this.isCollidableValid = sdk.find_type_definition("ace.AceUtil"):get_method("isCollidableValid(via.physics.Collidable)") --[[@as REMethodDefinition]]
+this.calcCollidableCenter = sdk.find_type_definition("app.CollisionUtil")
+    :get_method("calcCollidableCenter(via.physics.Collidable)") --[[@as REMethodDefinition]]
 this.getPARTS_TYPEFromFixed = sdk.find_type_definition("app.EnemyDef"):get_method(
     "getPARTS_TYPEFromFixed(app.EnemyDef.PARTS_TYPE_Fixed, app.EnemyDef.PARTS_TYPE)"
 ) --[[@as REMethodDefinition]]

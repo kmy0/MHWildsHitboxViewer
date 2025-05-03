@@ -1,8 +1,14 @@
 ---@class RuntimeData
 ---@field playman app.PlayerManager?
 ---@field flowman app.GameFlowManager?
+---@field catalog app.cPlayerCatalogHolder?
 ---@field state State
 ---@field map Map
+---@field camera Camera
+
+---@class Camera
+---@field transform via.Transform?
+---@field origin Vector3f
 
 ---@class (exact) State
 ---@field missing_shapes table<string, boolean>
@@ -10,12 +16,16 @@
 
 ---@class (exact) Map
 ---@field update_order CharType[]
+---@field guard_order GuardType[]
 
 local table_util = require("HitboxViewer.table_util")
 
 ---@class RuntimeData
 local this = {
     state = { missing_shapes = {}, tick_count = 0 },
+    camera = {
+        origin = Vector3f.new(0, 0, 0),
+    },
     enum = {},
     ---@diagnostic disable-next-line: missing-fields
     map = {},
@@ -38,6 +48,7 @@ this.enum.shape = {
     Triangle = 5,
     ContinuousCapsule = 6,
     ContinuousSphere = 7,
+    SlicedCylinder = 8,
 }
 ---@enum ShapeDummy
 this.enum.shape_dummy = {
@@ -134,6 +145,13 @@ this.enum.hitbox_load_data = {
     rsc = 1,
     shell = 2,
 }
+---@enum GuardType
+this.enum.guard_type = {
+    NORMAL = 2,
+    SPECIAL = 3,
+    AIM = 4,
+    PARRY = 8,
+}
 this.map.update_order = {
     this.enum.char.MasterPlayer,
     this.enum.char.BigMonster,
@@ -141,6 +159,12 @@ this.map.update_order = {
     this.enum.char.Pet,
     this.enum.char.Npc,
     this.enum.char.SmallMonster,
+}
+this.map.guard_order = {
+    this.enum.guard_type.PARRY,
+    this.enum.guard_type.AIM,
+    this.enum.guard_type.SPECIAL,
+    this.enum.guard_type.NORMAL,
 }
 
 ---@return app.GameFlowManager
@@ -179,12 +203,39 @@ function this.in_transition()
     return this.get_flowman():get_NextGameStateType() ~= nil
 end
 
+---@return app.cPlayerCatalogHolder
+function this.get_catalog()
+    local playman = this.get_playman()
+    if not this.catalog then
+        local obj = playman:get_Catalog()
+        this.catalog = obj
+    end
+    return this.catalog
+end
+
 ---@return string?
 function this.get_missing_shapes()
     local t = table_util.keys(this.state.missing_shapes)
     table.sort(t)
     if next(t) then
         return table.concat(t, ", ")
+    end
+end
+
+function this.update_camera()
+    if not this.camera.transform then
+        local main_view = sdk.call_native_func(
+            sdk.get_native_singleton("via.SceneManager"),
+            sdk.find_type_definition("via.SceneManager") --[[@as RETypeDefinition]],
+            "get_MainView()"
+        ) --[[@as via.SceneView]]
+        local camera = main_view:get_PrimaryCamera()
+        local game_object = camera:get_GameObject()
+        this.camera.transform = game_object:get_Transform()
+    end
+
+    if this.camera.transform then
+        this.camera.origin = this.camera.transform:get_Position()
     end
 end
 

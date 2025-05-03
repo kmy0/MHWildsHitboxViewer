@@ -4,7 +4,9 @@
 ---@class via.vec3 : Vector3f
 ---@class via.clr.ManagedObject : via.Object
 ---@class via.Component : via.clr.ManagedObject
----@class via.Userdata : via.clr.ManagedObject
+---@field get_GameObject fun(self: via.Component): via.GameObject
+
+---@class via.UserData : via.clr.ManagedObject
 ---@class via.Behavior : via.Component
 ---@field get_Started fun(self: via.Behavior): System.Boolean
 ---@field get_Valid fun(self: via.Behavior): System.Boolean
@@ -37,7 +39,7 @@
 
 ---@class ace.GUIManagerBase : ace.GAElement
 ---@class via.Language : System.Enum
----@class app.GUIManager : ace.GUIManagerBase --FIXME:
+---@class app.GUIManager : ace.GUIManagerBase
 ---@field getSystemLanguageToApp fun(self: app.GUIManager) : via.Language
 
 ---@class System.Nullable<T> : System.ValueType
@@ -82,7 +84,7 @@
 ---@class app.user_data.EmParamParts.cDataBase : via.clr.ManagedObject
 ---@class app.user_data.EmParamParts.cPartsBreak : app.user_data.EmParamParts.cDataBase
 ---@class app.user_data.EmParamParts.cMeat : app.user_data.EmParamParts.cDataBase
----@class app.user_data.EmParamParts : via.Userdata
+---@class app.user_data.EmParamParts : via.UserData
 ---@field getPartsIndex fun(self: app.user_data.EmParamParts, guid: System.Guid) : System.Nullable<System.Int32>
 ---@field get_PartsList fun(self: app.user_data.EmParamParts) : System.Array<app.user_data.EmParamParts.cParts>
 ---@field getMeatIndex fun(self: app.user_data.EmParamParts, guid: System.Guid) : System.Nullable<System.Int32>
@@ -160,13 +162,21 @@
 ---@class app.EnemyZakoCharacter : app.EnemyCharacter
 ---@class app.EnemyBossCharacter : app.EnemyCharacter
 ---@class app.CharacterBase : app.AppBehavior
----@field get_GameObject fun(self: app.CharacterBase) : via.GameObject
+---@field get_GameObject fun(self: app.CharacterBase): via.GameObject
 
 ---@class app.NpcCharacter : app.CharacterBase
 ---@class app.HunterCharacter : app.CharacterBase
 ---@field get_IsMaster fun(self: app.HunterCharacter): System.Boolean
 ---@field get_IsUserControl fun(self: app.HunterCharacter): System.Boolean
 ---@field get_HunterExtend fun(self: app.HunterCharacter): app.HunterCharacter.cHunterExtendBase
+---@field get_HunterStatus fun(self: app.HunterCharacter): app.cHunterStatus
+---@field get_WeaponType fun(self: app.HunterCharacter): app.WeaponDef.TYPE
+
+---@class app.cHunterStatus : ace.cNonCycleTypeObject
+---@field _HunterStatusFlag ace.cSafeContinueFlagGroup
+
+---@class ace.cSafeContinueFlagGroup : via.clr.ManagedObject
+---@field check fun(self: ace.cSafeContinueFlagGroup, flag: System.UInt32): System.Boolean
 
 ---@class app.OtomoCharacter : app.CharacterBase
 ---@field get_OwnerHunterCharacter fun(self: app.OtomoCharacter): app.HunterCharacter
@@ -189,6 +199,7 @@
 ---@class ace.GAElement<T> : ace.GAElementBase
 ---@class app.PlayerManager : ace.GAElement
 ---@field getMasterPlayer fun(self: app.PlayerManager): app.cPlayerManageInfo
+---@field get_Catalog fun(self: app.PlayerManager): app.cPlayerCatalogHolder
 
 ---@class app.cFieldSceneParam.SCENE_TYPE : System.Enum
 ---@class ace.GameFlowManagerBase : ace.GAElement
@@ -203,6 +214,7 @@
 ---@class via.Transform : via.Component
 ---@field get_GameObject fun(self: via.Transform): via.GameObject
 ---@field get_Parent fun(self: via.Transform): via.Transform?
+---@field get_Position fun(self: via.Transform): via.vec3
 
 ---@class via.physics.ShapeType : System.Enum
 ---@class via.physics.Shape : via.clr.ManagedObject
@@ -431,3 +443,12 @@
 ---@field _IsAttackDetector System.Boolean
 
 ---@class app.EnemyDef.PARTS_TYPE_Fixed : System.Enum
+---@class app.cPlayerCatalogHolder : via.clr.ManagedObject
+---@field getWeaponActionParam fun(self: app.cPlayerCatalogHolder, weapon_type: app.WeaponDef.TYPE): app.user_data.WpActionParamBase
+
+---@class app.user_data.WpActionParamBase : via.UserData
+---@class app.WeaponDef.TYPE : System.Enum
+---@class via.SceneView : via.clr.ManagedObject
+---@field get_PrimaryCamera fun(self: via.SceneView): via.Camera
+
+---@class via.Camera : via.Component
