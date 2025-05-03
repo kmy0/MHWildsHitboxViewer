@@ -6,6 +6,11 @@
 ---@class (exact) HurtboxSettings : BoxSettings
 ---@field conditions table<string, table<string, any>>
 ---@field default_state DefaultHurtboxState
+---@field guard_type GuardboxType
+
+---@class (exact) GuardboxType : HitboxType
+---@field disable_top boolean
+---@field disable_bottom boolean
 
 ---@class (exact) HitboxType
 ---@field disable table<string, boolean>
@@ -78,7 +83,7 @@ local util = require("HitboxViewer.util")
 ---@class Config
 local this = {}
 
-this.version = "0.0.1"
+this.version = "0.0.2"
 this.name = "HitboxViewer"
 this.config_path = this.name .. "/config.json"
 this.default_color = 1020343074
@@ -111,8 +116,15 @@ this.default = {
             Player = this.default_color,
             MasterPlayer = this.default_color,
             Npc = this.default_color,
-            highlight = 1021633775,
+            highlight = this.default_highlight_color,
             one_color = this.default_color,
+        },
+        guard_type = {
+            disable = {},
+            color = {},
+            color_enable = {},
+            disable_top = false,
+            disable_bottom = false,
         },
         conditions = {
             {
@@ -123,7 +135,7 @@ this.default = {
                 sub_type = 2,
             },
             {
-                color = 1021633775,
+                color = this.default_highlight_color,
                 key = 2,
                 type = 4,
                 state = 1,
@@ -176,7 +188,7 @@ this.default = {
     draw = {
         distance = 50,
         outline = true,
-        outline_color = 4278190080,
+        outline_color = 4261412864,
     },
     gui = {
         main = {

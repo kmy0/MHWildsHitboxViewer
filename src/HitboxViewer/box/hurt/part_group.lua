@@ -1,22 +1,22 @@
----@class (exact) PartGroup TODO: change attr names
----@field show boolean
----@field highlight boolean
+---@class (exact) PartGroup
+---@field is_show boolean
+---@field is_highlight boolean
 ---@field name string
 ---@field part_data PartData
 ---@field condition ConditionResult
 ---@field condition_color integer
----@field scars_open boolean
 ---@field hurtboxes BigEnemyHurtBox[]
 ---@field guid string
 
 ---@class (exact) PartData
 ---@field hitzone table<string, integer>
----@field enabled boolean
+---@field is_enabled boolean
 ---@field can_break boolean
 ---@field is_broken boolean
 ---@field is_weak boolean
 ---@field is_lost boolean
 ---@field scar_boxes ScarBox[]?
+---@field is_scar_gui_open boolean
 ---@field extract string
 ---@field _hitzones table<app.user_data.EmParamParts.MEAT_SLOT, table<string, integer>>?
 ---@field _dmg_part app.cEmModuleParts.cDamageParts
@@ -178,12 +178,13 @@ local function get_part_data(enemy_ctx, enemy_mc_holder, meat_data)
 
     ---@type PartData
     local ret = {
-        enabled = false,
+        is_enabled = false,
         extract = ace.enum.rod[runtime_data._RodExtract],
         can_break = break_part ~= nil,
         is_weak = is_weak,
         is_broken = false,
         is_lost = is_lost ~= nil and is_lost,
+        is_scar_gui_open = false,
         scar_boxes = scars,
         ---@diagnostic disable-next-line: need-check-nil
         hitzone = weak_hitzone or hitzones[dmg_part:get_MeatSlot()],
@@ -211,9 +212,8 @@ function this:new(cache, enemy_ctx, enemy_mc_holder, enemy_hurtbox, meat_data)
     if not cache[formated_guid] then
         local name, part_data = get_part_data(enemy_ctx, enemy_mc_holder, meat_data)
         o = {
-            show = config.current.hurtboxes.default_state == rt.enum.default_hurtbox_state.Draw,
-            highlight = false,
-            scars_open = false,
+            is_show = config.current.hurtboxes.default_state == rt.enum.default_hurtbox_state.Draw,
+            is_highlight = false,
             hurtboxes = {},
             condition = rt.enum.condition_result.None,
             condition_color = 0,
@@ -253,15 +253,15 @@ function this:update()
     end
 
     --FIXME: app.cEmModuleParts.cDamageParts:get_IsEnable seems to return wrong values? or does it refer to something else?
-    self.part_data.enabled = false
+    self.part_data.is_enabled = false
     for _, box in pairs(self.hurtboxes) do
-        if box.enabled then
-            self.part_data.enabled = true
+        if box.is_enabled then
+            self.part_data.is_enabled = true
             break
         end
     end
 
-    self.condition, self.condition_color = conditions:check_part_group(self)
+    self.condition, self.condition_color = conditions.check_part_group(self)
     if not table_util.empty(ret) then
         return ret
     end

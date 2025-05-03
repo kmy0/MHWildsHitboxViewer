@@ -26,6 +26,7 @@
 ---@field meat_type_to_field_name table<string, string>
 ---@field char_type_to_name table<string, string>
 ---@field cMeatFields REField[]
+---@field guard_flag_to_field_name table<integer, string>
 
 ---@class AceData
 local this = {
@@ -64,6 +65,13 @@ local this = {
             ["app.EnemyZakoCharacter"] = "SmallMonster",
         },
         cMeatFields = sdk.find_type_definition("app.user_data.EmParamParts.cMeat"):get_fields(),
+        guard_flag_to_field_name = {
+            [-1] = "_GuardDegree",
+            [2] = "_GuardDegree",
+            [3] = "_PowerGuardDegree",
+            [4] = "_AimGuardDegree",
+            [8] = "_GuardDegree",
+        },
     },
 }
 

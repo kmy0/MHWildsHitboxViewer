@@ -19,27 +19,27 @@ local this = {
     by_type_by_gameobject = {},
 }
 
-function this:clear()
-    self.by_gameobject = {}
-    self.by_type_by_gameobject = {}
-    self.master_player = nil
+function this.clear()
+    this.by_gameobject = {}
+    this.by_type_by_gameobject = {}
+    this.master_player = nil
 end
 
 ---@param char_type CharType
-function this:is_empty(char_type)
-    return not self.by_type_by_gameobject[char_type] or table_util.empty(self.by_type_by_gameobject[char_type])
+function this.is_empty(char_type)
+    return not this.by_type_by_gameobject[char_type] or table_util.empty(this.by_type_by_gameobject[char_type])
 end
 
 ---@param char Character
-function this:remove(char)
-    self.by_gameobject[char.game_object] = nil
-    self.by_type_by_gameobject[char.type][char.game_object] = nil
+function this.remove(char)
+    this.by_gameobject[char.game_object] = nil
+    this.by_type_by_gameobject[char.type][char.game_object] = nil
 end
 
 ---@param game_object via.GameObject
 ---@param char_base app.CharacterBase?
 ---@return Character?
-function this:get_char(game_object, char_base)
+function this.get_char(game_object, char_base)
     if this.by_gameobject[game_object] then
         return this.by_gameobject[game_object]
     end
@@ -70,7 +70,7 @@ function this:get_char(game_object, char_base)
 end
 
 ---@return MasterPlayer?
-function this:get_master_player()
+function this.get_master_player()
     if not this.master_player or util.is_only_my_ref(this.master_player.base) then
         if not rt.get_playman() then
             return
@@ -79,7 +79,7 @@ function this:get_master_player()
         if player_info then
             local hunter_char = player_info:get_Character()
             local game_object = hunter_char:get_GameObject()
-            local ret = this:get_char(game_object, hunter_char)
+            local ret = this.get_char(game_object, hunter_char)
             ---@cast ret MasterPlayer?
             this.master_player = ret
         end

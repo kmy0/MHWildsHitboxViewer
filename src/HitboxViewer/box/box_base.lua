@@ -1,5 +1,5 @@
 ---@class (exact) BoxBase
----@field enabled boolean
+---@field is_enabled boolean
 ---@field sort integer
 ---@field pos Vector3f
 ---@field distance number
@@ -16,6 +16,10 @@
 ---@field pos_b Vector3f
 ---@field radius number
 
+---@class (exact) SlicedCylinderShape : CylinderShape
+---@field direction Vector3f
+---@field degrees number
+
 ---@class (exact) BoxShape
 ---@field pos Vector3f
 ---@field extent Vector3f
@@ -25,7 +29,7 @@
 ---@field pos Vector3f
 ---@field radius number
 
----@alias ShapeData CylinderShape | BoxShape | SphereShape
+---@alias ShapeData CylinderShape | BoxShape | SphereShape | SlicedCylinderShape
 
 local data = require("HitboxViewer.data")
 
@@ -60,10 +64,17 @@ function this:new(box_type, shape_type)
         shape_data.pos = Vector3f.new(0, 0, 0)
         shape_data.extent = Vector3f.new(0, 0, 0)
         shape_data.rot = Matrix4x4f.new(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1)
+    elseif shape_type == rt.enum.shape.SlicedCylinder then
+        ---@cast shape_data SlicedCylinderShape
+        shape_data.pos_a = Vector3f.new(0, 0, 0)
+        shape_data.pos_b = Vector3f.new(0, 0, 0)
+        shape_data.radius = 0
+        shape_data.degrees = 0
+        shape_data.direction = Vector3f.new(0, 0, 0)
     end
 
     local o = {
-        enabled = true,
+        is_enabled = true,
         sort = 0,
         pos = Vector3f.new(0, 0, 0),
         distance = 0,

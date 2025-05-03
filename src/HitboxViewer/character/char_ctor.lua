@@ -1,7 +1,6 @@
 ---@class (exact) FriendCharacter : Character
 ---@class (exact) Pet : FriendCharacter
 ---@class (exact) Npc : FriendCharacter
----@class (exact) Player : FriendCharacter
 ---@class (exact) MasterPlayer : Player
 
 ---@class (exact) EnemyCharacter : Character
@@ -10,6 +9,7 @@
 local bigenemy = require("HitboxViewer.character.big_enemy")
 local char_base_ = require("HitboxViewer.character.char_base")
 local data = require("HitboxViewer.data")
+local player = require("HitboxViewer.character.player")
 local util = require("HitboxViewer.util")
 
 local gui = data.gui
@@ -44,9 +44,11 @@ local function get_hunter_data(char_base)
     local type = hunter_extend:get_IsNpc() and rt.enum.char.Npc
         or (char_base:get_IsMaster() and rt.enum.char.MasterPlayer or rt.enum.char.Player)
 
-    local ret = char_base_:new(type, char_base, get_hunter_name(hunter_extend))
-    ---@cast ret Player | Npc
-    return ret
+    if type == rt.enum.char.Npc then
+        ---@type Npc
+        return char_base_:new(type, char_base, get_hunter_name(hunter_extend))
+    end
+    return player:new(type, char_base, get_hunter_name(hunter_extend))
 end
 
 ---@param char_base app.OtomoCharacter

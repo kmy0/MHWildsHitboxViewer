@@ -13,10 +13,10 @@ local this = {
 
 ---@param type_def_name string
 ---@param table table
----@param add_color_entry boolean
+---@param color integer?
 ---@param as_string boolean?
 ---@param ignore_values string[]?
-local function write_fields_to_config(type_def_name, table, add_color_entry, as_string, ignore_values)
+local function write_fields_to_config(type_def_name, table, color, as_string, ignore_values)
     local co = coroutine.create(this.util.iter_fields)
     local status = true
     ---@type integer
@@ -27,8 +27,8 @@ local function write_fields_to_config(type_def_name, table, add_color_entry, as_
         status, name, data = coroutine.resume(co, type_def_name, as_string, ignore_values)
         if name and data then
             table.disable[name] = false
-            if add_color_entry then
-                table.color[name] = config.default_color
+            if color then
+                table.color[name] = color
                 table.color_enable[name] = false
             end
         end
@@ -37,16 +37,16 @@ end
 
 ---@param strings string[]
 ---@param table table
----@param add_color_entry boolean
+---@param color integer?
 ---@param ignore_values string[]?
-local function write_strings_to_config(strings, table, add_color_entry, ignore_values)
+local function write_strings_to_config(strings, table, color, ignore_values)
     for _, name in ipairs(strings) do
         if ignore_values and table_util.table_contains(ignore_values, name) then
             goto continue
         end
         table.disable[name] = false
-        if add_color_entry then
-            table.color[name] = config.default_color
+        if color then
+            table.color[name] = color
             table.color_enable[name] = false
         end
         ::continue::
@@ -73,10 +73,15 @@ function this.init()
     this.util.get_enum("app.OtomoDef.USE_OTOMO_TOOL_TYPE", this.ace.enum.otomo_tool_type)
     this.util.get_enum("app.user_data.EmParamParts.INDEX_CATEGORY", this.ace.enum.em_part_index)
 
-    write_fields_to_config("app.HitDef.DAMAGE_TYPE", config.default.hitboxes.damage_type, true)
-    write_fields_to_config("app.HitDef.DAMAGE_ANGLE", config.default.hitboxes.damage_angle, true)
-    write_fields_to_config("app.Hit.GUARD_TYPE", config.default.hitboxes.guard_type, true)
-    write_strings_to_config(this.custom_attack_type.sorted, config.default.hitboxes.misc_type, true)
+    write_fields_to_config("app.HitDef.DAMAGE_TYPE", config.default.hitboxes.damage_type, config.default_color)
+    write_fields_to_config("app.HitDef.DAMAGE_ANGLE", config.default.hitboxes.damage_angle, config.default_color)
+    write_fields_to_config("app.Hit.GUARD_TYPE", config.default.hitboxes.guard_type, config.default_color)
+    write_strings_to_config(this.custom_attack_type.sorted, config.default.hitboxes.misc_type, config.default_color)
+    write_strings_to_config(
+        table_util.sort(table_util.keys(this.runtime.enum.guard_type)),
+        config.default.hurtboxes.guard_type,
+        config.default_highlight_color
+    )
 end
 
 return this

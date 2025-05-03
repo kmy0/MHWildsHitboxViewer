@@ -1,7 +1,7 @@
 ---@class (exact) HitBoxBase : CollidableBase
 ---@field log_entry AttackLogEntry
 ---@field shellcolhit app.mcShellColHit?
----@field shown boolean
+---@field is_shown boolean
 ---@field tick integer
 
 local colldable_base = require("HitboxViewer.box.collidable_base")
@@ -19,11 +19,14 @@ setmetatable(this, { __index = colldable_base })
 
 ---@param collidable via.physics.Collidable
 ---@param parent Character
+---@param resource_idx integer
+---@param set_idx integer
+---@param collidable_idx integer
 ---@param log_entry AttackLogEntry
 ---@param shellcolhit app.mcShellColHit?
 ---@return HitBoxBase?
-function this:new(collidable, parent, log_entry, shellcolhit)
-    local o = colldable_base.new(self, collidable, parent, rt.enum.box.HitBox)
+function this:new(collidable, parent, resource_idx, set_idx, collidable_idx, log_entry, shellcolhit)
+    local o = colldable_base.new(self, collidable, parent, rt.enum.box.HitBox, resource_idx, set_idx, collidable_idx)
 
     if not o then
         return
@@ -33,11 +36,12 @@ function this:new(collidable, parent, log_entry, shellcolhit)
     setmetatable(o, self)
     o.log_entry = log_entry
     o.shellcolhit = shellcolhit
-    o.shown = false
+    o.is_shown = false
     o.tick = rt.state.tick_count
     return o
 end
 
+---@return BoxState
 function this:update_data()
     if config.current.hitboxes.use_one_color then
         self.color = config.current.hitboxes.color.one_color
@@ -60,15 +64,15 @@ end
 function this:update()
     if
         self.shellcolhit and self.shellcolhit:get_reference_count() <= 1
-        or not self.shown and rt.state.tick_count - self.tick > 1200
+        or not self.is_shown and rt.state.tick_count - self.tick > 1200
     then
         return rt.enum.box_state.Dead, { self }
     end
 
     local box_state, boxes = colldable_base.update(self)
     if box_state == rt.enum.box_state.Draw then
-        self.shown = true
-    elseif box_state == rt.enum.box_state.None and self.shown then
+        self.is_shown = true
+    elseif box_state == rt.enum.box_state.None and self.is_shown then
         box_state = rt.enum.box_state.Dead
     end
     return box_state, boxes

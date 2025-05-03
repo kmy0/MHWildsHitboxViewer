@@ -52,9 +52,24 @@ local function draw_hurtboxes_header()
         imgui.spacing()
         imgui.spacing()
 
-        if imgui.tree_node("Conditions") then
+        local node = imgui.tree_node("Guard")
+        util.tooltip("Player only")
+        if node then
+            imgui.spacing()
+            util.checkbox("Disable Top Guard Indicator##GuardHurtbox", "hurtboxes.guard_type.disable_top")
+            util.tooltip("Hide Guard Indicator on Players Top Hurtbox")
+            util.checkbox("Disable Bottom Guard Indicator##GuardHurtbox", "hurtboxes.guard_type.disable_bottom")
+            util.tooltip("Hide Guard Indicator on Players Bottom Hurtbox")
+            imgui.spacing()
+            util.box_type_setup(config.current.hurtboxes.guard_type, "hurtboxes.guard_type", "guard_type")
+            imgui.tree_pop()
+        end
+
+        node = imgui.tree_node("Conditions")
+        util.tooltip("Big Monster only\nEvaluated from top to bottom")
+        if node then
             if imgui.button(util.spaced_string("Create", 3)) then
-                conditions:new_condition(rt.enum.condition_type.Element)
+                conditions.new_condition(rt.enum.condition_type.Element)
             end
             imgui.same_line()
             imgui.push_item_width(200)
@@ -70,13 +85,11 @@ local function draw_hurtboxes_header()
                 for _, monster in pairs(char.cache.by_type_by_gameobject[rt.enum.char.BigMonster]) do
                     ---@cast monster BigEnemy
                     for _, part in pairs(monster.parts) do
-                        part.show = config.current.hurtboxes.default_state == rt.enum.default_hurtbox_state.Draw
+                        part.is_show = config.current.hurtboxes.default_state == rt.enum.default_hurtbox_state.Draw
                     end
                 end
             end
             imgui.pop_item_width()
-            util.tooltip("Conditions work only for Big Monsters\nConditions are evaluated from top to the bottom", true)
-
             imgui.separator()
             for i = 1, #conditions.sorted do
                 local cond = conditions.sorted[i]
@@ -86,8 +99,6 @@ local function draw_hurtboxes_header()
             end
 
             imgui.tree_pop()
-        else
-            imgui.separator()
         end
         imgui.unindent(10)
         imgui.spacing()
@@ -290,7 +301,6 @@ local function draw_hurtbox_info_header()
 
         imgui.spacing()
         imgui.unindent(10)
-        imgui.separator()
         imgui.spacing()
     end
 end
@@ -338,7 +348,6 @@ local function draw_attack_log_header()
 
         imgui.spacing()
         imgui.unindent(10)
-        imgui.separator()
         imgui.spacing()
     end
 end
@@ -390,8 +399,6 @@ function this.draw()
         char.create_all_chars()
     end
 
-    imgui.separator()
-    imgui.spacing()
     imgui.unindent(10)
 
     draw_hurtboxes_header()

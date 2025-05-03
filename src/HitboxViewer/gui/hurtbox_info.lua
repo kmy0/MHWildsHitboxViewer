@@ -128,8 +128,8 @@ local function draw_table(monster)
             elseif header == "Scars" then
                 if part.part_data.scar_boxes then
                     imgui.spacing()
-                    if imgui.arrow_button("##scars_click" .. row, part.scars_open and 3 or 1) then
-                        part.scars_open = not part.scars_open
+                    if imgui.arrow_button("##scars_click" .. row, part.part_data.is_scar_gui_open and 3 or 1) then
+                        part.part_data.is_scar_gui_open = not part.part_data.is_scar_gui_open
                     end
                     imgui.spacing()
                 end
@@ -138,7 +138,7 @@ local function draw_table(monster)
             end
         end
 
-        if part.scars_open then
+        if part.part_data.is_scar_gui_open then
             draw_scar_rows(part.part_data.scar_boxes)
         end
     end
@@ -180,7 +180,7 @@ function this.draw_condition(cond)
     save = changed or save
 
     if changed then
-        cond = conditions:swap_condition(cond, value)
+        cond = conditions.swap_condition(cond, value)
     end
 
     imgui.same_line()
@@ -271,7 +271,7 @@ function this.draw_condition(cond)
             index = index + 1
         end
 
-        if conditions:swap_order(cond, conditions.sorted[index]) then
+        if conditions.swap_order(cond, conditions.sorted[index]) then
             save = false
         end
     end
@@ -279,7 +279,7 @@ function this.draw_condition(cond)
     if save then
         conditions:save()
     elseif remove then
-        conditions:remove(cond)
+        conditions.remove(cond)
     end
 end
 
@@ -287,7 +287,7 @@ function this.draw()
     if
         config.current.enabled_hurtboxes
         and not config.current.hurtboxes.disable.BigMonster
-        and not char.cache:is_empty(rt.enum.char.BigMonster)
+        and not char.cache.is_empty(rt.enum.char.BigMonster)
     then
         local sorted_monsters = char.get_sorted_chars(rt.enum.char.BigMonster)
         if not sorted_monsters then

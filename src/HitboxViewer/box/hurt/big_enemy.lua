@@ -16,14 +16,17 @@ setmetatable(this, { __index = hurtbox_base })
 
 ---@param collidable via.physics.Collidable
 ---@param parent BigEnemy
+---@param resource_idx integer
+---@param set_idx integer
+---@param collidable_idx integer
 ---@param meat_data app.col_user_data.DamageParamEm
 ---@return BigEnemyHurtBox?
-function this:new(collidable, parent, meat_data)
+function this:new(collidable, parent, resource_idx, set_idx, collidable_idx, meat_data)
     if meat_data:get_RuntimeData()._PartsIndex < 0 then
         return
     end
 
-    local o = hurtbox_base.new(self, collidable, parent)
+    local o = hurtbox_base.new(self, collidable, parent, resource_idx, set_idx, collidable_idx)
 
     if not o then
         return
@@ -39,12 +42,13 @@ function this:new(collidable, parent, meat_data)
     return o
 end
 
+---@return BoxState
 function this:update_data()
-    if not self.part_group.show and self.part_group.condition ~= rt.enum.condition_result.Highlight then
+    if not self.part_group.is_show and self.part_group.condition ~= rt.enum.condition_result.Highlight then
         return rt.enum.box_state.None
     end
 
-    if self.part_group.highlight then
+    if self.part_group.is_highlight then
         self.color = config.current.hurtboxes.color.highlight
     elseif self.part_group.condition == rt.enum.condition_result.Highlight then
         self.color = self.part_group.condition_color

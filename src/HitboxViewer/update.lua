@@ -7,14 +7,6 @@ local hb_draw = require("HitboxViewer.hb_draw")
 local rt = data.runtime
 
 local this = {}
-local update_order = {
-    rt.enum.char.MasterPlayer,
-    rt.enum.char.BigMonster,
-    rt.enum.char.Player,
-    rt.enum.char.Pet,
-    rt.enum.char.Npc,
-    rt.enum.char.SmallMonster,
-}
 
 function this.characters()
     if
@@ -26,9 +18,11 @@ function this.characters()
     end
 
     local tick = rt.state.tick_count
+    local update_order = rt.map.update_order
     local updated = 0
     local force_updated = 0
-    local master_player_pos = char.get_master_player():get_pos()
+
+    rt.update_camera()
     for i = 1, #update_order do
         local char_type = update_order[i]
         local characters = char.cache.by_type_by_gameobject[char_type]
@@ -49,11 +43,11 @@ function this.characters()
             then
                 character.last_update_tick = tick
                 if character:is_dead() then
-                    char.cache:remove(character)
+                    char.cache.remove(character)
                     goto continue
                 end
 
-                out_of_range = not character:update_distance(master_player_pos)
+                out_of_range = not character:update_distance(rt.camera.origin)
                 if not force_update then
                     updated = updated + 1
                 else

@@ -14,7 +14,7 @@ local this = {
 }
 
 ---@param load_data HitBoxLoadData
----@return fun(): via.physics.Collidable, via.physics.RequestSetColliderUserData
+---@return fun(): via.physics.Collidable, via.physics.RequestSetColliderUserData, integer, integer, integer
 local function get_collidable(load_data)
     return coroutine.wrap(function()
         if load_data.type == rt.enum.hitbox_load_data.rsc then
@@ -22,7 +22,7 @@ local function get_collidable(load_data)
             for i = 0, load_data.rsc:getNumCollidables(load_data.res_idx, load_data.req_idx) - 1 do
                 local col = load_data.rsc:getCollidable(load_data.res_idx, load_data.req_idx, i)
                 if col then
-                    coroutine.yield(col, col:get_UserData())
+                    coroutine.yield(col, col:get_UserData(), load_data.res_idx, load_data.req_idx, i)
                 end
             end
         else
@@ -31,7 +31,7 @@ local function get_collidable(load_data)
             ---@cast arr via.physics.Collidable[]
             table.insert(arr, load_data.first_colider)
             for _, col in pairs(arr) do
-                coroutine.yield(col, col:get_UserData())
+                coroutine.yield(col, col:get_UserData(), -1, -1, -1)
             end
         end
     end)
@@ -47,7 +47,7 @@ function this.get()
         local box
         local char = load_data.char
 
-        for col, userdata in get_collidable(load_data) do
+        for col, userdata, resource_idx, set_idx, collidable_idx in get_collidable(load_data) do
             local log_entry = attack_log.get_log_entry(char, userdata)
 
             if
@@ -64,19 +64,43 @@ function this.get()
             attack_log:log(log_entry)
             if char.type == rt.enum.char.Npc then
                 ---@cast char Npc
-                box = friend.npc:new(col, char, log_entry, load_data.shellcolhit)
+                box = friend.npc:new(col, char, resource_idx, set_idx, collidable_idx, log_entry, load_data.shellcolhit)
             elseif char.type == rt.enum.char.Player or char.type == rt.enum.char.MasterPlayer then
                 ---@cast char Player
-                box = friend.player:new(col, char, log_entry, load_data.shellcolhit)
+                box = friend.player:new(
+                    col,
+                    char,
+                    resource_idx,
+                    set_idx,
+                    collidable_idx,
+                    log_entry,
+                    load_data.shellcolhit
+                )
             elseif char.type == rt.enum.char.Pet then
                 ---@cast char Pet
-                box = friend.pet:new(col, char, log_entry, load_data.shellcolhit)
+                box = friend.pet:new(col, char, resource_idx, set_idx, collidable_idx, log_entry, load_data.shellcolhit)
             elseif char.type == rt.enum.char.BigMonster then
                 ---@cast char BigEnemy
-                box = enemy.big_enemy:new(col, char, log_entry, load_data.shellcolhit)
+                box = enemy.big_enemy:new(
+                    col,
+                    char,
+                    resource_idx,
+                    set_idx,
+                    collidable_idx,
+                    log_entry,
+                    load_data.shellcolhit
+                )
             elseif char.type == rt.enum.char.SmallMonster then
                 ---@cast char SmallEnemy
-                box = enemy.small_enemy:new(col, char, log_entry, load_data.shellcolhit)
+                box = enemy.small_enemy:new(
+                    col,
+                    char,
+                    resource_idx,
+                    set_idx,
+                    collidable_idx,
+                    log_entry,
+                    load_data.shellcolhit
+                )
             end
 
             if box then
