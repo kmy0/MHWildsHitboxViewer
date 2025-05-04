@@ -33,8 +33,17 @@ function this:new(collidable, parent, resource_idx, set_idx, collidable_idx)
     return o
 end
 
+---@return BoxState, HurtBoxBase[]?
 function this:update()
-    local box_state, boxes = hurtbox_base.update(self)
+    local box_state = hurtbox_base.update(self)
+    ---@type HurtBoxBase[]?
+    local ret
+
+    if box_state == rt.enum.box_state.Draw then
+        ret = {}
+        table.insert(ret, self)
+    end
+
     if
         box_state == rt.enum.box_state.Draw
         and (
@@ -42,12 +51,13 @@ function this:update()
             or (self.set_idx == 2 and not config.current.hurtboxes.guard_type.disable_bottom)
         )
     then
-        local guard_state, guard = self.guard_box:update()
+        local guard_state = self.guard_box:update()
         if guard_state == rt.enum.box_state.Draw then
-            table.move(guard, 1, #guard, #boxes + 1, boxes)
+            ---@cast ret HurtBoxBase[]
+            table.insert(ret, self.guard_box)
         end
     end
-    return box_state, boxes
+    return box_state, ret
 end
 
 return this

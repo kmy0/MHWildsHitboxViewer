@@ -6,6 +6,7 @@
 ---@field direction Vector3f
 ---@field front_col via.physics.Collidable
 ---@field center_col via.physics.Collidable
+---@field hurtboxes table<via.physics.Collidable, PlayerHurtBox>
 
 ---@class (exact) Weapon
 ---@field userdata app.user_data.WpActionParamBase
@@ -13,6 +14,7 @@
 
 local char_base = require("HitboxViewer.character.char_base")
 local data = require("HitboxViewer.data")
+local table_util = require("HitboxViewer.table_util")
 local util = require("HitboxViewer.util")
 
 local rt = data.runtime
@@ -91,7 +93,19 @@ function this:update_hurtboxes()
         self:update_direction()
     end
 
-    return char_base.update_hurtboxes(self)
+    local ret = {}
+    for col, box in pairs(self.hurtboxes) do
+        local box_state, boxes = box:update()
+        if box_state == rt.enum.box_state.Draw and boxes then
+            table.move(boxes, 1, #boxes, #ret + 1, ret)
+        elseif box_state == rt.enum.box_state.Dead then
+            self.hurtboxes[col] = nil
+        end
+    end
+
+    if not table_util.empty(ret) then
+        return ret
+    end
 end
 
 return this

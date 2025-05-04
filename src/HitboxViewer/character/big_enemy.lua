@@ -89,16 +89,24 @@ function this:update_hurtboxes()
             self.pg_queue:swap(table_util.keys(self.parts))
         end
 
+        ---@type table<string, integer>
+        local updated = {}
         for part_key in self.pg_queue:get() do
             local part_group = self.parts[part_key]
             if part_group then
                 self.scars[part_key] = self.parts[part_key]:update()
+                updated[part_key] = 1
             else
                 self.scars[part_key] = nil
             end
         end
 
-        for _, scars in pairs(self.scars) do
+        for part_key, scars in pairs(self.scars) do
+            if not updated[part_key] then
+                for _, scar in pairs(scars) do
+                    scar:update_shape()
+                end
+            end
             table.move(scars, 1, #scars, #ret + 1, ret)
         end
     else

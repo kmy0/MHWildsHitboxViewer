@@ -65,7 +65,7 @@ function this:update_data()
     return rt.enum.box_state.Draw
 end
 
----@return BoxState, BoxBase[]?
+---@return BoxState
 function this:update()
     self.state = ace.enum.scar[self._scar_part:get_State()]
     self.is_enabled = not self._scar_part:get_IsForceDisableCollision()

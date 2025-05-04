@@ -31,8 +31,17 @@ setmetatable(this, { __index = box_base })
 ---@return CollidableBase?
 function this:new(collidable, parent, box_type, resource_idx, set_idx, collidable_idx)
     local shape = collidable:get_TransformedShape()
+
+    if not shape then
+        return
+    end
+
     local shape_name = ace.enum.shape[shape:get_ShapeType()]
     local shape_type = rt.enum.shape[shape_name]
+
+    if not shape_type then
+        return
+    end
 
     local o = box_base.new(self, box_type, shape_type)
     setmetatable(o, self)
@@ -98,10 +107,10 @@ function this:update_shape()
     return rt.enum.box_state.None
 end
 
----@return BoxState, CollidableBase[]
+---@return BoxState
 function this:update()
     if self.collidable:get_reference_count() <= 1 then
-        return rt.enum.box_state.Dead, { self }
+        return rt.enum.box_state.Dead
     end
     return box_base.update(self)
 end

@@ -9,7 +9,7 @@
 ---@field shape_data ShapeData
 ---@field update_shape fun(self: BoxBase): BoxState
 ---@field update_data fun(self: BoxBase): BoxState
----@field update fun(self: BoxBase): BoxState, BoxBase[]
+---@field update fun(self: BoxBase): BoxState
 
 ---@class (exact) CylinderShape
 ---@field pos_a Vector3f
@@ -88,12 +88,12 @@ function this:new(box_type, shape_type)
     return o
 end
 
----@return BoxState, BoxBase[]
+---@return BoxState
 function this:update()
     if self:update_data() == rt.enum.box_state.Draw and self:update_shape() == rt.enum.box_state.Draw then
-        return rt.enum.box_state.Draw, { self }
+        return rt.enum.box_state.Draw
     end
-    return rt.enum.box_state.None, { self }
+    return rt.enum.box_state.None
 end
 
 return this

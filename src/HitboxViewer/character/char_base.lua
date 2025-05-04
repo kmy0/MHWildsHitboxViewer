@@ -117,9 +117,9 @@ end
 function this:_update_boxes(boxes)
     local ret = {}
     for col, box in pairs(boxes) do
-        local box_state, _boxes = box:update()
+        local box_state = box:update()
         if box_state == rt.enum.box_state.Draw then
-            table.move(_boxes, 1, #_boxes, #ret + 1, ret)
+            table.insert(ret, box)
         elseif box_state == rt.enum.box_state.Dead then
             boxes[col] = nil
         end

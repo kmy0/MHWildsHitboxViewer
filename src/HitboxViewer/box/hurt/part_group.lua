@@ -245,9 +245,9 @@ function this:update()
 
     if self.part_data.scar_boxes then
         for _, scar in pairs(self.part_data.scar_boxes) do
-            local box_state, boxes = scar:update()
-            if box_state == rt.enum.box_state.Draw and boxes then
-                table.move(boxes, 1, #boxes, #ret + 1, ret)
+            local box_state = scar:update()
+            if box_state == rt.enum.box_state.Draw then
+                table.insert(ret, scar)
             end
         end
     end

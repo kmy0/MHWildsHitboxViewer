@@ -60,22 +60,22 @@ function this:update_data()
     return rt.enum.box_state.Draw
 end
 
----@return BoxState, BoxBase[]
+---@return BoxState
 function this:update()
     if
         self.shellcolhit and self.shellcolhit:get_reference_count() <= 1
         or not self.is_shown and rt.state.tick_count - self.tick > 1200
     then
-        return rt.enum.box_state.Dead, { self }
+        return rt.enum.box_state.Dead
     end
 
-    local box_state, boxes = colldable_base.update(self)
+    local box_state = colldable_base.update(self)
     if box_state == rt.enum.box_state.Draw then
         self.is_shown = true
     elseif box_state == rt.enum.box_state.None and self.is_shown then
         box_state = rt.enum.box_state.Dead
     end
-    return box_state, boxes
+    return box_state
 end
 
 return this

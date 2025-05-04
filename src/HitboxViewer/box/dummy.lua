@@ -89,9 +89,9 @@ end
 
 function this.get()
     for _, dummy_box in pairs(active_dummies) do
-        local box_state, box = dummy_box:update()
+        local box_state = dummy_box:update()
         if box_state == rt.enum.box_state.Draw then
-            hb_draw.enqueue(box)
+            hb_draw.enqueue(dummy_box)
         end
     end
 end
