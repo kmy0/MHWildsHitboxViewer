@@ -150,7 +150,7 @@ this.enum.guard_type = {
     NORMAL = 2,
     SPECIAL = 3,
     AIM = 4,
-    PARRY = 8,
+    HYPER = 8,
 }
 this.map.update_order = {
     this.enum.char.MasterPlayer,
@@ -161,7 +161,7 @@ this.map.update_order = {
     this.enum.char.SmallMonster,
 }
 this.map.guard_order = {
-    this.enum.guard_type.PARRY,
+    this.enum.guard_type.HYPER,
     this.enum.guard_type.AIM,
     this.enum.guard_type.SPECIAL,
     this.enum.guard_type.NORMAL,

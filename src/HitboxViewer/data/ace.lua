@@ -27,6 +27,7 @@
 ---@field char_type_to_name table<string, string>
 ---@field cMeatFields REField[]
 ---@field guard_flag_to_field_name table<integer, string>
+---@field guard_flag_to_angle table<GuardType, number>
 
 ---@class AceData
 local this = {
@@ -70,7 +71,9 @@ local this = {
             [2] = "_GuardDegree",
             [3] = "_PowerGuardDegree",
             [4] = "_AimGuardDegree",
-            [8] = "_GuardDegree",
+        },
+        guard_flag_to_angle = {
+            [8] = 360.0,
         },
     },
 }

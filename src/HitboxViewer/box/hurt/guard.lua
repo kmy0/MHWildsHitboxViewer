@@ -35,10 +35,8 @@ function this:update_shape()
     end
 
     local userdata = self.parent.weapon.userdata
-    local angle = userdata:get_field(ace.map.guard_flag_to_field_name[self.parent.guard_type])
-    if not angle then
-        angle = userdata:get_field(ace.map.guard_flag_to_field_name[-1])
-    end
+    local field_name = ace.map.guard_flag_to_field_name[self.parent.guard_type] or ace.map.guard_flag_to_field_name[-1] --[[@as string]]
+    local angle = ace.map.guard_flag_to_angle[self.parent.guard_type] or userdata:get_field(field_name)
 
     self.shape_data.degrees = angle
     self.shape_data.direction = self.parent.direction
