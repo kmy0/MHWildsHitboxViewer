@@ -43,12 +43,12 @@ end
 
 function this.get()
     for load_data in queue:get() do
-        ---@type HitBoxBase?
-        local box
         local char = load_data.char
 
         for col, userdata, resource_idx, set_idx, collidable_idx in get_collidable(load_data) do
             local log_entry = attack_log.get_log_entry(char, userdata)
+            ---@type HitBoxBase?
+            local box
 
             if
                 char:has_hitbox(col)

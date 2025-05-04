@@ -65,6 +65,7 @@
 ---@field max_table_size integer
 ---@field max_char_loads integer
 ---@field max_char_updates integer
+---@field max_hurtbox_loads integer
 ---@field min_char_interval integer
 ---@field max_char_interval integer
 ---@field max_char_creates integer
@@ -90,6 +91,7 @@ this.default_color = 1020343074
 this.default_highlight_color = 1021633775
 this.max_table_size = 100
 this.max_char_loads = 1
+this.max_hurtbox_loads = 3
 this.max_char_updates = 3
 this.max_char_creates = 3
 this.min_char_interval = 10

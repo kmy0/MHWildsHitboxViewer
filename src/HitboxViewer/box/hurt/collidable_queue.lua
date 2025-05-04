@@ -1,8 +1,8 @@
----@class (exact) HurtBoxLoadQueue : LoadQueueBase
----@field queue HurtBoxLoadData[]
----@field enqueue fun(self: HurtBoxLoadQueue , load_data: HurtBoxLoadData)
+---@class (exact) HurtBoxColLoadQueue : LoadQueueBase
+---@field queue HurtBoxColLoadData[]
+---@field enqueue fun(self: HurtBoxColLoadQueue , load_data: HurtBoxColLoadData)
 
----@class (exact) HurtBoxLoadData : LoadDataBase
+---@class (exact) HurtBoxColLoadData : LoadDataBase
 ---@field char Character
 ---@field rsc via.physics.RequestSetCollider
 
@@ -12,10 +12,10 @@ local load_queue_base = require("HitboxViewer.load_queue_base")
 
 local rt = data.runtime
 
----@class HurtBoxLoadQueue
+---@class HurtBoxColLoadQueue
 local this = load_queue_base:new()
 
----@return fun(): HurtBoxLoadData
+---@return fun(): HurtBoxColLoadData
 function this:get()
     return this:_get(function()
         return not rt.in_transition()

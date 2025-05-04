@@ -8,7 +8,8 @@ local friend = {
     npc = require("HitboxViewer.box.hurt.hurtbox_base"),
     pet = require("HitboxViewer.box.hurt.hurtbox_base"),
 }
-local queue = require("HitboxViewer.box.hurt.load_queue")
+local box_queue = require("HitboxViewer.box.hurt.box_queue")
+local col_queue = require("HitboxViewer.box.hurt.collidable_queue")
 
 local rt = data.runtime
 
@@ -54,17 +55,23 @@ local function get_collidable(char, rsc)
 end
 
 function this.clear()
-    queue:clear()
+    col_queue:clear()
 end
 
 function this.get()
-    ---@type HurtBoxBase?
-    local box
-    for load_data in queue:get() do
+    for load_data in col_queue:get() do
         local char = load_data.char
 
         for col, userdata, resource_idx, set_idx, collidable_idx in get_collidable(char, load_data.rsc) do
             local data_type = userdata:get_type_definition() --[[@as RETypeDefinition]]
+            local box_data = {
+                char = char,
+                col = col,
+                resource_idx = resource_idx,
+                set_idx = set_idx,
+                collidable_idx = collidable_idx,
+                userdata = userdata,
+            }
 
             -- stylua: ignore start
             if
@@ -77,26 +84,64 @@ function this.get()
                 )
             -- stylua: ignore end
             then
-                ---@cast char Npc
-                box = friend.npc:new(col, char, resource_idx, set_idx, collidable_idx)
+                box_queue:enqueue(box_data)
             elseif char.type == rt.enum.char.Player or char.type == rt.enum.char.MasterPlayer then
-                ---@cast char Player
-                box = friend.player:new(col, char, resource_idx, set_idx, collidable_idx)
+                box_queue:enqueue(box_data)
             elseif char.type == rt.enum.char.Pet and data_type:is_a("app.col_user_data.DamageParamOt") then
-                ---@cast char Pet
-                box = friend.pet:new(col, char, resource_idx, set_idx, collidable_idx)
+                box_queue:enqueue(box_data)
             elseif char.type == rt.enum.char.BigMonster and data_type:is_a("app.col_user_data.DamageParamEm") then
-                ---@cast char BigEnemy
-                ---@cast userdata app.col_user_data.DamageParamEm
-                box = enemy.big_enemy:new(col, char, resource_idx, set_idx, collidable_idx, userdata)
+                box_queue:enqueue(box_data)
             elseif char.type == rt.enum.char.SmallMonster and data_type:is_a("app.col_user_data.DamageParamEm") then
-                ---@cast char SmallEnemy
-                box = enemy.small_enemy:new(col, char, resource_idx, set_idx, collidable_idx)
+                box_queue:enqueue(box_data)
             end
+        end
+    end
 
-            if box then
-                char:add_hurtbox(box)
-            end
+    for load_data in box_queue:get() do
+        ---@type HurtBoxBase?
+        local box
+        local char = load_data.char
+
+        if char.type == rt.enum.char.Npc then
+            ---@cast char Npc
+            box =
+                friend.npc:new(load_data.col, char, load_data.resource_idx, load_data.set_idx, load_data.collidable_idx)
+        elseif char.type == rt.enum.char.Player or char.type == rt.enum.char.MasterPlayer then
+            ---@cast char Player
+            box = friend.player:new(
+                load_data.col,
+                char,
+                load_data.resource_idx,
+                load_data.set_idx,
+                load_data.collidable_idx
+            )
+        elseif char.type == rt.enum.char.Pet then
+            ---@cast char Pet
+            box =
+                friend.pet:new(load_data.col, char, load_data.resource_idx, load_data.set_idx, load_data.collidable_idx)
+        elseif char.type == rt.enum.char.BigMonster then
+            ---@cast char BigEnemy
+            box = enemy.big_enemy:new(
+                load_data.col,
+                char,
+                load_data.resource_idx,
+                load_data.set_idx,
+                load_data.collidable_idx,
+                load_data.userdata --[[@as app.col_user_data.DamageParamEm]]
+            )
+        elseif char.type == rt.enum.char.SmallMonster then
+            ---@cast char SmallEnemy
+            box = enemy.small_enemy:new(
+                load_data.col,
+                char,
+                load_data.resource_idx,
+                load_data.set_idx,
+                load_data.collidable_idx
+            )
+        end
+
+        if box then
+            char:add_hurtbox(box)
         end
     end
 end
