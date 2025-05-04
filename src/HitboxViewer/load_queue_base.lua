@@ -2,6 +2,8 @@
 ---@class (exact) LoadQueueBase
 ---@field queue LoadDataBase[]
 
+local table_util = require("HitboxViewer.table_util")
+
 ---@class LoadQueueBase
 local this = {}
 ---@diagnostic disable-next-line: inject-field
@@ -17,6 +19,11 @@ end
 
 function this:clear()
     self.queue = {}
+end
+
+---@param queue LoadDataBase[]
+function this:swap(queue)
+    self.queue = queue
 end
 
 ---@param load_data LoadDataBase
@@ -56,6 +63,10 @@ end
 
 function this:get()
     return self:_get()
+end
+
+function this:empty()
+    return table_util.empty(self.queue)
 end
 
 return this

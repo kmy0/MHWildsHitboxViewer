@@ -69,6 +69,7 @@
 ---@field min_char_interval integer
 ---@field max_char_interval integer
 ---@field max_char_creates integer
+---@field max_part_group_updates integer
 ---@field default Settings
 ---@field current Settings
 ---@field init fun()
@@ -92,6 +93,7 @@ this.default_highlight_color = 1021633775
 this.max_table_size = 100
 this.max_char_loads = 1
 this.max_hurtbox_loads = 3
+this.max_part_group_updates = 1
 this.max_char_updates = 3
 this.max_char_creates = 3
 this.min_char_interval = 10

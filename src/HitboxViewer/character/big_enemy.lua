@@ -3,11 +3,18 @@
 ---@field mc_holder app.EnemyCharacter.MINI_COMPONENT_HOLDER
 ---@field browser app.cEnemyBrowser
 ---@field ctx app.cEnemyContext
+---@field pg_queue PGUpdateQueue
+---@field scars table<string, ScarBox[]>
+
+---@class (exact) PGUpdateQueue : LoadQueueBase
+---@field queue string[]
+---@field get fun(self: PGUpdateQueue): fun(): string
 
 local char_base = require("HitboxViewer.character.char_base")
 local conditions = require("HitboxViewer.box.hurt.conditions")
 local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
+local load_queue_base = require("HitboxViewer.load_queue_base")
 local table_util = require("HitboxViewer.table_util")
 
 local rt = data.runtime
@@ -30,6 +37,16 @@ function this:new(base, name, ctx)
     o.browser = ctx:get_Browser()
     o.parts = {}
     o.ctx = ctx
+    o.pg_queue = load_queue_base:new() --[[@as PGUpdateQueue]]
+    o.scars = {}
+
+    o.pg_queue.get = function()
+        ---@diagnostic disable-next-line: invisible
+        return o.pg_queue:_get(function()
+            return not rt.in_transition()
+        end, config.max_part_group_updates)
+    end
+
     return o
 end
 
@@ -68,12 +85,25 @@ function this:update_hurtboxes()
 
     local ret = {}
     if config.current.gui.main.is_opened or not conditions:empty() then
-        for _, part_group in pairs(self.parts) do
-            local boxes = part_group:update()
-            if boxes then
-                table.move(boxes, 1, #boxes, #ret + 1, ret)
+        if self.pg_queue:empty() then
+            self.pg_queue:swap(table_util.keys(self.parts))
+        end
+
+        for part_key in self.pg_queue:get() do
+            local part_group = self.parts[part_key]
+            if part_group then
+                self.scars[part_key] = self.parts[part_key]:update()
+            else
+                self.scars[part_key] = nil
             end
         end
+
+        for _, scars in pairs(self.scars) do
+            table.move(scars, 1, #scars, #ret + 1, ret)
+        end
+    else
+        self.pg_queue:clear()
+        self.scars = {}
     end
 
     local boxes = self:_update_boxes(self.hurtboxes)
