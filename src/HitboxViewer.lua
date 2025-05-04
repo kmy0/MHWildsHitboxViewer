@@ -37,12 +37,6 @@ re.on_draw_ui(function()
     if imgui.button(string.format("%s %s", config.name, config.version)) then
         config.current.gui.main.is_opened = not config.current.gui.main.is_opened
     end
-
-    local missing_shapes = rt.get_missing_shapes()
-    if missing_shapes then
-        imgui.same_line()
-        imgui.text("Missing Shapes: " .. missing_shapes)
-    end
 end)
 
 ---@diagnostic disable-next-line: param-type-mismatch name has too many possibilities so ls fails to find it??

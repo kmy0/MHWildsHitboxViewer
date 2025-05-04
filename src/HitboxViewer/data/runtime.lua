@@ -11,18 +11,15 @@
 ---@field origin Vector3f
 
 ---@class (exact) State
----@field missing_shapes table<string, boolean>
 ---@field tick_count integer
 
 ---@class (exact) Map
 ---@field update_order CharType[]
 ---@field guard_order GuardType[]
 
-local table_util = require("HitboxViewer.table_util")
-
 ---@class RuntimeData
 local this = {
-    state = { missing_shapes = {}, tick_count = 0 },
+    state = { tick_count = 0 },
     camera = {
         origin = Vector3f.new(0, 0, 0),
     },
@@ -211,15 +208,6 @@ function this.get_catalog()
         this.catalog = obj
     end
     return this.catalog
-end
-
----@return string?
-function this.get_missing_shapes()
-    local t = table_util.keys(this.state.missing_shapes)
-    table.sort(t)
-    if next(t) then
-        return table.concat(t, ", ")
-    end
 end
 
 function this.update_camera()
