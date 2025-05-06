@@ -1,10 +1,10 @@
----@class (exact) LoadDataBase
----@class (exact) LoadQueueBase
----@field queue LoadDataBase[]
+---@class (exact) QueueDataBase
+---@class (exact) QueueBase
+---@field queue QueueDataBase[]
 
 local table_util = require("HitboxViewer.table_util")
 
----@class LoadQueueBase
+---@class QueueBase
 local this = {}
 ---@diagnostic disable-next-line: inject-field
 this.__index = this
@@ -21,21 +21,21 @@ function this:clear()
     self.queue = {}
 end
 
----@param queue LoadDataBase[]
+---@param queue QueueDataBase[]
 function this:swap(queue)
     self.queue = queue
 end
 
----@param load_data LoadDataBase
-function this:enqueue(load_data)
-    table.insert(self.queue, load_data)
+---@param queue_data QueueDataBase
+function this:enqueue(queue_data)
+    table.insert(self.queue, queue_data)
 end
 
 ---@protected
 ---@param is_enabled (fun(): boolean)?
 ---@param max integer?
----@param is_skip (fun(load_data: LoadDataBase): boolean)?
----@return fun(): LoadDataBase
+---@param is_skip (fun(load_data: QueueDataBase): boolean)?
+---@return fun(): QueueDataBase
 function this:_get(is_enabled, max, is_skip)
     local j = 0
     return coroutine.wrap(function()

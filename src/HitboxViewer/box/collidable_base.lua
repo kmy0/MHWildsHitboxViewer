@@ -10,7 +10,6 @@
 ---@field collidable_idx integer
 
 local box_base = require("HitboxViewer.box.box_base")
-local char = require("HitboxViewer.character")
 local data = require("HitboxViewer.data")
 
 local rt = data.runtime
@@ -31,11 +30,6 @@ setmetatable(this, { __index = box_base })
 ---@return CollidableBase?
 function this:new(collidable, parent, box_type, resource_idx, set_idx, collidable_idx)
     local shape = collidable:get_TransformedShape()
-
-    if not shape then
-        return
-    end
-
     local shape_name = ace.enum.shape[shape:get_ShapeType()]
     local shape_type = rt.enum.shape[shape_name]
 

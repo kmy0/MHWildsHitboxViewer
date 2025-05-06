@@ -6,7 +6,7 @@
 ---@field pg_queue PGUpdateQueue
 ---@field scars table<string, ScarBox[]>
 
----@class (exact) PGUpdateQueue : LoadQueueBase
+---@class (exact) PGUpdateQueue : QueueBase
 ---@field queue string[]
 ---@field get fun(self: PGUpdateQueue): fun(): string
 
@@ -14,7 +14,7 @@ local char_base = require("HitboxViewer.character.char_base")
 local conditions = require("HitboxViewer.box.hurt.conditions")
 local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
-local load_queue_base = require("HitboxViewer.load_queue_base")
+local queue_base = require("HitboxViewer.queue_base")
 local table_util = require("HitboxViewer.table_util")
 
 local rt = data.runtime
@@ -37,7 +37,7 @@ function this:new(base, name, ctx)
     o.browser = ctx:get_Browser()
     o.parts = {}
     o.ctx = ctx
-    o.pg_queue = load_queue_base:new() --[[@as PGUpdateQueue]]
+    o.pg_queue = queue_base:new() --[[@as PGUpdateQueue]]
     o.scars = {}
 
     o.pg_queue.get = function()

@@ -1,8 +1,8 @@
----@class (exact) HitBoxLoadQueue : LoadQueueBase
+---@class (exact) HitBoxLoadQueue : QueueBase
 ---@field queue HitBoxLoadData[]
 ---@field enqueue fun(self: HitBoxLoadQueue , load_data: HitLoadDataRsc | HitLoadDataShell)
 
----@class (exact) HitBoxLoadData : LoadDataBase
+---@class (exact) HitBoxLoadData : QueueDataBase
 ---@field type HitBoxLoadDataType
 ---@field char Character
 
@@ -18,12 +18,12 @@
 
 local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
-local load_queue_base = require("HitboxViewer.load_queue_base")
+local queue_base = require("HitboxViewer.queue_base")
 
 local rt = data.runtime
 
 ---@class HitBoxLoadQueue
-local this = load_queue_base:new()
+local this = queue_base:new()
 
 ---@return fun(): HitLoadDataRsc | HitLoadDataShell
 function this:get()
