@@ -10,6 +10,9 @@ local this = {
     sorted = {},
 }
 
+-- All possible 'entry' data is located at HitboxViewer/attack_log.lua, line 106, 178, 242
+-- keep in mind that booleans are strings
+
 function this.types._TerrainHitOnly(entry)
     return entry.more_data._TerrainHitOnly == "true"
 end
