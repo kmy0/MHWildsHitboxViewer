@@ -1,9 +1,9 @@
----@class (exact) BigEnemyHurtBox : HurtBoxBase
+---@class (exact) BigEnemyHurtBox : EnemyHurtBox
 ---@field part_group PartGroup
 
 local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
-local hurtbox_base = require("HitboxViewer.box.hurt.hurtbox_base")
+local enemy_hurtbox = require("HitboxViewer.box.hurt.enemy")
 local part_group = require("HitboxViewer.box.hurt.part_group")
 
 local rt = data.runtime
@@ -12,7 +12,7 @@ local rt = data.runtime
 local this = {}
 ---@diagnostic disable-next-line: inject-field
 this.__index = this
-setmetatable(this, { __index = hurtbox_base })
+setmetatable(this, { __index = enemy_hurtbox })
 
 ---@param collidable via.physics.Collidable
 ---@param parent BigEnemy
@@ -22,11 +22,7 @@ setmetatable(this, { __index = hurtbox_base })
 ---@param meat_data app.col_user_data.DamageParamEm
 ---@return BigEnemyHurtBox?
 function this:new(collidable, parent, resource_idx, set_idx, collidable_idx, meat_data)
-    if meat_data:get_RuntimeData()._PartsIndex < 0 then
-        return
-    end
-
-    local o = hurtbox_base.new(self, collidable, parent, resource_idx, set_idx, collidable_idx)
+    local o = enemy_hurtbox.new(self, collidable, parent, resource_idx, set_idx, collidable_idx, meat_data)
 
     if not o then
         return
@@ -53,7 +49,7 @@ function this:update_data()
     elseif self.part_group.condition == rt.enum.condition_result.Highlight then
         self.color = self.part_group.condition_color
     else
-        return hurtbox_base.update_data(self)
+        return enemy_hurtbox.update_data(self)
     end
 
     return rt.enum.box_state.Draw

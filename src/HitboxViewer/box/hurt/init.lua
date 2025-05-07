@@ -1,7 +1,7 @@
 local data = require("HitboxViewer.data")
 local enemy = {
     big_enemy = require("HitboxViewer.box.hurt.big_enemy"),
-    small_enemy = require("HitboxViewer.box.hurt.hurtbox_base"),
+    small_enemy = require("HitboxViewer.box.hurt.enemy"),
 }
 local friend = {
     player = require("HitboxViewer.box.hurt.player"),
@@ -106,7 +106,7 @@ function this.get()
             )
         elseif char.type == rt.enum.char.SmallMonster and data_type:is_a("app.col_user_data.DamageParamEm") then
             ---@cast char SmallEnemy
-            box = enemy.small_enemy:new(col, char, load_data.resource_idx, load_data.set_idx, load_data.collidable_idx)
+            box = enemy.small_enemy:new(col, char, load_data.resource_idx, load_data.set_idx, load_data.collidable_idx, p_data --[[@as app.col_user_data.DamageParamEm]])
         end
 
         if box then
