@@ -2,7 +2,7 @@ local box_base = require("HitboxViewer.box.box_base")
 local character = require("HitboxViewer.character")
 local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
-local hb_draw = require("HitboxViewer.hb_draw")
+local draw_queue = require("HitboxViewer.draw_queue")
 local table_util = require("HitboxViewer.table_util")
 
 local rt = data.runtime
@@ -91,7 +91,7 @@ function this.get()
     for _, dummy_box in pairs(active_dummies) do
         local box_state = dummy_box:update()
         if box_state == rt.enum.box_state.Draw then
-            hb_draw.enqueue(dummy_box)
+            draw_queue:enqueue({ dummy_box })
         end
     end
 end

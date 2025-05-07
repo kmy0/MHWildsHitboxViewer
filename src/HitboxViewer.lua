@@ -3,7 +3,7 @@ local char = require("HitboxViewer.character")
 local config = require("HitboxViewer.config")
 local config_menu = require("HitboxViewer.gui")
 local data = require("HitboxViewer.data")
-local hb_draw = require("HitboxViewer.hb_draw")
+local draw_queue = require("HitboxViewer.draw_queue")
 local update = require("HitboxViewer.update")
 
 data.init()
@@ -11,6 +11,10 @@ config.init()
 box.hurtbox.conditions.init()
 
 local rt = data.runtime
+
+hb_draw.register(function()
+    draw_queue:draw()
+end)
 
 sdk.hook(
     sdk.find_type_definition("app.CharacterBase"):get_method("doStart") --[[@as REMethodDefinition]],
@@ -40,11 +44,10 @@ re.on_draw_ui(function()
 end)
 
 ---@diagnostic disable-next-line: param-type-mismatch name has too many possibilities so ls fails to find it??
-re.on_application_entry("EndRendering", function()
+re.on_application_entry("EndPhysics", function()
     if rt.in_game() then
-        update.queues()
         update.characters()
-        hb_draw.draw()
+        update.queues()
     else
         update.clear()
     end

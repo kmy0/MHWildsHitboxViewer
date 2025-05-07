@@ -2,13 +2,15 @@ local box = require("HitboxViewer.box")
 local char = require("HitboxViewer.character")
 local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
-local hb_draw = require("HitboxViewer.hb_draw")
+local draw_queue = require("HitboxViewer.draw_queue")
 
 local rt = data.runtime
 
 local this = {}
 
 function this.characters()
+    draw_queue:clear()
+
     if
         (not config.current.enabled_hurtboxes and not config.current.enabled_hitboxes)
         or not char.get_master_player()
@@ -60,10 +62,10 @@ function this.characters()
             end
 
             if config.current.enabled_hitboxes then
-                hb_draw.enqueue(character:update_hitboxes())
+                draw_queue:enqueue(character:update_hitboxes())
             end
             if config.current.enabled_hurtboxes then
-                hb_draw.enqueue(character:update_hurtboxes())
+                draw_queue:enqueue(character:update_hurtboxes())
             end
             ::continue::
         end
@@ -86,7 +88,7 @@ function this.clear()
     box.hitbox.clear()
     box.dummy.clear()
     char.clear()
-    hb_draw.clear()
+    draw_queue.clear()
 end
 
 return this

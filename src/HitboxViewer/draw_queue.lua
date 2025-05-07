@@ -1,23 +1,28 @@
+---@class DrawQueue : QueueBase
+---@field queue BoxBase[]
+---@field sorted boolean
+---@field enqueue fun(self: DrawQueue , boxes: BoxBase[]?)
+
 local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
+local queue_base = require("HitboxViewer.queue_base")
 
 local rt = data.runtime
 
----@type BoxBase[]
-local draw_queue = {}
+---@class DrawQueue
+local this = queue_base:new()
+this.sorted = false
 
-local this = {}
-
----@param boxes BoxBase[]?
-function this.enqueue(boxes)
-    if not boxes then
-        return
+---@param x BoxBase
+---@param y BoxBase
+---@return boolean
+local function sort_boxes(x, y)
+    if x.distance > y.distance then
+        return true
+    elseif x.distance == y.distance then
+        return x.sort < y.sort
     end
-    table.move(boxes, 1, #boxes, #draw_queue + 1, draw_queue)
-end
-
-function this.clear()
-    draw_queue = {}
+    return false
 end
 
 ---@param box BoxBase
@@ -80,26 +85,33 @@ local function draw_shape(box)
     end
 end
 
----@param x BoxBase
----@param y BoxBase
----@return boolean
-local function sort_boxes(x, y)
-    if x.distance > y.distance then
-        return true
-    elseif x.distance == y.distance then
-        return x.sort < y.sort
+---@param boxes BoxBase[]?
+function this:enqueue(boxes)
+    if boxes then
+        table.move(boxes, 1, #boxes, #self.queue + 1, self.queue)
+        self.sorted = false
     end
-    return false
 end
 
-function this.draw()
-    table.sort(draw_queue, sort_boxes)
-    for i = 1, #draw_queue do
-        local box = draw_queue[i]
+function this:sort()
+    table.sort(self.queue, sort_boxes)
+    self.sorted = true
+end
+
+function this:draw()
+    if not self.sorted then
+        self:sort()
+    end
+
+    for i = 1, #self.queue do
+        local box = self.queue[i]
         box.sort = i
         draw_shape(box)
-        draw_queue[i] = nil
     end
+end
+
+function this.clear()
+    this.queue = {}
 end
 
 return this
