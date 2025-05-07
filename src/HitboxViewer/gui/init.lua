@@ -227,7 +227,7 @@ local function draw_hitboxes_header()
         imgui.spacing()
         imgui.spacing()
 
-        util.tooltip("Color application order:\nMisc Type > Guard Type > Damage Angle > Damage Type > Char", true)
+        imgui.text("Color application order:\nMisc Type > Guard Type > Damage Angle > Damage Type > Char")
         if imgui.tree_node("Damage Type") then
             imgui.spacing()
             util.box_type_setup(config.current.hitboxes.damage_type, "hitboxes.damage_type", "damage_type")
@@ -243,8 +243,9 @@ local function draw_hitboxes_header()
             util.box_type_setup(config.current.hitboxes.guard_type, "hitboxes.guard_type", "guard_type")
             imgui.tree_pop()
         end
+
         local node = imgui.tree_node("Misc Type")
-        util.tooltip("Evaluated from top to bottom")
+        util.tooltip("Evaluated from top to bottom\nYou can add your own at HitboxViewer/data/custom_attack_type.lua")
         if node then
             imgui.spacing()
             util.box_type_setup(config.current.hitboxes.misc_type, "hitboxes.misc_type", "misc_type", function(t, i, j)
