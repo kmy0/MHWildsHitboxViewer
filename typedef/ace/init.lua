@@ -19,7 +19,7 @@
 ---@class System.String : string, via.clr.ManagedObject
 ---@class System.Enum : integer, System.ValueType
 ---@class System.Object : via.clr.ManagedObject
----@class System.Single : integer, System.ValueType
+---@class System.Single : number, System.ValueType
 ---@class System.Guid : System.ValueType
 ---@field mData1 System.UInt32
 ---@field mData2 System.UInt16
@@ -257,11 +257,11 @@
 ---@class via.physics.CollidableBase : via.Component
 ---@class via.physics.RequestSetCollider : via.physics.CollidableBase
 ---@field get_NumRequestSets fun(self: via.physics.RequestSetCollider) : System.UInt32
----@field getNumRequestSetsFromIndex fun(self: via.physics.RequestSetCollider, i: System.UInt32 | integer) : System.UInt32
----@field getNumCollidablesFromIndex fun(self: via.physics.RequestSetCollider, i: System.UInt32 | integer, j: System.UInt32 | integer) : System.UInt32
----@field getCollidableFromIndex fun(self: via.physics.RequestSetCollider, i: System.UInt32 | integer, j: System.UInt32 | integer, k : System.UInt32 | integer) : via.physics.Collidable
----@field getNumCollidables fun(self: via.physics.RequestSetCollider, i: System.UInt32 | integer, j: System.UInt32 | integer) : System.UInt32
----@field getCollidable fun(self: via.physics.RequestSetCollider, i: System.UInt32 | integer, j: System.UInt32 | integer, k : System.UInt32 | integer) : via.physics.Collidable
+---@field getNumRequestSetsFromIndex fun(self: via.physics.RequestSetCollider, i: System.UInt32) : System.UInt32
+---@field getNumCollidablesFromIndex fun(self: via.physics.RequestSetCollider, i: System.UInt32, j: System.UInt32) : System.UInt32
+---@field getCollidableFromIndex fun(self: via.physics.RequestSetCollider, i: System.UInt32, j: System.UInt32, k : System.UInt32) : via.physics.Collidable
+---@field getNumCollidables fun(self: via.physics.RequestSetCollider, i: System.UInt32, j: System.UInt32) : System.UInt32
+---@field getCollidable fun(self: via.physics.RequestSetCollider, i: System.UInt32, j: System.UInt32, k : System.UInt32) : via.physics.Collidable
 
 ---@class via.physics.Collidable : via.clr.ManagedObject
 ---@field get_TransformedShape fun(self: via.physics.Collidable): via.physics.Shape
