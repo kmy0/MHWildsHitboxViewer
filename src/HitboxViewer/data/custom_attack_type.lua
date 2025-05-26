@@ -10,7 +10,7 @@ local this = {
     sorted = {},
 }
 
--- All possible 'entry' data is located at HitboxViewer/attack_log.lua, line 106, 178, 242
+-- All possible 'entry' data is located at HitboxViewer/attack_log.lua, line 113, 176, 232, 313
 -- keep in mind that booleans are strings
 
 function this.types._TerrainHitOnly(entry)

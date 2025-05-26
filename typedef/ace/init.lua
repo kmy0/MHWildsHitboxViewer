@@ -262,6 +262,13 @@
 ---@field getCollidableFromIndex fun(self: via.physics.RequestSetCollider, i: System.UInt32, j: System.UInt32, k : System.UInt32) : via.physics.Collidable
 ---@field getNumCollidables fun(self: via.physics.RequestSetCollider, i: System.UInt32, j: System.UInt32) : System.UInt32
 ---@field getCollidable fun(self: via.physics.RequestSetCollider, i: System.UInt32, j: System.UInt32, k : System.UInt32) : via.physics.Collidable
+---@field getRequestSetGroups fun(self: via.physics.RequestSetCollider, i: System.UInt32): via.physics.RequestSetCollider.RequestSetGroup
+
+---@class via.physics.RequestSetCollider.RequestSetGroup : via.clr.ManagedObject
+---@field get_Resource fun(self: via.physics.RequestSetCollider.RequestSetGroup): via.physics.RequestSetColliderResourceHolder
+
+---@class via.physics.RequestSetColliderResourceHolder : via.clr.ManagedObject
+---@field get_ResourcePath fun(self: via.physics.RequestSetColliderResourceHolder): System.String
 
 ---@class via.physics.Collidable : via.clr.ManagedObject
 ---@field get_TransformedShape fun(self: via.physics.Collidable): via.physics.Shape
@@ -452,3 +459,4 @@
 ---@field get_PrimaryCamera fun(self: via.SceneView): via.Camera
 
 ---@class via.Camera : via.Component
+---@class app.col_user_data.AttackParamPlShell : app.col_user_data.AttackParamPlBase

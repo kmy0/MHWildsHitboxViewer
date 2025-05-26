@@ -1,7 +1,12 @@
----@class AttackLogEntry
+---@class (exact) AttackLogEntryBase
 ---@field char_type string
 ---@field char_id string | integer
 ---@field char_name string
+---@field userdata_type RETypeDefinition
+---@field resource_path string
+---@field resource_idx integer
+
+---@class (exact) AttackLogEntryData
 ---@field motion_value integer
 ---@field element number | string
 ---@field status number | string
@@ -11,10 +16,12 @@
 ---@field damage_angle string
 ---@field guard_type string
 ---@field misc_type string?
----@field stun number
+---@field stun number | string
 ---@field sharpness integer | string
 ---@field attack_id integer
 ---@field more_data table<string, any>
+
+---@class (exact) AttackLogEntry : AttackLogEntryData, AttackLogEntryBase
 
 ---@class AttackLog
 ---@field entries AttackLogEntry[]
@@ -26,6 +33,7 @@
 
 local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
+local table_util = require("HitboxViewer.table_util")
 
 local ace = data.ace
 local rt = data.runtime
@@ -99,15 +107,10 @@ function this:clear()
     self.row_count = 0
 end
 
----@param char Character
 ---@param userdata app.col_user_data.AttackParamPl
-function this.get_player_data(char, userdata)
-    if not char.hitbox_userdata_cache[userdata] then
-        char.hitbox_userdata_cache[userdata] = {
-            ---@diagnostic disable-next-line: assign-type-mismatch
-            char_type = rt.enum.char.MasterPlayer == char.type and "Self" or rl(rt.enum.char, char.type),
-            char_id = char.id,
-            char_name = char.name,
+---@return AttackLogEntryData
+function this.get_player_data(userdata)
+    return {
             motion_value = userdata._Attack,
             element = userdata._StatusAttrRate,
             status = userdata._StatusConditionRate,
@@ -117,13 +120,13 @@ function this.get_player_data(char, userdata)
             part_break = userdata._PartsBreakRate,
             mount = userdata._RideDamage,
             stun = userdata._StunDamage,
-            sharpness = userdata._CustomKireajiReduce / 10,
+        sharpness = userdata._CustomKireajiReduce / 10 --[[@as number]],
             attack_id = userdata._RuntimeData._AttackUniqueID,
             more_data = {
                 _DamageTypeCustom = ace.enum.damage_type_custom[userdata:get_DamageTypeCustom()],
                 _AttackAttr = ace.enum.attack_attr[userdata:get_AttackAttr()],
                 _AttackCond = ace.enum.attack_condition[userdata:get_AttackCond()],
-                _Type = ace.enum.action_type[userdata:get_Type()],
+            _Type = ace.enum.attack_param[userdata:get_Type()],
                 _AttrRate = userdata:get_AttrRate(),
                 _FixAttack = userdata._FixAttack,
                 _AttrValue = userdata._AttrValue,
@@ -165,21 +168,12 @@ function this.get_player_data(char, userdata)
                 _CustomShockAbsorberRate = userdata._CustomShockAbsorberRate,
             },
         }
-        fix_data(char.hitbox_userdata_cache[userdata])
-        fix_data(char.hitbox_userdata_cache[userdata].more_data)
-    end
-    return char.hitbox_userdata_cache[userdata]
 end
 
----@param char Character
 ---@param userdata app.col_user_data.AttackParamEm
-function this.get_enemy_data(char, userdata)
-    if not char.hitbox_userdata_cache[userdata] then
-        char.hitbox_userdata_cache[userdata] = {
-            ---@diagnostic disable-next-line: assign-type-mismatch
-            char_type = rl(rt.enum.char, char.type),
-            char_id = char.id,
-            char_name = char.name,
+---@return AttackLogEntryData
+function this.get_enemy_data(userdata)
+    return {
             motion_value = userdata._Attack,
             element = gui.data_missing,
             status = gui.data_missing,
@@ -195,7 +189,7 @@ function this.get_enemy_data(char, userdata)
                 _DamageTypeCustom = ace.enum.damage_type_custom[userdata:get_DamageTypeCustom()],
                 _AttackAttr = ace.enum.attack_attr[userdata:get_AttackAttr()],
                 _AttackCond = ace.enum.attack_condition[userdata:get_AttackCond()],
-                _Type = ace.enum.action_type[userdata:get_Type()],
+            _Type = ace.enum.attack_param[userdata:get_Type()],
                 _AttrRate = userdata:get_AttrRate(),
                 _FixAttack = userdata._FixAttack,
                 _AttrValue = userdata._AttrValue,
@@ -229,21 +223,12 @@ function this.get_enemy_data(char, userdata)
                 _IsEnergyAttack = userdata._IsEnergyAttack,
             },
         }
-        fix_data(char.hitbox_userdata_cache[userdata])
-        fix_data(char.hitbox_userdata_cache[userdata].more_data)
-    end
-    return char.hitbox_userdata_cache[userdata]
 end
 
----@param char Character
 ---@param userdata app.col_user_data.AttackParamOt
-function this.get_pet_data(char, userdata)
-    if not char.hitbox_userdata_cache[userdata] then
-        char.hitbox_userdata_cache[userdata] = {
-            ---@diagnostic disable-next-line: assign-type-mismatch
-            char_type = rl(rt.enum.char, char.type),
-            char_id = char.id,
-            char_name = char.name,
+---@return AttackLogEntryData
+function this.get_pet_data(userdata)
+    return {
             motion_value = userdata._Attack,
             element = gui.data_missing,
             status = gui.data_missing,
@@ -259,7 +244,7 @@ function this.get_pet_data(char, userdata)
                 _DamageTypeCustom = ace.enum.damage_type_custom[userdata:get_DamageTypeCustom()],
                 _AttackAttr = ace.enum.attack_attr[userdata:get_AttackAttr()],
                 _AttackCond = ace.enum.attack_condition[userdata:get_AttackCond()],
-                _Type = ace.enum.action_type[userdata:get_Type()],
+            _Type = ace.enum.attack_param[userdata:get_Type()],
                 _AttrRate = userdata:get_AttrRate(),
                 _FixAttack = userdata._FixAttack,
                 _AttrValue = userdata._AttrValue,
@@ -279,32 +264,64 @@ function this.get_pet_data(char, userdata)
                 _IsStealAttack = userdata._IsStealAttack,
             },
         }
-        fix_data(char.hitbox_userdata_cache[userdata])
-        fix_data(char.hitbox_userdata_cache[userdata].more_data)
-    end
-    return char.hitbox_userdata_cache[userdata]
+end
 end
 
 ---@param char Character
 ---@param userdata via.physics.RequestSetColliderUserData
+---@param rsc via.physics.RequestSetCollider
+---@param resource_idx integer
 ---@return AttackLogEntry?
-function this.get_log_entry(char, userdata)
-    local p_data = userdata:get_ParentUserData()
-    local t_def = p_data:get_type_definition()
+function this.get_log_entry(char, userdata, rsc, resource_idx)
+    if char.hitbox_userdata_cache[userdata] then
+        return char.hitbox_userdata_cache[userdata]
+    end
 
-    if not t_def then
+    local p_data = userdata:get_ParentUserData()
+    local p_data_def = p_data:get_type_definition()
+
+    if not p_data_def then
         return
     end
-    if t_def:is_a("app.col_user_data.AttackParamPl") or t_def:is_a("app.col_user_data.AttackParamPlShell") then
+
+    ---@type AttackLogEntryData
+    local entry_data
+
+    if
+        p_data_def:is_a("app.col_user_data.AttackParamPl") or p_data_def:is_a("app.col_user_data.AttackParamPlShell")
+    then
         ---@cast p_data app.col_user_data.AttackParamPl
-        return this.get_player_data(char, p_data)
-    elseif t_def:is_a("app.col_user_data.AttackParamEm") then
+        entry_data = this.get_player_data(p_data)
+    elseif p_data_def:is_a("app.col_user_data.AttackParamEm") then
         ---@cast p_data app.col_user_data.AttackParamEm
-        return this.get_enemy_data(char, p_data)
-    elseif t_def:is_a("app.col_user_data.AttackParamOt") then
+        entry_data = this.get_enemy_data(p_data)
+    elseif p_data_def:is_a("app.col_user_data.AttackParamOt") then
         ---@cast p_data app.col_user_data.AttackParamOt
-        return this.get_pet_data(char, p_data)
+        entry_data = this.get_pet_data(p_data)
     end
+
+    if not entry_data then
+        return
+    end
+
+    fix_data(entry_data)
+    fix_data(entry_data.more_data)
+    local set_group = rsc:getRequestSetGroups(resource_idx)
+    local resource = set_group:get_Resource()
+
+    ---@type AttackLogEntryBase
+    local entry_base = {
+        char_type = rt.enum.char.MasterPlayer == char.type and "Self" or rl(rt.enum.char, char.type),
+        char_id = char.id,
+        char_name = char.name,
+        userdata_type = p_data_def,
+        resource_idx = resource_idx,
+        resource_path = resource:get_ResourcePath(),
+    }
+    local ret = table_util.table_merge(entry_base, entry_data) --[[@as AttackLogEntry]]
+    ---@cast userdata app.col_user_data.AttackParam | app.col_user_data.DamageParam
+    char.hitbox_userdata_cache[userdata] = ret
+    return ret
 end
 
 return this
