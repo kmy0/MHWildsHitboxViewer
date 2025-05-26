@@ -320,6 +320,8 @@
 ---@field get_Owner fun(self: app.mcShellColHit): via.GameObject
 ---@field _FirstCollider via.physics.Collidable
 ---@field _SubColliders System.Array<via.physics.Collidable>
+---@field _ReqSetCol via.physics.RequestSetCollider
+---@field _CollisionResourceIndex System.Int32
 
 ---@class ace.ShellBase : via.Behavior
 ---@field get_ShellOwner fun(self: ace.ShellBase): via.GameObject

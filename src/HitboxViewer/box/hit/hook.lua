@@ -56,6 +56,18 @@ function this.get_shell_post(retval)
         return
     end
 
+    local first_colider = shellcolhit._FirstCollider
+    local sub_colliders = shellcolhit._SubColliders
+
+    if not first_colider and sub_colliders:get_Count() == 0 then
+        load_queue:enqueue({
+            type = rt.enum.hitbox_load_data.shell_rsc,
+            char = char,
+            rsc = shellcolhit._ReqSetCol,
+            res_idx = shellcolhit._CollisionResourceIndex,
+            shellcolhit = shellcolhit,
+        })
+    else
     load_queue:enqueue({
         type = rt.enum.hitbox_load_data.shell,
         char = char,
@@ -63,6 +75,8 @@ function this.get_shell_post(retval)
         sub_colliders = shellcolhit._SubColliders,
         shellcolhit = shellcolhit,
     })
+    end
+
     return retval
 end
 

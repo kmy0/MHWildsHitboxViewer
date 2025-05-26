@@ -141,6 +141,7 @@ this.enum.condition_state = {
 this.enum.hitbox_load_data = {
     rsc = 1,
     shell = 2,
+    shell_rsc = 3,
 }
 ---@enum GuardType
 this.enum.guard_type = {

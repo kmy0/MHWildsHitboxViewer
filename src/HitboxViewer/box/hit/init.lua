@@ -25,6 +25,16 @@ local function get_collidable(load_data)
                     coroutine.yield(col, col:get_UserData(), load_data.res_idx, load_data.req_idx, i)
                 end
             end
+        elseif load_data.type == rt.enum.hitbox_load_data.shell_rsc then
+            ---@cast load_data HitLoadDataShellRsc
+            for j = 0, load_data.rsc:getNumRequestSetsFromIndex(load_data.res_idx) - 1 do
+                for k = 0, load_data.rsc:getNumCollidablesFromIndex(load_data.res_idx, j) - 1 do
+                    local col = load_data.rsc:getCollidableFromIndex(load_data.res_idx, j, k)
+                    if col then
+                        coroutine.yield(col, col:get_UserData(), load_data.res_idx, j, k)
+                    end
+                end
+            end
         else
             ---@cast load_data HitLoadDataShell
             local arr = util.system_array_to_lua(load_data.sub_colliders)
