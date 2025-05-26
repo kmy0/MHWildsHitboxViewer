@@ -68,13 +68,13 @@ function this.get_shell_post(retval)
             shellcolhit = shellcolhit,
         })
     else
-    load_queue:enqueue({
-        type = rt.enum.hitbox_load_data.shell,
-        char = char,
-        first_colider = shellcolhit._FirstCollider,
-        sub_colliders = shellcolhit._SubColliders,
-        shellcolhit = shellcolhit,
-    })
+        load_queue:enqueue({
+            type = rt.enum.hitbox_load_data.shell,
+            char = char,
+            first_colider = shellcolhit._FirstCollider,
+            sub_colliders = shellcolhit._SubColliders,
+            shellcolhit = shellcolhit,
+        })
     end
 
     return retval
