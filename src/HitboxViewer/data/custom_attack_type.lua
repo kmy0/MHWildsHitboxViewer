@@ -13,7 +13,7 @@ local this = {
 -- All possible 'entry' data is located at HitboxViewer/attack_log.lua, line 113, 176, 232, 313
 -- keep in mind that booleans are strings
 
-function this.types._TerrainHitOnly(entry)
+function this.types.TerrainHitOnly(entry)
     return entry.more_data._TerrainHitOnly == "true"
 end
 
@@ -46,6 +46,15 @@ function this.check(entry)
     end
 end
 
-this.sorted = table_util.keys(this.types)
-table.sort(this.sorted)
+-- Evaluation order
+-- this.sorted = table_util.keys(this.types)
+-- table.sort(this.sorted)
+this.sorted = {
+    "JustDodge",
+    "AttackHurtbox",
+    "Parry",
+    "NoMotionValue",
+    "TerrainHitOnly",
+}
+
 return this
