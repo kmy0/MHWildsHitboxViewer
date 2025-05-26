@@ -25,6 +25,9 @@ function this.types.Parry(entry)
     local parry_damage = entry.more_data._ParryDamage
     return parry_damage and parry_damage > 0
 end
+function this.types.AttackHurtbox(entry)
+    return entry.userdata_type:is_a("app.col_user_data.DamageParam")
+end
 
 ---@param entry AttackLogEntry
 ---@return string?

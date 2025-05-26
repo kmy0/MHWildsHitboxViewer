@@ -9,7 +9,7 @@
 ---@field id integer
 ---@field hurtboxes table<via.physics.Collidable, HurtBoxBase>
 ---@field hitboxes table<via.physics.Collidable, HitBoxBase>
----@field hitbox_userdata_cache table<app.col_user_data.AttackParam, AttackLogEntry>
+---@field hitbox_userdata_cache table<app.col_user_data.AttackParam | app.col_user_data.DamageParam, AttackLogEntry>
 ---@field order integer
 ---@field last_update_tick integer
 

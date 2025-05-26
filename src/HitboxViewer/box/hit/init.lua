@@ -71,7 +71,10 @@ function this.get()
                 goto continue
             end
 
-            attack_log:log(log_entry)
+            if not log_entry.userdata_type:is_a("app.col_user_data.DamageParam") then
+                attack_log:log(log_entry)
+            end
+
             if char.type == rt.enum.char.Npc then
                 ---@cast char Npc
                 box = friend.npc:new(col, char, resource_idx, set_idx, collidable_idx, log_entry, load_data.shellcolhit)

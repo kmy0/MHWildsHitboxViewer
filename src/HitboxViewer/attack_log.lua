@@ -265,6 +265,24 @@ function this.get_pet_data(userdata)
             },
         }
 end
+
+---@param userdata app.col_user_data.DamageParam
+---@return AttackLogEntryData
+function this.get_hurtbox_data(userdata)
+    return {
+        motion_value = 0,
+        element = gui.data_missing,
+        status = gui.data_missing,
+        part_break = gui.data_missing,
+        mount = gui.data_missing,
+        stun = gui.data_missing,
+        sharpness = gui.data_missing,
+        damage_type = gui.data_missing,
+        damage_angle = gui.data_missing,
+        guard_type = gui.data_missing,
+        attack_id = 0,
+        more_data = {},
+    }
 end
 
 ---@param char Character
@@ -298,6 +316,9 @@ function this.get_log_entry(char, userdata, rsc, resource_idx)
     elseif p_data_def:is_a("app.col_user_data.AttackParamOt") then
         ---@cast p_data app.col_user_data.AttackParamOt
         entry_data = this.get_pet_data(p_data)
+    elseif p_data_def:is_a("app.col_user_data.DamageParam") then
+        ---@cast p_data app.col_user_data.DamageParam
+        entry_data = this.get_hurtbox_data(p_data)
     end
 
     if not entry_data then
