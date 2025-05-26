@@ -4,12 +4,14 @@
 ---@field weapon Weapon
 ---@field guard_type GuardType?
 ---@field direction Vector3f
+---@field overwrite_guard_direction Vector3f?
 ---@field front_col via.physics.Collidable
 ---@field center_col via.physics.Collidable
 ---@field hurtboxes table<via.physics.Collidable, PlayerHurtBox>
 
 ---@class (exact) Weapon
 ---@field userdata app.user_data.WpActionParamBase
+---@field handling app.cHunterWeaponHandlingBase
 ---@field type app.WeaponDef.TYPE
 
 local char_base = require("HitboxViewer.character.char_base")
@@ -56,6 +58,7 @@ function this:update_weapon()
     if weapon_type ~= self.weapon.type then
         self.weapon.userdata = rt.get_catalog():getWeaponActionParam(weapon_type)
         self.weapon.type = weapon_type
+        self.weapon.handling = self.base:get_WeaponHandling()
     end
 end
 
@@ -80,6 +83,29 @@ function this:update_direction()
     self.direction.y = dir.y
 end
 
+function this:update_overwrite_guard_direction()
+    self.overwrite_guard_direction = self.weapon.handling:getOverwriteGuardDir()
+    if
+        self.overwrite_guard_direction.x == 0
+        and self.overwrite_guard_direction.y == 0
+        and self.overwrite_guard_direction.z == 0
+    then
+        self.overwrite_guard_direction = nil
+    else
+        -- its inverted for whatever reason
+        self.overwrite_guard_direction.x = -self.overwrite_guard_direction.x
+        self.overwrite_guard_direction.y = -self.overwrite_guard_direction.y
+        self.overwrite_guard_direction.z = -self.overwrite_guard_direction.z
+    end
+end
+
+function this:get_guard_direction()
+    if self.overwrite_guard_direction then
+        return self.overwrite_guard_direction
+    end
+    return self.direction
+end
+
 ---@return HurtBoxBase[]?
 function this:update_hurtboxes()
     if self:is_hurtbox_disabled() then
@@ -91,6 +117,7 @@ function this:update_hurtboxes()
 
     if self.guard_type then
         self:update_direction()
+        self:update_overwrite_guard_direction()
     end
 
     local ret = {}

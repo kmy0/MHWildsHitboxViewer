@@ -171,6 +171,7 @@
 ---@field get_HunterExtend fun(self: app.HunterCharacter): app.HunterCharacter.cHunterExtendBase
 ---@field get_HunterStatus fun(self: app.HunterCharacter): app.cHunterStatus
 ---@field get_WeaponType fun(self: app.HunterCharacter): app.WeaponDef.TYPE
+---@field get_WeaponHandling fun(self: app.HunterCharacter): app.cHunterWeaponHandlingBase
 
 ---@class app.cHunterStatus : ace.cNonCycleTypeObject
 ---@field _HunterStatusFlag ace.cSafeContinueFlagGroup
@@ -462,3 +463,5 @@
 
 ---@class via.Camera : via.Component
 ---@class app.col_user_data.AttackParamPlShell : app.col_user_data.AttackParamPlBase
+---@class app.cHunterWeaponHandlingBase : via.clr.ManagedObject
+---@field getOverwriteGuardDir fun(self: app.cHunterWeaponHandlingBase): via.vec3

@@ -39,7 +39,7 @@ function this:update_shape()
     local angle = ace.map.guard_flag_to_angle[self.parent.guard_type] or userdata:get_field(field_name)
 
     self.shape_data.degrees = angle
-    self.shape_data.direction = self.parent.direction
+    self.shape_data.direction = self.parent:get_guard_direction()
     self.shape_data.direction.y = 0
     self.shape_data.radius = self.parent_hurtbox.shape_data.radius + 0.02
 
