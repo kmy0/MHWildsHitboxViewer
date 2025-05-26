@@ -122,7 +122,8 @@ end
 ---@param box_config_key string
 ---@param type_name string
 ---@param predicate (fun(t: table, i: integer, j:integer) : boolean)?
-function this.box_type_setup(box_type, box_config_key, type_name, predicate)
+---@param sort (fun(a: string, b: string): boolean)?
+function this.box_type_setup(box_type, box_config_key, type_name, predicate, sort)
     local keys = table_util.keys(box_type.disable)
     ---@cast keys string[]
 
@@ -130,7 +131,7 @@ function this.box_type_setup(box_type, box_config_key, type_name, predicate)
         keys = table_util.table_remove(keys, predicate)
     end
 
-    table.sort(keys)
+    table.sort(keys, sort)
     imgui.begin_rect()
     imgui.push_item_width(250)
     for _, key in ipairs(keys) do
