@@ -5,21 +5,18 @@
 ---@class (exact) HitBoxLoadData : QueueDataBase
 ---@field type HitBoxLoadDataType
 ---@field char Character
+---@field rsc via.physics.RequestSetCollider
+---@field res_idx integer
 
 ---@class (exact) HitLoadDataRsc : HitBoxLoadData
----@field rsc via.physics.RequestSetCollider
----@field res_idx integer
 ---@field req_idx integer
 
----@class (exact) HitLoadDataShell : HitBoxLoadData
----@field first_colider via.physics.Collidable
----@field sub_colliders System.Array<via.physics.Collidable>
+---@class (exact) HitLoadDataShellRsc : HitBoxLoadData
 ---@field shellcolhit app.mcShellColHit
 
----@class (exact) HitLoadDataShellRsc : HitBoxLoadData
----@field rsc via.physics.RequestSetCollider
----@field res_idx integer
----@field shellcolhit app.mcShellColHit
+---@class (exact) HitLoadDataShell : HitLoadDataShellRsc
+---@field first_colider via.physics.Collidable
+---@field sub_colliders System.Array<via.physics.Collidable>
 
 local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")

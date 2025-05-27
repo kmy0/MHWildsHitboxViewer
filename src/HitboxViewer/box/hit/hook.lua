@@ -71,8 +71,10 @@ function this.get_shell_post(retval)
         load_queue:enqueue({
             type = rt.enum.hitbox_load_data.shell,
             char = char,
-            first_colider = shellcolhit._FirstCollider,
-            sub_colliders = shellcolhit._SubColliders,
+            first_colider = first_colider,
+            sub_colliders = sub_colliders,
+            rsc = shellcolhit._ReqSetCol,
+            res_idx = shellcolhit._CollisionResourceIndex,
             shellcolhit = shellcolhit,
         })
     end

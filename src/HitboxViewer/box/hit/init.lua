@@ -41,7 +41,7 @@ local function get_collidable(load_data)
             ---@cast arr via.physics.Collidable[]
             table.insert(arr, load_data.first_colider)
             for _, col in pairs(arr) do
-                coroutine.yield(col, col:get_UserData(), -1, -1, -1)
+                coroutine.yield(col, col:get_UserData(), load_data.res_idx, -1, -1)
             end
         end
     end)
