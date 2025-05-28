@@ -143,6 +143,7 @@ this.enum.hitbox_load_data = {
     shell = 2,
     shell_rsc = 3,
 }
+-- you can find all guard flags (other than HYPER) somewhere in app.cHunterStockDamage.checkGuard(app.HitInfo, app.cHunterDamageInfo) function
 ---@enum GuardType
 this.enum.guard_type = {
     NORMAL = 2,
