@@ -62,10 +62,7 @@ end
 
 ---@return BoxState
 function this:update()
-    if
-        self.shellcolhit and self.shellcolhit:get_reference_count() <= 1
-        or not self.is_shown and rt.state.tick_count - self.tick > 1200
-    then
+    if self.shellcolhit and self.shellcolhit:get_reference_count() <= 1 or rt.state.tick_count - self.tick > 1200 then
         return rt.enum.box_state.Dead
     end
 
