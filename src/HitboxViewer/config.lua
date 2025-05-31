@@ -85,7 +85,7 @@ local util = require("HitboxViewer.util")
 ---@class Config
 local this = {}
 
-this.version = "0.0.3"
+this.version = "0.0.4"
 this.name = "HitboxViewer"
 this.config_path = this.name .. "/config.json"
 this.default_color = 1020343074
