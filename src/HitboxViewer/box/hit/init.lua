@@ -18,21 +18,11 @@ local this = {
 local function get_collidable(load_data)
     return coroutine.wrap(function()
         if load_data.type == rt.enum.hitbox_load_data.rsc then
-            ---@cast load_data HitLoadDataRsc
+            ---@cast load_data HitBoxLoadDataRsc
             for i = 0, load_data.rsc:getNumCollidables(load_data.res_idx, load_data.req_idx) - 1 do
                 local col = load_data.rsc:getCollidable(load_data.res_idx, load_data.req_idx, i)
                 if col then
                     coroutine.yield(col, col:get_UserData(), load_data.res_idx, load_data.req_idx, i)
-                end
-            end
-        elseif load_data.type == rt.enum.hitbox_load_data.shell_rsc then
-            ---@cast load_data HitLoadDataShellRsc
-            for j = 0, load_data.rsc:getNumRequestSetsFromIndex(load_data.res_idx) - 1 do
-                for k = 0, load_data.rsc:getNumCollidablesFromIndex(load_data.res_idx, j) - 1 do
-                    local col = load_data.rsc:getCollidableFromIndex(load_data.res_idx, j, k)
-                    if col then
-                        coroutine.yield(col, col:get_UserData(), load_data.res_idx, j, k)
-                    end
                 end
             end
         elseif load_data.type == rt.enum.hitbox_load_data.base then
@@ -48,11 +38,17 @@ local function get_collidable(load_data)
                 end
             end
         else
-            ---@cast load_data HitLoadDataShell
-            local arr = util.system_array_to_lua(load_data.sub_colliders)
-            ---@cast arr via.physics.Collidable[]
-            table.insert(arr, load_data.first_colider)
-            for _, col in pairs(arr) do
+            ---@cast load_data HitBoxLoadDataShell
+            for j = 0, load_data.rsc:getNumRequestSetsFromIndex(load_data.res_idx) - 1 do
+                for k = 0, load_data.rsc:getNumCollidablesFromIndex(load_data.res_idx, j) - 1 do
+                    local col = load_data.rsc:getCollidableFromIndex(load_data.res_idx, j, k)
+                    if col then
+                        coroutine.yield(col, col:get_UserData(), load_data.res_idx, j, k)
+                    end
+                end
+            end
+
+            for _, col in pairs(load_data.colliders) do
                 coroutine.yield(col, col:get_UserData(), load_data.res_idx, -1, -1)
             end
         end

@@ -2,7 +2,7 @@ local char_cache = require("HitboxViewer.character.char_cache")
 local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
 local load_queue = require("HitboxViewer.box.hit.load_queue")
-local utilities = require("HitboxViewer.util")
+local util = require("HitboxViewer.util")
 
 local rt = data.runtime
 local rl = data.util.reverse_lookup
@@ -31,7 +31,7 @@ function this.get_shell_post(retval)
     local shellcolhit = storage["shellcolhit"] --[[@as app.mcShellColHit]]
     --FIXME: surely there must be better way to get actual owner of the shell???
     local shellcol_owner = shellcolhit:get_Owner()
-    local shell_base = utilities.get_component(shellcol_owner, "ace.ShellBase")
+    local shell_base = util.get_component(shellcol_owner, "ace.ShellBase")
     ---@cast shell_base ace.ShellBase
     local shell_owner = shell_base:get_ShellOwner()
     local shell_transform = shell_owner:get_Transform()
@@ -57,27 +57,19 @@ function this.get_shell_post(retval)
     end
 
     local first_colider = shellcolhit._FirstCollider
-    local sub_colliders = shellcolhit._SubColliders
-
-    if not first_colider and sub_colliders:get_Count() == 0 then
-        load_queue:enqueue({
-            type = rt.enum.hitbox_load_data.shell_rsc,
-            char = char,
-            rsc = shellcolhit._ReqSetCol,
-            res_idx = shellcolhit._CollisionResourceIndex,
-            shellcolhit = shellcolhit,
-        })
-    else
-        load_queue:enqueue({
-            type = rt.enum.hitbox_load_data.shell,
-            char = char,
-            first_colider = first_colider,
-            sub_colliders = sub_colliders,
-            rsc = shellcolhit._ReqSetCol,
-            res_idx = shellcolhit._CollisionResourceIndex,
-            shellcolhit = shellcolhit,
-        })
+    local cols = util.system_array_to_lua(shellcolhit._SubColliders)
+    if first_colider then
+        table.insert(cols, first_colider)
     end
+
+    load_queue:enqueue({
+        type = rt.enum.hitbox_load_data.shell,
+        char = char,
+        colliders = cols,
+        rsc = shellcolhit._ReqSetCol,
+        res_idx = shellcolhit._CollisionResourceIndex,
+        shellcolhit = shellcolhit,
+    })
 
     return retval
 end

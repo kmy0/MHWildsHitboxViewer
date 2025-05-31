@@ -1,23 +1,20 @@
 ---@class (exact) HitBoxLoadQueue : QueueBase
 ---@field queue HitBoxLoadData[]
----@field enqueue fun(self: HitBoxLoadQueue , load_data: HitLoadDataRsc | HitLoadDataShell | HitLoadDataShellRsc | HitBoxLoadData)
+---@field enqueue fun(self: HitBoxLoadQueue , load_data: HitBoxLoadDataRsc | HitBoxLoadDataShell | HitBoxLoadData)
 
 ---@class (exact) HitBoxLoadData : QueueDataBase
 ---@field type HitBoxLoadDataType
 ---@field char Character
 ---@field rsc via.physics.RequestSetCollider
 
----@class (exact) HitLoadDataRsc : HitBoxLoadData
+---@class (exact) HitBoxLoadDataRsc : HitBoxLoadData
 ---@field res_idx integer
 ---@field req_idx integer
 
----@class (exact) HitLoadDataShellRsc : HitBoxLoadData
+---@class (exact) HitBoxLoadDataShell : HitBoxLoadData
 ---@field res_idx integer
+---@field colliders via.physics.Collidable[]
 ---@field shellcolhit app.mcShellColHit
-
----@class (exact) HitLoadDataShell : HitLoadDataShellRsc
----@field first_colider via.physics.Collidable
----@field sub_colliders System.Array<via.physics.Collidable>
 
 local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
@@ -28,7 +25,7 @@ local rt = data.runtime
 ---@class HitBoxLoadQueue
 local this = queue_base:new()
 
----@return fun(): HitLoadDataRsc | HitLoadDataShell | HitLoadDataShellRsc
+---@return fun(): HitBoxLoadDataRsc | HitBoxLoadDataShell | HitBoxLoadData
 function this:get()
     return self:_get(function()
         return config.current.enabled_hitboxes and not rt.in_transition()
