@@ -32,6 +32,11 @@ sdk.hook(
     box.hitbox.hook.get_shell_pre,
     box.hitbox.hook.get_shell_post
 )
+sdk.hook(
+    sdk.find_type_definition("app.Wp10Insect"):get_method("requestActiveAttackCol(app.Wp10InsectDef.INSECT_ATK_TYPE)") --[[@as REMethodDefinition]],
+    box.hitbox.hook.get_kinsect_attack_pre,
+    box.hitbox.hook.get_kinsect_attack_post
+)
 
 if config.current.enabled_hurtboxes and rt.in_game() then
     char.create_all_chars()

@@ -12,7 +12,6 @@ local this = {
 function this.create_all_chars()
     local transforms = util.get_all_components("app.CharacterBase")
     local size = transforms:get_Count()
-
     for i = 0, size - 1 do
         ---@type app.CharacterBase
         local char_base = transforms:get_Item(i)

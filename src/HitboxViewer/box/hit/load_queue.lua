@@ -1,17 +1,18 @@
 ---@class (exact) HitBoxLoadQueue : QueueBase
 ---@field queue HitBoxLoadData[]
----@field enqueue fun(self: HitBoxLoadQueue , load_data: HitLoadDataRsc | HitLoadDataShell | HitLoadDataShellRsc)
+---@field enqueue fun(self: HitBoxLoadQueue , load_data: HitLoadDataRsc | HitLoadDataShell | HitLoadDataShellRsc | HitBoxLoadData)
 
 ---@class (exact) HitBoxLoadData : QueueDataBase
 ---@field type HitBoxLoadDataType
 ---@field char Character
 ---@field rsc via.physics.RequestSetCollider
----@field res_idx integer
 
 ---@class (exact) HitLoadDataRsc : HitBoxLoadData
+---@field res_idx integer
 ---@field req_idx integer
 
 ---@class (exact) HitLoadDataShellRsc : HitBoxLoadData
+---@field res_idx integer
 ---@field shellcolhit app.mcShellColHit
 
 ---@class (exact) HitLoadDataShell : HitLoadDataShellRsc

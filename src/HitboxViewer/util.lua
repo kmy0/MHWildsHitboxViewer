@@ -16,6 +16,7 @@ this.calcCollidableCenter = sdk.find_type_definition("app.CollisionUtil")
 this.getPARTS_TYPEFromFixed = sdk.find_type_definition("app.EnemyDef"):get_method(
     "getPARTS_TYPEFromFixed(app.EnemyDef.PARTS_TYPE_Fixed, app.EnemyDef.PARTS_TYPE)"
 ) --[[@as REMethodDefinition]]
+this.isCollidableValid = sdk.find_type_definition("ace.AceUtil"):get_method("isCollidableValid(via.physics.Collidable)") --[[@as REMethodDefinition]]
 
 ---@generic T
 ---@param array System.Array<T>

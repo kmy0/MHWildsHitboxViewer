@@ -465,3 +465,10 @@
 ---@class app.col_user_data.AttackParamPlShell : app.col_user_data.AttackParamPlBase
 ---@class app.cHunterWeaponHandlingBase : via.clr.ManagedObject
 ---@field getOverwriteGuardDir fun(self: app.cHunterWeaponHandlingBase): via.vec3
+
+---@class app.Wp10Insect : app.AppBehavior
+---@field get_Hunter fun(self: app.Wp10Insect): app.HunterCharacter
+---@field _Components app.Wp10Insect.COMPONENTS
+
+---@class app.Wp10Insect.COMPONENTS : System.ValueType
+---@field _RequestSetCol via.physics.RequestSetCollider

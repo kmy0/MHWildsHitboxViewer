@@ -35,6 +35,18 @@ local function get_collidable(load_data)
                     end
                 end
             end
+        elseif load_data.type == rt.enum.hitbox_load_data.base then
+            ---@cast load_data HitBoxLoadData
+            for i = 0, load_data.rsc:get_NumRequestSets() - 1 do
+                for j = 0, load_data.rsc:getNumRequestSetsFromIndex(i) - 1 do
+                    for k = 0, load_data.rsc:getNumCollidablesFromIndex(i, j) - 1 do
+                        local col = load_data.rsc:getCollidableFromIndex(i, j, k)
+                        if col and util.isCollidableValid:call(nil, col) then
+                            coroutine.yield(col, col:get_UserData(), i, j, k)
+                        end
+                    end
+                end
+            end
         else
             ---@cast load_data HitLoadDataShell
             local arr = util.system_array_to_lua(load_data.sub_colliders)

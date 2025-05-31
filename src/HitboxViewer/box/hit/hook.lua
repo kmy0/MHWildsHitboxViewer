@@ -109,4 +109,47 @@ function this.get_attack_pre(args)
     })
 end
 
+function this.get_kinsect_attack_pre(args)
+    if not config.current.enabled_hitboxes then
+        return
+    end
+
+    local storage = thread.get_hook_storage()
+    storage["insect"] = sdk.to_managed_object(args[2])
+end
+
+function this.get_kinsect_attack_post(retval)
+    if not config.current.enabled_hitboxes then
+        return
+    end
+
+    local storage = thread.get_hook_storage()
+    if not storage or not storage["insect"] then
+        return
+    end
+
+    local insect = storage["insect"] --[[@as app.Wp10Insect]]
+    local owner = insect:get_Hunter()
+    local game_object = owner:get_GameObject()
+    local char = char_cache.get_char(game_object, owner)
+
+    if
+        not char
+        or char.distance > config.current.draw.distance
+        or config.current.hitboxes.disable[rl(rt.enum.char, char.type)]
+    then
+        return
+    end
+
+    local components = insect._Components
+
+    load_queue:enqueue({
+        type = rt.enum.hitbox_load_data.base,
+        char = char,
+        rsc = components._RequestSetCol,
+    })
+
+    return retval
+end
+
 return this
