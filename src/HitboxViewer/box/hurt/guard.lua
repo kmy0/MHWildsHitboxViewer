@@ -8,7 +8,6 @@ local data = require("HitboxViewer.data")
 
 local rt = data.runtime
 local ace = data.ace
-local rl = data.util.reverse_lookup
 
 ---@class GuardBox
 local this = {}
@@ -35,8 +34,13 @@ function this:update_shape()
     end
 
     local userdata = self.parent.weapon.userdata
-    local field_name = ace.map.guard_flag_to_field_name[self.parent.guard_type] or ace.map.guard_flag_to_field_name[-1] --[[@as string]]
-    local angle = ace.map.guard_flag_to_angle[self.parent.guard_type] or userdata:get_field(field_name)
+    local field_name = ace.map.guard_name_to_field_name[self.parent.guard_type]
+        or ace.map.guard_name_to_field_name["GUARD"]
+    local angle = ace.map.guard_name_to_angle[self.parent.guard_type] or userdata:get_field(field_name)
+
+    if not angle then
+        angle = userdata:get_field(ace.map.guard_name_to_field_name["GUARD"])
+    end
 
     self.shape_data.degrees = angle
     self.shape_data.direction = self.parent:get_guard_direction()
@@ -63,15 +67,14 @@ function this:update_data()
         return rt.enum.box_state.None
     end
 
-    local guard_name = rl(rt.enum.guard_type, self.parent.guard_type)
-    if config.current.hurtboxes.guard_type.disable[guard_name] then
+    if config.current.hurtboxes.guard_type.disable[self.parent.guard_type] then
         return rt.enum.box_state.None
     end
 
     if config.current.hurtboxes.use_one_color then
         self.color = config.current.hurtboxes.color.one_color
-    elseif config.current.hurtboxes.guard_type.color_enable[guard_name] then
-        self.color = config.current.hurtboxes.guard_type.color[guard_name]
+    elseif config.current.hurtboxes.guard_type.color_enable[self.parent.guard_type] then
+        self.color = config.current.hurtboxes.guard_type.color[self.parent.guard_type]
     else
         self.color = config.current.hurtboxes.color.highlight
     end

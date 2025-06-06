@@ -15,7 +15,6 @@
 
 ---@class (exact) Map
 ---@field update_order CharType[]
----@field guard_order GuardType[]
 
 ---@class RuntimeData
 local this = {
@@ -143,14 +142,6 @@ this.enum.hitbox_load_data = {
     rsc = 2,
     shell = 3,
 }
--- you can find all guard flags (other than HYPER) somewhere in app.cHunterStockDamage.checkGuard(app.HitInfo, app.cHunterDamageInfo) function
----@enum GuardType
-this.enum.guard_type = {
-    NORMAL = 2,
-    SPECIAL = 3,
-    AIM = 4,
-    HYPER = 8,
-}
 this.map.update_order = {
     this.enum.char.MasterPlayer,
     this.enum.char.BigMonster,
@@ -158,12 +149,6 @@ this.map.update_order = {
     this.enum.char.Pet,
     this.enum.char.Npc,
     this.enum.char.SmallMonster,
-}
-this.map.guard_order = {
-    this.enum.guard_type.HYPER,
-    this.enum.guard_type.AIM,
-    this.enum.guard_type.SPECIAL,
-    this.enum.guard_type.NORMAL,
 }
 
 ---@return app.GameFlowManager

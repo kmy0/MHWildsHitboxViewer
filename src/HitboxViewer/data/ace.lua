@@ -21,13 +21,15 @@
 ---@field friend_hit_type table<app.EnemyDef.Damage.FRIEND_HIT_TYPE, string>
 ---@field otomo_tool_type table<app.OtomoDef.USE_OTOMO_TOOL_TYPE, string>
 ---@field em_part_index table<app.user_data.EmParamParts.INDEX_CATEGORY, string>
+---@field hunter_status_flag table<app.HunterDef.STATUS_FLAG, string>
 
 ---@class (exact) AceMap
 ---@field meat_type_to_field_name table<string, string>
 ---@field char_type_to_name table<string, string>
 ---@field cMeatFields REField[]
----@field guard_flag_to_field_name table<integer, string>
----@field guard_flag_to_angle table<GuardType, number>
+---@field guard_name_to_field_name table<string, string>
+---@field guard_name_to_angle table<string, number>
+---@field guard_names string[]
 
 ---@class AceData
 local this = {
@@ -50,6 +52,7 @@ local this = {
         friend_hit_type = {},
         otomo_tool_type = {},
         em_part_index = {},
+        hunter_status_flag = {},
     },
     map = {
         meat_type_to_field_name = {
@@ -66,14 +69,27 @@ local this = {
             ["app.EnemyZakoCharacter"] = "SmallMonster",
         },
         cMeatFields = sdk.find_type_definition("app.user_data.EmParamParts.cMeat"):get_fields(),
-        guard_flag_to_field_name = {
-            [-1] = "_GuardDegree",
-            [2] = "_GuardDegree",
-            [3] = "_PowerGuardDegree",
-            [4] = "_AimGuardDegree",
+
+        guard_name_to_field_name = {
+            GUARD = "_GuardDegree",
+            GUARD_POINT = "_GuardDegree",
+            POWER_GUARD = "_PowerGuardDegree",
+            TECHNICAL_GUARD = "_AimGuardDegree",
+            LASER_GUARD = "_GuardDegree",
         },
-        guard_flag_to_angle = {
-            [8] = 360.0,
+        guard_name_to_angle = {
+            SUPER_ARMOR = 360.0,
+            HYPER_ARMOR = 360.0,
+        },
+        -- sorted by check order
+        guard_names = {
+            "HYPER_ARMOR",
+            "SUPER_ARMOR",
+            "TECHNICAL_GUARD",
+            "GUARD_POINT",
+            "LASER_GUARD",
+            "POWER_GUARD",
+            "GUARD",
         },
     },
 }

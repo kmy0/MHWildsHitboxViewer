@@ -2,7 +2,7 @@
 ---@field status_flags ace.cSafeContinueFlagGroup
 ---@field base app.HunterCharacter
 ---@field weapon Weapon
----@field guard_type GuardType?
+---@field guard_type string?
 ---@field direction Vector3f
 ---@field overwrite_guard_direction Vector3f?
 ---@field front_col via.physics.Collidable
@@ -15,11 +15,14 @@
 ---@field type app.WeaponDef.TYPE
 
 local char_base = require("HitboxViewer.character.char_base")
+local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
 local table_util = require("HitboxViewer.table_util")
 local util = require("HitboxViewer.util")
 
 local rt = data.runtime
+local rl = data.util.reverse_lookup
+local ace = data.ace
 
 ---@class Player
 local this = {}
@@ -64,11 +67,15 @@ end
 
 function this:update_guard_type()
     self.guard_type = nil
-    for i = 0, #rt.map.guard_order do
-        local guard_type = rt.map.guard_order[i]
-        if self.status_flags:check(guard_type) then
+    for i = 1, #ace.map.guard_names do
+        local guard_type = ace.map.guard_names[i]
+        local guard_flag = rl(data.ace.enum.hunter_status_flag, guard_type)
+
+        if self.status_flags:check(guard_flag) then
             self.guard_type = guard_type
-            return
+            if not config.current.hurtboxes.guard_type.disable[self.guard_type] then
+                return
+            end
         end
     end
 end

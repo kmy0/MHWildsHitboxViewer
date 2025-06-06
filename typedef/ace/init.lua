@@ -472,3 +472,5 @@
 
 ---@class app.Wp10Insect.COMPONENTS : System.ValueType
 ---@field _RequestSetCol via.physics.RequestSetCollider
+
+---@class app.HunterDef.STATUS_FLAG : System.Enum
