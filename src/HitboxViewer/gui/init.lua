@@ -9,6 +9,7 @@ local table_util = require("HitboxViewer.table_util")
 local util = require("HitboxViewer.gui.util")
 
 local rt = data.runtime
+local ace = data.ace
 
 local this = {}
 local window = {
@@ -61,7 +62,14 @@ local function draw_hurtboxes_header()
             util.checkbox("Disable Bottom Guard Indicator##GuardHurtbox", "hurtboxes.guard_type.disable_bottom")
             util.tooltip("Hide Guard Indicator on Players Bottom Hurtbox")
             imgui.spacing()
-            util.box_type_setup(config.current.hurtboxes.guard_type, "hurtboxes.guard_type", "guard_type")
+            util.box_type_setup(
+                config.current.hurtboxes.guard_type,
+                "hurtboxes.guard_type",
+                "guard_type",
+                function(t, i, j)
+                    return table_util.table_contains(ace.map.guard_names, t[i])
+                end
+            )
             imgui.tree_pop()
         end
 
@@ -230,17 +238,38 @@ local function draw_hitboxes_header()
         imgui.text("Color application order:\nMisc Type > Guard Type > Damage Angle > Damage Type > Char")
         if imgui.tree_node("Damage Type") then
             imgui.spacing()
-            util.box_type_setup(config.current.hitboxes.damage_type, "hitboxes.damage_type", "damage_type")
+            util.box_type_setup(
+                config.current.hitboxes.damage_type,
+                "hitboxes.damage_type",
+                "damage_type",
+                function(t, i, j)
+                    return table_util.table_contains(table_util.values(ace.enum.damage_type), t[i])
+                end
+            )
             imgui.tree_pop()
         end
         if imgui.tree_node("Damage Angle") then
             imgui.spacing()
-            util.box_type_setup(config.current.hitboxes.damage_angle, "hitboxes.damage_angle", "damage_angle")
+            util.box_type_setup(
+                config.current.hitboxes.damage_angle,
+                "hitboxes.damage_angle",
+                "damage_angle",
+                function(t, i, j)
+                    return table_util.table_contains(table_util.values(ace.enum.damage_angle), t[i])
+                end
+            )
             imgui.tree_pop()
         end
         if imgui.tree_node("Guard Type") then
             imgui.spacing()
-            util.box_type_setup(config.current.hitboxes.guard_type, "hitboxes.guard_type", "guard_type")
+            util.box_type_setup(
+                config.current.hitboxes.guard_type,
+                "hitboxes.guard_type",
+                "guard_type",
+                function(t, i, j)
+                    return table_util.table_contains(table_util.values(ace.enum.guard_type), t[i])
+                end
+            )
             imgui.tree_pop()
         end
 
@@ -395,7 +424,7 @@ function this.draw()
     end
 
     imgui.spacing()
-    imgui.indent(10)
+    imgui.indent(5)
 
     util.checkbox("Draw Hitboxes", "enabled_hitboxes")
     local changed = util.checkbox("Draw Hurtboxes", "enabled_hurtboxes")
@@ -403,7 +432,7 @@ function this.draw()
         char.create_all_chars()
     end
 
-    imgui.unindent(10)
+    imgui.unindent(5)
 
     draw_hurtboxes_header()
     draw_hitboxes_header()
