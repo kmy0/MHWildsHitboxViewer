@@ -187,4 +187,21 @@ function this.split_string(s, sep)
     return ret
 end
 
+---@param char app.CharacterBase?
+---@return boolean
+function this.is_char_valid(char)
+    local ok, ret = pcall(function()
+        if char then
+            return char:get_Valid()
+        end
+        return false
+    end)
+
+    if not ok then
+        return false
+    end
+
+    return ret
+end
+
 return this

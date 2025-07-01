@@ -48,7 +48,7 @@ function this.get_char(game_object, char_base)
         char_base = util.get_component(game_object, "app.CharacterBase") --[[@as app.CharacterBase?]]
     end
 
-    if not char_base or not char_base:get_Started() or not char_base:get_Valid() then
+    if not char_base or not char_base:get_Started() or not util.is_char_valid(char_base) then
         return
     end
 

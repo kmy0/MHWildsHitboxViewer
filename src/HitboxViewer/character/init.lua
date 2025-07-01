@@ -27,7 +27,7 @@ end
 -- and things throw exceptions, couldnt find anything better to hook
 function this.get()
     for load_data in load_queue:get() do
-        if load_data.char_base and not load_data.char_base:get_Valid() then
+        if load_data.char_base and not util.is_char_valid(load_data.char_base) then
             goto continue
         end
 

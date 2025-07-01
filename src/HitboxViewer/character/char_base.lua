@@ -62,10 +62,7 @@ end
 
 ---@return boolean
 function this:is_dead()
-    local _, is_dead = pcall(function()
-        return not self.base:get_Valid()
-    end)
-    return is_dead or util.is_only_my_ref(self.base)
+    return not util.is_char_valid(self.base) or util.is_only_my_ref(self.base)
 end
 
 ---@param box HurtBoxBase
