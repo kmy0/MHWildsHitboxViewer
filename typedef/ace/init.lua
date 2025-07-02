@@ -460,6 +460,7 @@
 ---@class app.WeaponDef.TYPE : System.Enum
 ---@class via.SceneView : via.clr.ManagedObject
 ---@field get_PrimaryCamera fun(self: via.SceneView): via.Camera
+---@field get_WindowSize fun(self: via.SceneView): via.Size
 
 ---@class via.Camera : via.Component
 ---@class app.col_user_data.AttackParamPlShell : app.col_user_data.AttackParamPlBase

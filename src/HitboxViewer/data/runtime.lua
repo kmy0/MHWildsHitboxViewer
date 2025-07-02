@@ -16,6 +16,8 @@
 ---@class (exact) Map
 ---@field update_order CharType[]
 
+local util = require("HitboxViewer.util")
+
 ---@class RuntimeData
 local this = {
     state = { tick_count = 0 },

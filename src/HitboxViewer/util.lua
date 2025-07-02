@@ -104,6 +104,29 @@ function this.get_scene()
     )
 end
 
+---@return via.SceneView
+function this.get_main_view()
+    return sdk.call_native_func(
+        sdk.get_native_singleton("via.SceneManager"),
+        sdk.find_type_definition("via.SceneManager") --[[@as RETypeDefinition]],
+        "get_MainView()"
+    )
+end
+
+---@return {x: number, y:number}
+function this.get_screen_size()
+    local size = this.get_main_view():get_WindowSize()
+    return { x = size.w, y = size.h }
+end
+
+---@return {x: number, y:number}
+function this.get_screen_center()
+    local size = this.get_screen_size()
+    size.x = size.x / 2
+    size.y = size.y / 2
+    return size
+end
+
 ---@param type string?
 ---@return System.Array<REManagedObject>
 function this.get_all_components(type)
