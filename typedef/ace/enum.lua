@@ -1,0 +1,31 @@
+---@meta
+
+---@class via.Language : System.Enum
+---@class via.physics.ShapeType : System.Enum
+
+---@class app.NpcDef.ID : System.Enum
+---@class app.EnemyDef.PARTS_TYPE : System.Enum
+---@class app.Hit.ROD_EXTRACT : System.Enum
+---@class app.user_data.EmParamParts.MEAT_SLOT : System.Enum
+---@class app.user_data.EmParamParts.INDEX_CATEGORY : System.Enum
+---@class app.EnemyDef.ID : System.Enum
+---@class app.cFieldSceneParam.SCENE_TYPE : System.Enum
+---@class app.cEmModuleScar.cScarParts.STATE : System.Enum
+---@class app.HitDef.DAMAGE_TYPE_CUSTOM : System.Enum
+---@class app.HitDef.DAMAGE_ANGLE : System.Enum
+---@class app.HitDef.ATTR : System.Enum
+---@class app.Hit.GUARD_TYPE : System.Enum
+---@class app.HitDef.CONDITION : System.Enum
+---@class app.Hit.ATTACK_PARAM_TYPE : System.Enum
+---@class app.HitDef.ACTION_TYPE : System.Enum
+---@class app.HitDef.BATTLE_RIDING_ATTACK_TYPE : System.Enum
+---@class app.EnemyDef.Damage.ENEMY_DAMAGE_TYPE : System.Enum
+---@class app.EnemyDef.ATTACK_FILTER_TYPE : System.Enum
+---@class app.EnemyDef.Damage.FRIEND_HIT_TYPE : System.Enum
+---@class app.OtomoDef.USE_OTOMO_TOOL_TYPE : System.Enum
+---@class app.OtomoDef.USE_OTOMO_TOOL_TYPE_Fixed : System.Enum
+---@class app.HitDef.DAMAGE_TYPE : System.Enum
+---@class app.HunterDef.STATUS_FLAG : System.Enum
+---@class app.PressDef.PRESS_LEVEL: System.Enum
+---@class app.EnemyDef.PARTS_TYPE_Fixed : System.Enum
+---@class app.WeaponDef.TYPE : System.Enum
