@@ -73,10 +73,12 @@ function this.init()
     this.util.get_enum("app.OtomoDef.USE_OTOMO_TOOL_TYPE", this.ace.enum.otomo_tool_type)
     this.util.get_enum("app.user_data.EmParamParts.INDEX_CATEGORY", this.ace.enum.em_part_index)
     this.util.get_enum("app.HunterDef.STATUS_FLAG", this.ace.enum.hunter_status_flag)
+    this.util.get_enum("app.PressDef.PRESS_LEVEL", this.ace.enum.press_level)
 
     write_fields_to_config("app.HitDef.DAMAGE_TYPE", config.default.hitboxes.damage_type, config.default_color)
     write_fields_to_config("app.HitDef.DAMAGE_ANGLE", config.default.hitboxes.damage_angle, config.default_color)
     write_fields_to_config("app.Hit.GUARD_TYPE", config.default.hitboxes.guard_type, config.default_color)
+    write_fields_to_config("app.PressDef.PRESS_LEVEL", config.default.pressboxes.press_level, config.default_color)
     write_strings_to_config(this.custom_attack_type.sorted, config.default.hitboxes.misc_type, config.default_color)
     write_strings_to_config(
         table_util.sort(this.ace.map.guard_names),

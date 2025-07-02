@@ -2,10 +2,8 @@
 ---@field queue HurtBoxLoadData[]
 ---@field enqueue fun(self: HurtBoxLoadQueue , load_data: HurtBoxLoadData)
 
----@class (exact) HurtBoxLoadData : HurtBoxColLoadData
----@field resource_idx integer
----@field set_idx integer
----@field collidable_idx integer
+---@class (exact) HurtBoxLoadData : BoxLoadData
+---@field userdata app.col_user_data.DamageParam
 
 local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")

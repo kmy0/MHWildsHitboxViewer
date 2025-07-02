@@ -113,6 +113,59 @@ local function draw_hurtboxes_header()
     end
 end
 
+local function draw_pressboxes_header()
+    if imgui.collapsing_header("Pressboxes") then
+        imgui.indent(10)
+        imgui.spacing()
+
+        imgui.begin_rect()
+        util.checkbox("Disable Small Monsters##Pressbox", "pressboxes.disable.SmallMonster")
+        util.checkbox("Disable Big Monsters##Pressbox", "pressboxes.disable.BigMonster")
+        util.checkbox("Disable Pets##Pressbox", "pressboxes.disable.Pet")
+        util.checkbox("Disable Self##Pressbox", "pressboxes.disable.MasterPlayer")
+        util.checkbox("Disable Players##Pressbox", "pressboxes.disable.Player")
+        util.checkbox("Disable Npc##Pressbox", "pressboxes.disable.Npc")
+        imgui.end_rect(5, 10)
+
+        imgui.same_line()
+        util.set_pos(5)
+
+        imgui.begin_rect()
+        imgui.push_item_width(250)
+
+        imgui.begin_disabled(config.current.pressboxes.use_one_color)
+        util.color_edit("Small Monsters##Pressbox", "pressboxes.color.SmallMonster")
+        util.color_edit("Big Monsters##Pressbox", "pressboxes.color.BigMonster")
+        util.color_edit("Pets##Pressbox", "pressboxes.color.Pet")
+        util.color_edit("Self##Pressbox", "pressboxes.color.MasterPlayer")
+        util.color_edit("Players##Pressbox", "pressboxes.color.Player")
+        util.color_edit("Npc##Pressbox", "pressboxes.color.Npc")
+        imgui.end_disabled()
+
+        imgui.pop_item_width()
+        imgui.end_rect(5, 10)
+
+        imgui.spacing()
+        imgui.spacing()
+
+        if imgui.tree_node("Press Level") then
+            imgui.spacing()
+            util.box_type_setup(
+                config.current.pressboxes.press_level,
+                "pressboxes.press_level",
+                "press_level",
+                function(t, i, j)
+                    return table_util.table_contains(table_util.values(ace.enum.press_level), t[i])
+                end
+            )
+            imgui.tree_pop()
+        end
+
+        imgui.unindent(10)
+        imgui.spacing()
+    end
+end
+
 local function draw_settings_header()
     if imgui.collapsing_header("General Settings") then
         imgui.indent(10)
@@ -177,10 +230,37 @@ local function draw_settings_header()
                 for key, _ in pairs(config.current.hurtboxes.color) do
                     config.current.hurtboxes.color[key] = config.current.hurtboxes.color.one_color
                 end
+                for key, _ in pairs(config.current.hurtboxes.guard_type.color) do
+                    config.current.hurtboxes.guard_type.color[key] = config.current.hurtboxes.color.one_color
+                end
             end
 
             imgui.begin_disabled(not config.current.hurtboxes.use_one_color)
             util.color_edit("Hurtbox", "hurtboxes.color.one_color")
+            imgui.end_disabled()
+
+            imgui.spacing()
+            imgui.spacing()
+
+            util.checkbox("Use Single Color##Pressbox", "pressboxes.use_one_color")
+            imgui.same_line()
+
+            if imgui.button(util.spaced_string("Apply Pressbox Color To All Pressbox Colors", 3)) then
+                util.open_popup("confirm_all_colors_pressbox", 62, 30)
+            end
+
+            if util.popup_yesno("Are you sure?", "confirm_all_colors_pressbox") then
+                for key, _ in pairs(config.current.pressboxes.color) do
+                    config.current.pressboxes.color[key] = config.current.pressboxes.color.one_color
+                end
+                for key, _ in pairs(config.current.pressboxes.press_level.color) do
+                    config.current.pressboxes.press_level.color[key] = config.current.pressboxes.color.one_color
+                end
+            end
+
+            imgui.begin_disabled(not config.current.pressboxes.use_one_color)
+            util.color_edit("Pressbox", "pressboxes.color.one_color")
+
             imgui.end_disabled()
             imgui.tree_pop()
         end
@@ -428,7 +508,8 @@ function this.draw()
 
     util.checkbox("Draw Hitboxes", "enabled_hitboxes")
     local changed = util.checkbox("Draw Hurtboxes", "enabled_hurtboxes")
-    if changed and config.current.enabled_hurtboxes and rt.in_game() then
+    changed = util.checkbox("Draw Pressboxes", "enabled_pressboxes") or changed
+    if changed and (config.current.enabled_hurtboxes or config.current.enabled_pressboxes) and rt.in_game() then
         char.create_all_chars()
     end
 
@@ -436,6 +517,7 @@ function this.draw()
 
     draw_hurtboxes_header()
     draw_hitboxes_header()
+    draw_pressboxes_header()
     draw_settings_header()
     draw_hurtbox_info_header()
     draw_attack_log_header()

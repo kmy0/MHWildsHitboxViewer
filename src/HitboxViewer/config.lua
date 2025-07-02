@@ -24,6 +24,9 @@
 ---@field misc_type HitboxType
 ---@field table_size integer
 
+---@class (exact) PressboxSettings : BoxSettings
+---@field press_level HitboxType
+
 ---@class (exact) DrawSettings
 ---@field distance integer
 ---@field outline boolean
@@ -51,8 +54,10 @@
 ---@class (exact) Settings
 ---@field enabled_hurtboxes boolean
 ---@field enabled_hitboxes boolean
+---@field enabled_pressboxes boolean
 ---@field hurtboxes HurtboxSettings
 ---@field hitboxes HitboxSettings
+---@field pressboxes PressboxSettings
 ---@field draw DrawSettings
 ---@field gui GuiState
 
@@ -66,6 +71,7 @@
 ---@field max_char_loads integer
 ---@field max_char_updates integer
 ---@field max_hurtbox_loads integer
+---@field max_pressbox_loads integer
 ---@field min_char_interval integer
 ---@field max_char_interval integer
 ---@field max_char_creates integer
@@ -93,6 +99,7 @@ this.default_highlight_color = 1021633775
 this.max_table_size = 100
 this.max_char_loads = 1
 this.max_hurtbox_loads = 3
+this.max_pressbox_loads = 3
 this.max_part_group_updates = 1
 this.max_char_updates = 3
 this.max_char_creates = 3
@@ -104,6 +111,33 @@ this.current = {}
 this.default = {
     enabled_hitboxes = true,
     enabled_hurtboxes = true,
+    enabled_pressboxes = false,
+    pressboxes = {
+        disable = {
+            SmallMonster = false,
+            BigMonster = false,
+            Pet = false,
+            Player = false,
+            MasterPlayer = false,
+            Npc = false,
+        },
+        color = {
+            SmallMonster = this.default_color,
+            BigMonster = this.default_color,
+            Pet = this.default_color,
+            Player = this.default_color,
+            MasterPlayer = this.default_color,
+            Npc = this.default_color,
+            highlight = this.default_highlight_color,
+            one_color = this.default_color,
+        },
+        press_level = {
+            disable = {},
+            color = {},
+            color_enable = {},
+        },
+        use_one_color = false,
+    },
     hurtboxes = {
         disable = {
             SmallMonster = false,

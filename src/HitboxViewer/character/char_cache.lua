@@ -4,8 +4,8 @@
 ---@field by_type_by_gameobject table<CharType, table<via.GameObject, Character>>
 
 local char_ctor = require("HitboxViewer.character.char_ctor")
+local col_load_queue = require("HitboxViewer.box.collidable_queue")
 local data = require("HitboxViewer.data")
-local hurtbox_load_queue = require("HitboxViewer.box.hurt.collidable_queue")
 local table_util = require("HitboxViewer.table_util")
 local util = require("HitboxViewer.util")
 
@@ -63,7 +63,7 @@ function this.get_char(game_object, char_base)
         if o then
             this.by_gameobject[game_object] = o
             table_util.set_nested_value(this.by_type_by_gameobject, { o.type, game_object }, o)
-            hurtbox_load_queue:enqueue({ char = o, rsc = rsc })
+            col_load_queue:enqueue({ char = o, rsc = rsc })
             return o
         end
     end

@@ -38,7 +38,7 @@ sdk.hook(
     box.hitbox.hook.get_kinsect_attack_post
 )
 
-if config.current.enabled_hurtboxes and rt.in_game() then
+if config.current.enabled_hurtboxes or config.current.enabled_pressboxes and rt.in_game() then
     char.create_all_chars()
 end
 

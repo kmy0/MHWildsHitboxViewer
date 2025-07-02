@@ -12,7 +12,11 @@ function this.characters()
     draw_queue:clear()
 
     if
-        (not config.current.enabled_hurtboxes and not config.current.enabled_hitboxes)
+        (
+            not config.current.enabled_hurtboxes
+            and not config.current.enabled_hitboxes
+            and not config.current.enabled_pressboxes
+        )
         or not char.get_master_player()
         or rt.in_transition()
     then
@@ -64,9 +68,15 @@ function this.characters()
             if config.current.enabled_hitboxes then
                 draw_queue:enqueue(character:update_hitboxes())
             end
+
             if config.current.enabled_hurtboxes then
                 draw_queue:enqueue(character:update_hurtboxes())
             end
+
+            if config.current.enabled_pressboxes then
+                draw_queue:enqueue(character:update_pressboxes())
+            end
+
             ::continue::
         end
 
@@ -77,16 +87,12 @@ end
 function this.queues()
     rt.state.tick_count = rt.state.tick_count + 1
     char.get()
-    box.hurtbox.get()
-    box.hitbox.get()
-    box.dummy.get()
+    box.get()
 end
 
 function this.clear()
     rt.state.tick_count = 0
-    box.hurtbox.clear()
-    box.hitbox.clear()
-    box.dummy.clear()
+    box.clear()
     char.clear()
     draw_queue.clear()
 end

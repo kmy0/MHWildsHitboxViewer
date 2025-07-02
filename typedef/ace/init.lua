@@ -475,6 +475,11 @@
 ---@field _RequestSetCol via.physics.RequestSetCollider
 
 ---@class app.HunterDef.STATUS_FLAG : System.Enum
+---@class app.PressDef.PRESS_LEVEL: System.Enum
+
+---@class app.col_user_data.PressParam : via.physics.RequestSetColliderUserData
+---@field get_PressLevel fun(self: app.col_user_data.PressParam): app.PressDef.PRESS_LEVEL
+
 ---@class via.Size
 ---@field w System.Single
 ---@field h System.Single

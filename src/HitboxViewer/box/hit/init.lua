@@ -5,12 +5,12 @@ local friend = { player = base, npc = base, pet = base }
 local attack_log = require("HitboxViewer.attack_log")
 local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
-local queue = require("HitboxViewer.box.hit.load_queue")
 
 local rt = data.runtime
 
 local this = {
     hook = require("HitboxViewer.box.hit.hook"),
+    queue = require("HitboxViewer.box.hit.load_queue"),
 }
 
 ---@param load_data HitBoxLoadData
@@ -55,12 +55,8 @@ local function get_collidable(load_data)
     end)
 end
 
-function this.clear()
-    queue:clear()
-end
-
 function this.get()
-    for load_data in queue:get() do
+    for load_data in this.queue:get() do
         local char = load_data.char
 
         for col, userdata, resource_idx, set_idx, collidable_idx in get_collidable(load_data) do

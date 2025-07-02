@@ -9,6 +9,7 @@
 ---@field id integer
 ---@field hurtboxes table<via.physics.Collidable, HurtBoxBase>
 ---@field hitboxes table<via.physics.Collidable, HitBoxBase>
+---@field pressboxes table<via.physics.Collidable, PressBoxBase>
 ---@field hitbox_userdata_cache table<app.col_user_data.AttackParam | app.col_user_data.DamageParam, AttackLogEntry>
 ---@field order integer
 ---@field last_update_tick integer
@@ -46,6 +47,7 @@ function this:new(type, base, name)
         distance = 0,
         hurtboxes = {},
         hitboxes = {},
+        pressboxes = {},
         hitbox_userdata_cache = {},
         last_update_tick = 0,
     }
@@ -75,6 +77,11 @@ function this:add_hitbox(box)
     self.hitboxes[box.collidable] = box
 end
 
+---@param box PressBoxBase
+function this:add_pressbox(box)
+    self.pressboxes[box.collidable] = box
+end
+
 ---@param col via.physics.Collidable
 ---@return boolean
 function this:has_hitbox(col)
@@ -95,7 +102,7 @@ end
 
 ---@return boolean
 function this:is_disabled()
-    return self:is_hurtbox_disabled() and self:is_hitbox_disabled()
+    return self:is_hurtbox_disabled() and self:is_hitbox_disabled() and self:is_pressbox_disabled()
 end
 
 ---@return boolean
@@ -106,6 +113,11 @@ end
 ---@return boolean
 function this:is_hitbox_disabled()
     return config.current.hitboxes.disable[self.type_name]
+end
+
+---@return boolean
+function this:is_pressbox_disabled()
+    return config.current.pressboxes.disable[self.type_name]
 end
 
 ---@protected
@@ -135,13 +147,22 @@ function this:update_hurtboxes()
     return self:_update_boxes(self.hurtboxes)
 end
 
----@return HurtBoxBase[]?
+---@return HitBoxBase[]?
 function this:update_hitboxes()
     if self:is_hitbox_disabled() then
         return
     end
 
     return self:_update_boxes(self.hitboxes)
+end
+
+---@return PressBoxBase[]?
+function this:update_pressboxes()
+    if self:is_pressbox_disabled() then
+        return
+    end
+
+    return self:_update_boxes(self.pressboxes)
 end
 
 return this
