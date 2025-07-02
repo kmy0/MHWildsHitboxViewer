@@ -475,3 +475,6 @@
 ---@field _RequestSetCol via.physics.RequestSetCollider
 
 ---@class app.HunterDef.STATUS_FLAG : System.Enum
+---@class via.Size
+---@field w System.Single
+---@field h System.Single

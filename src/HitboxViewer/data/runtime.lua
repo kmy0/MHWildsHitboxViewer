@@ -201,11 +201,7 @@ end
 
 function this.update_camera()
     if not this.camera.transform then
-        local main_view = sdk.call_native_func(
-            sdk.get_native_singleton("via.SceneManager"),
-            sdk.find_type_definition("via.SceneManager") --[[@as RETypeDefinition]],
-            "get_MainView()"
-        ) --[[@as via.SceneView]]
+        local main_view = util.get_main_view()
         local camera = main_view:get_PrimaryCamera()
         local game_object = camera:get_GameObject()
         this.camera.transform = game_object:get_Transform()

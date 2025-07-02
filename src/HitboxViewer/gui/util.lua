@@ -1,5 +1,6 @@
 local config = require("HitboxViewer.config")
 local table_util = require("HitboxViewer.table_util")
+local util = require("HitboxViewer.util")
 
 local this = {}
 
@@ -30,6 +31,16 @@ function this.spaced_string(str, x)
     return string.rep(" ", x) .. str .. string.rep(" ", x)
 end
 
+---@param key string
+function this.open_popup(key, offset_x, offset_y)
+    offset_x = offset_x or 0
+    offset_y = offset_y or 0
+
+    local screen_center = util.get_screen_center()
+    imgui.set_next_window_pos(Vector2f.new(screen_center.x - offset_x, screen_center.y - offset_y))
+    imgui.open_popup(key)
+end
+
 ---@param str string
 ---@param key string
 ---@return boolean
@@ -37,8 +48,14 @@ function this.popup_yesno(str, key)
     local ret = false
     if imgui.begin_popup(key, 1 << 27) then
         imgui.spacing()
+        imgui.spacing()
+        imgui.spacing()
+        imgui.same_line()
         imgui.text(this.spaced_string(str, 3))
         imgui.spacing()
+
+        imgui.spacing()
+        imgui.same_line()
 
         if imgui.button(this.spaced_string("Yes", 3)) then
             imgui.close_current_popup()
@@ -51,6 +68,10 @@ function this.popup_yesno(str, key)
             imgui.close_current_popup()
         end
 
+        imgui.same_line()
+        imgui.spacing()
+
+        imgui.spacing()
         imgui.spacing()
         imgui.end_popup()
     end

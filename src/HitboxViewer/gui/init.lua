@@ -141,7 +141,7 @@ local function draw_settings_header()
             imgui.same_line()
 
             if imgui.button(util.spaced_string("Apply Hitbox Color To All Hitbox Colors", 3)) then
-                imgui.open_popup("confirm_all_colors_hitbox")
+                util.open_popup("confirm_all_colors_hitbox", 62, 30)
             end
 
             if util.popup_yesno("Are you sure?", "confirm_all_colors_hitbox") then
@@ -170,7 +170,7 @@ local function draw_settings_header()
             imgui.same_line()
 
             if imgui.button(util.spaced_string("Apply Hurtbox Color To All Hurtbox Colors", 3)) then
-                imgui.open_popup("confirm_all_colors_hurtbox")
+                util.open_popup("confirm_all_colors_hurtbox", 62, 30)
             end
 
             if util.popup_yesno("Are you sure?", "confirm_all_colors_hurtbox") then
@@ -186,7 +186,7 @@ local function draw_settings_header()
         end
 
         if imgui.button(util.spaced_string("Restore Defaults", 3)) then
-            imgui.open_popup("confirm_restore")
+            util.open_popup("confirm_restore", 62, 30)
         end
 
         if util.popup_yesno("Are you sure?", "confirm_restore") then
