@@ -22,7 +22,8 @@
 ---@field otomo_tool_type table<app.OtomoDef.USE_OTOMO_TOOL_TYPE, string>
 ---@field em_part_index table<app.user_data.EmParamParts.INDEX_CATEGORY, string>
 ---@field hunter_status_flag table<app.HunterDef.STATUS_FLAG, string>
----@field press_level table<app.PressDef.PRESS_LEVEL,string>
+---@field press_level table<app.PressDef.PRESS_LEVEL, string>
+---@field col_layer table<app.CollisionFilter.LAYER, string>
 
 ---@class (exact) AceMap
 ---@field meat_type_to_field_name table<string, string>
@@ -55,6 +56,7 @@ local this = {
         em_part_index = {},
         hunter_status_flag = {},
         press_level = {},
+        col_layer = {},
     },
     map = {
         meat_type_to_field_name = {

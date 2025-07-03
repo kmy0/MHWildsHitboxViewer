@@ -52,6 +52,10 @@
 ---@field get_TransformedShape fun(self: via.physics.Collidable): via.physics.Shape
 ---@field get_UserData fun(self: via.physics.Collidable): via.physics.UserData
 ---@field get_Enabled fun(self: via.physics.Collidable): System.Boolean
+---@field get_FilterInfo fun(self: via.physics.Collidable): via.physics.FilterInfo
+
+---@class via.physics.FilterInfo : via.clr.ManagedObject
+---@field get_Layer fun(self: via.physics.FilterInfo): app.CollisionFilter.LAYER
 
 ---@class via.Size
 ---@field w System.Single

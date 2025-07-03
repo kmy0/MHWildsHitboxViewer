@@ -161,6 +161,14 @@ local function draw_pressboxes_header()
             imgui.tree_pop()
         end
 
+        if imgui.tree_node("Layer") then
+            imgui.spacing()
+            util.box_type_setup(config.current.pressboxes.layer, "pressboxes.layer", "layer", function(t, i, j)
+                return table_util.table_contains(table_util.values(ace.enum.col_layer), t[i])
+            end)
+            imgui.tree_pop()
+        end
+
         imgui.unindent(10)
         imgui.spacing()
     end
@@ -255,6 +263,9 @@ local function draw_settings_header()
                 end
                 for key, _ in pairs(config.current.pressboxes.press_level.color) do
                     config.current.pressboxes.press_level.color[key] = config.current.pressboxes.color.one_color
+                end
+                for key, _ in pairs(config.current.pressboxes.layer.color) do
+                    config.current.pressboxes.layer.color[key] = config.current.pressboxes.color.one_color
                 end
             end
 

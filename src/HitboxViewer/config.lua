@@ -26,6 +26,7 @@
 
 ---@class (exact) PressboxSettings : BoxSettings
 ---@field press_level HitboxType
+---@field layer HitboxType
 
 ---@class (exact) DrawSettings
 ---@field distance integer
@@ -132,6 +133,11 @@ this.default = {
             one_color = this.default_color,
         },
         press_level = {
+            disable = {},
+            color = {},
+            color_enable = {},
+        },
+        layer = {
             disable = {},
             color = {},
             color_enable = {},

@@ -29,3 +29,4 @@
 ---@class app.PressDef.PRESS_LEVEL: System.Enum
 ---@class app.EnemyDef.PARTS_TYPE_Fixed : System.Enum
 ---@class app.WeaponDef.TYPE : System.Enum
+---@class app.CollisionFilter.LAYER

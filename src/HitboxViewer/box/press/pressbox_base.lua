@@ -1,5 +1,6 @@
 ---@class (exact) PressBoxBase : CollidableBase
 ---@field press_level string
+---@field layer string
 
 local colldable_base = require("HitboxViewer.box.collidable_base")
 local config = require("HitboxViewer.config")
@@ -32,12 +33,19 @@ function this:new(collidable, parent, resource_idx, set_idx, collidable_idx, pre
     ---@cast o PressBoxBase
     setmetatable(o, self)
     o.press_level = ace.enum.press_level[press_data:get_PressLevel()]
+
+    local filter_info = collidable:get_FilterInfo()
+    o.layer = ace.enum.col_layer[filter_info:get_Layer()]
+
     return o
 end
 
 ---@return BoxState
 function this:update_data()
-    if config.current.pressboxes.press_level.disable[self.press_level] then
+    if
+        config.current.pressboxes.press_level.disable[self.press_level]
+        or config.current.pressboxes.layer.disable[self.layer]
+    then
         return rt.enum.box_state.None
     end
 
@@ -45,6 +53,8 @@ function this:update_data()
         self.color = config.current.pressboxes.color.one_color
     elseif config.current.pressboxes.press_level.color_enable[self.press_level] then
         self.color = config.current.pressboxes.press_level.color[self.press_level]
+    elseif config.current.pressboxes.layer.color_enable[self.layer] then
+        self.color = config.current.pressboxes.layer.color[self.layer]
     else
         self.color = config.current.pressboxes.color[rl(rt.enum.char, self.parent.type)]
     end
