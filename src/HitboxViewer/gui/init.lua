@@ -13,7 +13,7 @@ local ace = data.ace
 
 local this = {}
 local window = {
-    flags = 0,
+    flags = 1024,
     condition = 1 << 1,
     font = nil,
 }
@@ -393,7 +393,7 @@ local function draw_hurtbox_info_header()
         )
 
         config.current.gui.hurtbox_info.is_opened =
-            imgui.begin_window("Hurtbox Info", config.current.gui.hurtbox_info.is_opened, window.flags)
+            imgui.begin_window("Hurtbox Info", config.current.gui.hurtbox_info.is_opened, 0)
         imgui.indent(10)
         imgui.spacing()
         hurtbox_info.draw()
@@ -441,7 +441,7 @@ local function draw_attack_log_header()
         )
 
         config.current.gui.attack_log.is_opened =
-            imgui.begin_window("Attack Log", config.current.gui.attack_log.is_opened, window.flags)
+            imgui.begin_window("Attack Log", config.current.gui.attack_log.is_opened, 0)
         imgui.indent(10)
         imgui.spacing()
         attack_log_gui.draw()
@@ -514,17 +514,39 @@ function this.draw()
         return
     end
 
-    imgui.spacing()
-    imgui.indent(5)
+    if imgui.begin_menu_bar() then
+        if imgui.begin_menu("Mod", true) then
+            imgui.spacing()
+            imgui.indent(2)
 
-    util.checkbox("Draw Hitboxes", "enabled_hitboxes")
-    local changed = util.checkbox("Draw Hurtboxes", "enabled_hurtboxes")
-    changed = util.checkbox("Draw Pressboxes", "enabled_pressboxes") or changed
-    if changed and (config.current.enabled_hurtboxes or config.current.enabled_pressboxes) and rt.in_game() then
-        char.create_all_chars()
+            local changed = false
+            if imgui.menu_item("Draw Hitboxes", nil, config.current.enabled_hitboxes) then
+                config.current.enabled_hitboxes = not config.current.enabled_hitboxes
+                config.save()
+            end
+
+            if imgui.menu_item("Draw Hurtboxes", nil, config.current.enabled_hurtboxes) then
+                config.current.enabled_hurtboxes = not config.current.enabled_hurtboxes
+                changed = true
+                config.save()
+            end
+
+            if imgui.menu_item("Draw Pressboxes", nil, config.current.enabled_pressboxes) then
+                config.current.enabled_pressboxes = not config.current.enabled_pressboxes
+                changed = true
+                config.save()
+            end
+
+            if changed and (config.current.enabled_hurtboxes or config.current.enabled_pressboxes) and rt.in_game() then
+                char.create_all_chars()
+            end
+
+            imgui.unindent(2)
+            imgui.spacing()
+            imgui.end_menu()
+        end
+        imgui.end_menu_bar()
     end
-
-    imgui.unindent(5)
 
     draw_hurtboxes_header()
     draw_hitboxes_header()
