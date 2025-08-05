@@ -24,13 +24,14 @@
 ---@class (exact) AttackLogEntry : AttackLogEntryData, AttackLogEntryBase
 
 ---@class AttackLog
----@field entries AttackLogEntry[]
+---@field entries CircularBuffer<AttackLogEntry>
 ---@field this_tick table<integer, boolean>
 ---@field open_entries table<integer, boolean>
 ---@field last_tick integer
 ---@field entries_start integer
 ---@field row_count integer
 
+local circular_buffer = require("HitboxViewer.circular_buffer")
 local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
 local table_util = require("HitboxViewer.table_util")
@@ -42,14 +43,12 @@ local rl = data.util.reverse_lookup
 
 ---@class AttackLog
 local this = {
-    entries = {},
+    entries = circular_buffer:new(config.max_table_size),
     this_tick = {},
     open_entries = {},
     last_tick = -1,
     entries_start = 1,
-    row_count = 0,
 }
-local actual_max = config.max_table_size + 50
 
 ---@param t table<string, any>
 local function fix_data(t)
@@ -64,35 +63,19 @@ local function fix_data(t)
     end
 end
 
----@protected
-function this:_resize()
-    local size = #self.entries
-    if size >= config.max_table_size then
-        self.entries_start = size - config.max_table_size + 2
-    end
-    if size > actual_max then
-        local t = {}
-        for i = size - config.max_table_size + 2, size do
-            table.insert(t, self.entries[i])
-        end
-        self.entries_start = 1
-        self.entries = t
-    end
-end
-
 ---@param entry AttackLogEntry
 ---@return boolean
 function this:log(entry)
     if rt.state.tick_count ~= self.last_tick then
         self.last_tick = rt.state.tick_count
         self.this_tick = {}
-        self:_resize()
     end
+
     if not self.this_tick[entry.attack_id] then
         if not config.current.gui.attack_log.pause then
-            table.insert(self.entries, entry)
-            self.row_count = self.row_count + 1
+            self.entries:push_back(entry)
         end
+
         self.this_tick[entry.attack_id] = true
         return true
     end
@@ -104,7 +87,6 @@ function this:clear()
     self.this_tick = {}
     self.open_entries = {}
     self.last_tick = -1
-    self.row_count = 0
 end
 
 ---@param userdata app.col_user_data.AttackParamPl

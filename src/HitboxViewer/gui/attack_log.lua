@@ -45,10 +45,11 @@ local table_data = {
 
 ---@param more_data table<string, any>
 ---@param title string
----@param row integer
-local function draw_more_data(more_data, title, row)
-    attack_log.open_entries[row] = imgui.begin_window(title, attack_log.open_entries[row])
+---@param i integer
+local function draw_more_data(more_data, title, i)
+    attack_log.open_entries[i] = imgui.begin_window("Row " .. i, attack_log.open_entries[i])
 
+    imgui.text(title)
     ---@diagnostic disable-next-line: param-type-mismatch
     if imgui.begin_table(title, 2, table_data.flags) then
         imgui.table_setup_column("Key")
@@ -96,8 +97,7 @@ function this.draw()
             end
 
             imgui.table_headers_row()
-            local row = attack_log.row_count
-            for i = #attack_log.entries, attack_log.entries_start, -1 do
+            for i = #attack_log.entries, 1, -1 do
                 imgui.table_next_row()
                 local entry = attack_log.entries[i]
 
@@ -106,28 +106,27 @@ function this.draw()
                     local header = table_data.headers[col]
 
                     if header == "Row" then
-                        imgui.text(row --[[@as string]])
+                        imgui.text(i --[[@as string]])
                     elseif header == "Char Name" then
                         imgui.text(entry[table_data.header_to_key[header]])
                     elseif header == "More Data" then
                         if
                             (
-                                imgui.button(util.spaced_string("Click##attack_log_click" .. row, 3))
-                                and not attack_log.open_entries[row]
-                            ) or attack_log.open_entries[row]
+                                imgui.button(util.spaced_string("Click##attack_log_click" .. i, 3))
+                                and not attack_log.open_entries[i]
+                            ) or attack_log.open_entries[i]
                         then
-                            attack_log.open_entries[row] = true
+                            attack_log.open_entries[i] = true
                             draw_more_data(
                                 entry.more_data,
-                                string.format("%s. %s, %s - %s", row, entry.char_name, entry.char_id, entry.attack_id),
-                                row
+                                string.format("%s, %s - %s", entry.char_name, entry.char_id, entry.attack_id),
+                                i
                             )
                         end
                     else
                         imgui.text(entry[table_data.header_to_key[header]])
                     end
                 end
-                row = row - 1
             end
             imgui.end_table()
         end
