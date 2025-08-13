@@ -29,9 +29,11 @@ setmetatable(this, { __index = box_base })
 ---@param collidable_idx integer
 ---@return CollidableBase?
 function this:new(collidable, parent, box_type, resource_idx, set_idx, collidable_idx)
-    local shape = collidable:get_TransformedShape()
+    local ok, shape = pcall(function()
+        return collidable:get_TransformedShape()
+    end)
 
-    if not shape then
+    if not ok or not shape then
         return
     end
 
