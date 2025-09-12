@@ -7,9 +7,6 @@
 ---@field type BoxType
 ---@field shape_type ShapeType
 ---@field shape_data ShapeData
----@field update_shape fun(self: BoxBase): BoxState
----@field update_data fun(self: BoxBase): BoxState
----@field update fun(self: BoxBase): BoxState
 
 ---@class (exact) CylinderShape
 ---@field pos_a Vector3f
@@ -31,9 +28,10 @@
 
 ---@alias ShapeData CylinderShape | BoxShape | SphereShape | SlicedCylinderShape
 
-local data = require("HitboxViewer.data")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
 
-local rt = data.runtime
+local mod = data.mod
 
 ---@class BoxBase
 local this = {}
@@ -47,24 +45,24 @@ function this:new(box_type, shape_type)
     local shape_data = {}
 
     if
-        shape_type == rt.enum.shape.Capsule
-        or shape_type == rt.enum.shape.Cylinder
-        or shape_type == rt.enum.shape.ContinuousCapsule
+        shape_type == mod.enum.shape.Capsule
+        or shape_type == mod.enum.shape.Cylinder
+        or shape_type == mod.enum.shape.ContinuousCapsule
     then
         ---@cast shape_data CylinderShape
         shape_data.pos_a = Vector3f.new(0, 0, 0)
         shape_data.pos_b = Vector3f.new(0, 0, 0)
         shape_data.radius = 0
-    elseif shape_type == rt.enum.shape.Sphere or shape_type == rt.enum.shape.ContinuousSphere then
+    elseif shape_type == mod.enum.shape.Sphere or shape_type == mod.enum.shape.ContinuousSphere then
         ---@cast shape_data SphereShape
         shape_data.pos = Vector3f.new(0, 0, 0)
         shape_data.radius = 0
-    elseif shape_type == rt.enum.shape.Box or shape_type == rt.enum.shape.Triangle then
+    elseif shape_type == mod.enum.shape.Box or shape_type == mod.enum.shape.Triangle then
         ---@cast shape_data BoxShape
         shape_data.pos = Vector3f.new(0, 0, 0)
         shape_data.extent = Vector3f.new(0, 0, 0)
         shape_data.rot = Matrix4x4f.new(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1)
-    elseif shape_type == rt.enum.shape.SlicedCylinder then
+    elseif shape_type == mod.enum.shape.SlicedCylinder then
         ---@cast shape_data SlicedCylinderShape
         shape_data.pos_a = Vector3f.new(0, 0, 0)
         shape_data.pos_b = Vector3f.new(0, 0, 0)
@@ -89,11 +87,25 @@ function this:new(box_type, shape_type)
 end
 
 ---@return BoxState
+function this:update_data()
+    self.color = config.default_color
+    return mod.enum.box_state.Draw
+end
+
+---@return BoxState
+function this:update_shape()
+    return mod.enum.box_state.Draw
+end
+
+---@return BoxState
 function this:update()
-    if self:update_data() == rt.enum.box_state.Draw and self:update_shape() == rt.enum.box_state.Draw then
-        return rt.enum.box_state.Draw
+    if
+        self:update_data() == mod.enum.box_state.Draw
+        and self:update_shape() == mod.enum.box_state.Draw
+    then
+        return mod.enum.box_state.Draw
     end
-    return rt.enum.box_state.None
+    return mod.enum.box_state.None
 end
 
 return this

@@ -3,12 +3,13 @@
 ---@field layer string
 
 local colldable_base = require("HitboxViewer.box.collidable_base")
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
+local game_data = require("HitboxViewer.util.game.data")
 
 local ace = data.ace
-local rt = data.runtime
-local rl = data.util.reverse_lookup
+local mod = data.mod
+local rl = game_data.reverse_lookup
 
 ---@class PressBoxBase
 local this = {}
@@ -24,7 +25,15 @@ setmetatable(this, { __index = colldable_base })
 ---@param press_data app.col_user_data.PressParam
 ---@return PressBoxBase?
 function this:new(collidable, parent, resource_idx, set_idx, collidable_idx, press_data)
-    local o = colldable_base.new(self, collidable, parent, rt.enum.box.HurtBox, resource_idx, set_idx, collidable_idx)
+    local o = colldable_base.new(
+        self,
+        collidable,
+        parent,
+        mod.enum.box.HurtBox,
+        resource_idx,
+        set_idx,
+        collidable_idx
+    )
 
     if not o then
         return
@@ -42,24 +51,26 @@ end
 
 ---@return BoxState
 function this:update_data()
+    local config_mod = config.current.mod
+
     if
-        config.current.pressboxes.press_level.disable[self.press_level]
-        or config.current.pressboxes.layer.disable[self.layer]
+        config_mod.pressboxes.press_level.disable[self.press_level]
+        or config_mod.pressboxes.layer.disable[self.layer]
     then
-        return rt.enum.box_state.None
+        return mod.enum.box_state.None
     end
 
-    if config.current.pressboxes.use_one_color then
-        self.color = config.current.pressboxes.color.one_color
-    elseif config.current.pressboxes.press_level.color_enable[self.press_level] then
-        self.color = config.current.pressboxes.press_level.color[self.press_level]
-    elseif config.current.pressboxes.layer.color_enable[self.layer] then
-        self.color = config.current.pressboxes.layer.color[self.layer]
+    if config_mod.pressboxes.press_level.color_enable[self.press_level] then
+        self.color = config_mod.pressboxes.press_level.color[self.press_level]
+    elseif config_mod.pressboxes.layer.color_enable[self.layer] then
+        self.color = config_mod.pressboxes.layer.color[self.layer]
+    elseif config_mod.pressboxes.color_enable[rl(mod.enum.char, self.parent.type)] then
+        self.color = config_mod.pressboxes.color[rl(mod.enum.char, self.parent.type)]
     else
-        self.color = config.current.pressboxes.color[rl(rt.enum.char, self.parent.type)]
+        self.color = config_mod.pressboxes.color.one_color
     end
 
-    return rt.enum.box_state.Draw
+    return mod.enum.box_state.Draw
 end
 
 return this

@@ -2,7 +2,7 @@
 ---@field types table<string, fun(entry: AttackLogEntry): boolean>
 ---@field sorted string[]
 
-local table_util = require("HitboxViewer.table_util")
+local util_table = require("HitboxViewer.util.misc.table")
 
 ---@class CustomAttackType
 local this = {
@@ -10,7 +10,7 @@ local this = {
     sorted = {},
 }
 
--- All possible 'entry' data is located at HitboxViewer/attack_log.lua, line 113, 176, 232, 313
+-- All possible 'entry' data is located at HitboxViewer/attack_log.lua
 -- keep in mind that booleans are strings
 
 function this.types.TerrainHitOnly(entry)
@@ -27,7 +27,8 @@ function this.types.Parry(entry)
 end
 
 function this.types.JustDodge(entry)
-    return entry.resource_path == "GameDesign/Player/ActionData/Common/Collision/Collider/Shell/PlShell_Just_Dodge.rcol"
+    return entry.resource_path
+        == "GameDesign/Player/ActionData/Common/Collision/Collider/Shell/PlShell_Just_Dodge.rcol"
 end
 
 function this.types.AttackHurtbox(entry)
@@ -47,7 +48,7 @@ function this.check(entry)
 end
 
 -- Evaluation order
--- this.sorted = table_util.keys(this.types)
+-- this.sorted = util_table.keys(this.types)
 -- table.sort(this.sorted)
 this.sorted = {
     "JustDodge",

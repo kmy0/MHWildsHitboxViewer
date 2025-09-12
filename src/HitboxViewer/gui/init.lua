@@ -1,564 +1,123 @@
-local attack_log_gui = require("HitboxViewer.gui.attack_log")
-local char = require("HitboxViewer.character")
-local conditions = require("HitboxViewer.box.hurt.conditions")
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
-local dummies = require("HitboxViewer.box.dummy")
-local hurtbox_info = require("HitboxViewer.gui.hurtbox_info")
-local table_util = require("HitboxViewer.table_util")
-local util = require("HitboxViewer.gui.util")
+local config = require("HitboxViewer.config.init")
+local draw_settings = require("HitboxViewer.gui.draw_settings")
+local gui_util = require("HitboxViewer.gui.util")
+local hitbox = require("HitboxViewer.gui.hitbox")
+local hurtbox = require("HitboxViewer.gui.hurtbox")
+local pressbox = require("HitboxViewer.gui.pressbox")
+local set = require("HitboxViewer.util.imgui.config_set"):new(config)
+local util_imgui = require("HitboxViewer.util.imgui.init")
 
-local rt = data.runtime
-local ace = data.ace
-
-local this = {}
-local window = {
-    flags = 1024,
-    condition = 1 << 1,
-    font = nil,
+local this = {
+    window = {
+        flags = 1024,
+        condition = 2,
+    },
 }
 
-local function draw_hurtboxes_header()
-    if imgui.collapsing_header("Hurtboxes") then
-        imgui.indent(10)
-        imgui.spacing()
+local function draw_menu_bar()
+    if imgui.begin_menu(gui_util.tr("menu.config.name")) then
+        set:menu_item(gui_util.tr("menu.config.draw_hitboxes"), "mod.enabled_hitboxes")
+        set:menu_item(gui_util.tr("menu.config.draw_hurtboxes"), "mod.enabled_hurtboxes")
+        set:menu_item(gui_util.tr("menu.config.draw_pressboxes"), "mod.enabled_pressboxes")
 
-        imgui.begin_rect()
-        util.checkbox("Disable Small Monsters##Hurtbox", "hurtboxes.disable.SmallMonster")
-        util.checkbox("Disable Big Monsters##Hurtbox", "hurtboxes.disable.BigMonster")
-        util.checkbox("Disable Pets##Hurtbox", "hurtboxes.disable.Pet")
-        util.checkbox("Disable Self##Hurtbox", "hurtboxes.disable.MasterPlayer")
-        util.checkbox("Disable Players##Hurtbox", "hurtboxes.disable.Player")
-        util.checkbox("Disable Npc##Hurtbox", "hurtboxes.disable.Npc")
-        imgui.end_rect(5, 10)
-
-        imgui.same_line()
-        util.set_pos(5)
-
-        imgui.begin_rect()
-        imgui.push_item_width(250)
-
-        imgui.begin_disabled(config.current.hurtboxes.use_one_color)
-        util.color_edit("Small Monsters##Hurtbox", "hurtboxes.color.SmallMonster")
-        util.color_edit("Big Monsters##Hurtbox", "hurtboxes.color.BigMonster")
-        util.color_edit("Pets##Hurtbox", "hurtboxes.color.Pet")
-        util.color_edit("Self##Hurtbox", "hurtboxes.color.MasterPlayer")
-        util.color_edit("Players##Hurtbox", "hurtboxes.color.Player")
-        util.color_edit("Npc##Hurtbox", "hurtboxes.color.Npc")
-        imgui.end_disabled()
-
-        imgui.pop_item_width()
-        imgui.end_rect(5, 10)
-
-        imgui.spacing()
-        imgui.spacing()
-
-        local node = imgui.tree_node("Guard")
-        util.tooltip("Player only")
-        if node then
-            imgui.spacing()
-            util.checkbox("Disable Top Guard Indicator##GuardHurtbox", "hurtboxes.guard_type.disable_top")
-            util.tooltip("Hide Guard Indicator on Players Top Hurtbox")
-            util.checkbox("Disable Bottom Guard Indicator##GuardHurtbox", "hurtboxes.guard_type.disable_bottom")
-            util.tooltip("Hide Guard Indicator on Players Bottom Hurtbox")
-            imgui.spacing()
-            util.box_type_setup(
-                config.current.hurtboxes.guard_type,
-                "hurtboxes.guard_type",
-                "guard_type",
-                function(t, i, j)
-                    return table_util.table_contains(ace.map.guard_names, t[i])
-                end
-            )
-            imgui.tree_pop()
-        end
-
-        node = imgui.tree_node("Conditions")
-        util.tooltip("Big Monster only\nEvaluated from top to bottom")
-        if node then
-            if imgui.button(util.spaced_string("Create", 3)) then
-                conditions.new_condition(rt.enum.condition_type.Element)
-            end
-            imgui.same_line()
-            imgui.push_item_width(200)
-            if
-                util.combo(
-                    "Default Hurtbox State",
-                    "hurtboxes.default_state",
-                    table_util.sort(table_util.keys(rt.enum.default_hurtbox_state), function(a, b)
-                        return rt.enum.default_hurtbox_state[a] < rt.enum.default_hurtbox_state[b]
-                    end)
-                )
-            then
-                for _, monster in pairs(char.cache.by_type_by_gameobject[rt.enum.char.BigMonster]) do
-                    ---@cast monster BigEnemy
-                    for _, part in pairs(monster.parts) do
-                        part.is_show = config.current.hurtboxes.default_state == rt.enum.default_hurtbox_state.Draw
-                    end
-                end
-            end
-            imgui.pop_item_width()
-            imgui.separator()
-            for i = 1, #conditions.sorted do
-                local cond = conditions.sorted[i]
-                if cond then
-                    hurtbox_info.draw_condition(cond)
-                end
-            end
-
-            imgui.tree_pop()
-        end
-        imgui.unindent(10)
-        imgui.spacing()
+        imgui.end_menu()
     end
-end
 
-local function draw_pressboxes_header()
-    if imgui.collapsing_header("Pressboxes") then
-        imgui.indent(10)
-        imgui.spacing()
+    if imgui.begin_menu(gui_util.tr("menu.language.name")) then
+        local config_lang = config.current.mod.lang
+        imgui.push_style_var(14, Vector2f.new(0, 2))
 
-        imgui.begin_rect()
-        util.checkbox("Disable Small Monsters##Pressbox", "pressboxes.disable.SmallMonster")
-        util.checkbox("Disable Big Monsters##Pressbox", "pressboxes.disable.BigMonster")
-        util.checkbox("Disable Pets##Pressbox", "pressboxes.disable.Pet")
-        util.checkbox("Disable Self##Pressbox", "pressboxes.disable.MasterPlayer")
-        util.checkbox("Disable Players##Pressbox", "pressboxes.disable.Player")
-        util.checkbox("Disable Npc##Pressbox", "pressboxes.disable.Npc")
-        imgui.end_rect(5, 10)
-
-        imgui.same_line()
-        util.set_pos(5)
-
-        imgui.begin_rect()
-        imgui.push_item_width(250)
-
-        imgui.begin_disabled(config.current.pressboxes.use_one_color)
-        util.color_edit("Small Monsters##Pressbox", "pressboxes.color.SmallMonster")
-        util.color_edit("Big Monsters##Pressbox", "pressboxes.color.BigMonster")
-        util.color_edit("Pets##Pressbox", "pressboxes.color.Pet")
-        util.color_edit("Self##Pressbox", "pressboxes.color.MasterPlayer")
-        util.color_edit("Players##Pressbox", "pressboxes.color.Player")
-        util.color_edit("Npc##Pressbox", "pressboxes.color.Npc")
-        imgui.end_disabled()
-
-        imgui.pop_item_width()
-        imgui.end_rect(5, 10)
-
-        imgui.spacing()
-        imgui.spacing()
-
-        if imgui.tree_node("Press Level") then
-            imgui.spacing()
-            util.box_type_setup(
-                config.current.pressboxes.press_level,
-                "pressboxes.press_level",
-                "press_level",
-                function(t, i, j)
-                    return table_util.table_contains(table_util.values(ace.enum.press_level), t[i])
-                end
-            )
-            imgui.tree_pop()
-        end
-
-        if imgui.tree_node("Layer") then
-            imgui.spacing()
-            util.box_type_setup(config.current.pressboxes.layer, "pressboxes.layer", "layer", function(t, i, j)
-                return table_util.table_contains(table_util.values(ace.enum.col_layer), t[i])
-            end)
-            imgui.tree_pop()
-        end
-
-        imgui.unindent(10)
-        imgui.spacing()
-    end
-end
-
-local function draw_settings_header()
-    if imgui.collapsing_header("General Settings") then
-        imgui.indent(10)
-
-        imgui.push_item_width(250)
-        util.combo("Shape Spawner", "gui.dummy_shape", rt.enum.shape_dummy)
-        imgui.pop_item_width()
-        imgui.same_line()
-
-        if imgui.button(util.spaced_string("Go", 7)) then
-            dummies.spawn(config.current.gui.dummy_shape)
-        end
-        imgui.same_line()
-        if imgui.button(util.spaced_string("Clear", 6)) then
-            dummies.clear()
-        end
-
-        imgui.push_item_width(519)
-        util.slider_float("Draw Distance", "draw.distance", 0, 10000, "%.0f")
-        imgui.pop_item_width()
-        util.checkbox("Show Outline", "draw.outline")
-
-        if imgui.tree_node("Colors") then
-            util.color_edit("Outline", "draw.outline_color")
-            util.checkbox("Use Single Color##Hitbox", "hitboxes.use_one_color")
-            imgui.same_line()
-
-            if imgui.button(util.spaced_string("Apply Hitbox Color To All Hitbox Colors", 3)) then
-                util.open_popup("confirm_all_colors_hitbox", 62, 30)
+        for i = 1, #config.lang.sorted do
+            local menu_item = config.lang.sorted[i]
+            if util_imgui.menu_item(menu_item, config_lang.file == menu_item) then
+                config_lang.file = menu_item
+                config.lang:change()
+                config:save()
             end
-
-            if util.popup_yesno("Are you sure?", "confirm_all_colors_hitbox") then
-                for key, _ in pairs(config.current.hitboxes.color) do
-                    config.current.hitboxes.color[key] = config.current.hitboxes.color.one_color
-                end
-                for key, _ in pairs(config.current.hitboxes.damage_type.color) do
-                    config.current.hitboxes.damage_type.color[key] = config.current.hitboxes.color.one_color
-                end
-                for key, _ in pairs(config.current.hitboxes.damage_angle.color) do
-                    config.current.hitboxes.damage_angle.color[key] = config.current.hitboxes.color.one_color
-                end
-                for key, _ in pairs(config.current.hitboxes.guard_type.color) do
-                    config.current.hitboxes.guard_type.color[key] = config.current.hitboxes.color.one_color
-                end
-            end
-
-            imgui.begin_disabled(not config.current.hitboxes.use_one_color)
-            util.color_edit("Hitbox", "hitboxes.color.one_color")
-            imgui.end_disabled()
-
-            imgui.spacing()
-            imgui.spacing()
-
-            util.checkbox("Use Single Color##Hurtbox", "hurtboxes.use_one_color")
-            imgui.same_line()
-
-            if imgui.button(util.spaced_string("Apply Hurtbox Color To All Hurtbox Colors", 3)) then
-                util.open_popup("confirm_all_colors_hurtbox", 62, 30)
-            end
-
-            if util.popup_yesno("Are you sure?", "confirm_all_colors_hurtbox") then
-                for key, _ in pairs(config.current.hurtboxes.color) do
-                    config.current.hurtboxes.color[key] = config.current.hurtboxes.color.one_color
-                end
-                for key, _ in pairs(config.current.hurtboxes.guard_type.color) do
-                    config.current.hurtboxes.guard_type.color[key] = config.current.hurtboxes.color.one_color
-                end
-            end
-
-            imgui.begin_disabled(not config.current.hurtboxes.use_one_color)
-            util.color_edit("Hurtbox", "hurtboxes.color.one_color")
-            imgui.end_disabled()
-
-            imgui.spacing()
-            imgui.spacing()
-
-            util.checkbox("Use Single Color##Pressbox", "pressboxes.use_one_color")
-            imgui.same_line()
-
-            if imgui.button(util.spaced_string("Apply Pressbox Color To All Pressbox Colors", 3)) then
-                util.open_popup("confirm_all_colors_pressbox", 62, 30)
-            end
-
-            if util.popup_yesno("Are you sure?", "confirm_all_colors_pressbox") then
-                for key, _ in pairs(config.current.pressboxes.color) do
-                    config.current.pressboxes.color[key] = config.current.pressboxes.color.one_color
-                end
-                for key, _ in pairs(config.current.pressboxes.press_level.color) do
-                    config.current.pressboxes.press_level.color[key] = config.current.pressboxes.color.one_color
-                end
-                for key, _ in pairs(config.current.pressboxes.layer.color) do
-                    config.current.pressboxes.layer.color[key] = config.current.pressboxes.color.one_color
-                end
-            end
-
-            imgui.begin_disabled(not config.current.pressboxes.use_one_color)
-            util.color_edit("Pressbox", "pressboxes.color.one_color")
-
-            imgui.end_disabled()
-            imgui.tree_pop()
         end
 
-        if imgui.button(util.spaced_string("Restore Defaults", 3)) then
-            util.open_popup("confirm_restore", 62, 30)
-        end
-
-        if util.popup_yesno("Are you sure?", "confirm_restore") then
-            config.restore()
-            conditions:restore_default()
-        end
-
-        imgui.unindent(10)
         imgui.separator()
-        imgui.spacing()
-    end
-end
 
-local function draw_hitboxes_header()
-    if imgui.collapsing_header("Hitboxes") then
-        imgui.indent(10)
-        imgui.spacing()
+        set:menu_item(gui_util.tr("menu.language.fallback"), "mod.lang.fallback")
+        util_imgui.tooltip(config.lang:tr("menu.language.fallback_tooltip"))
 
-        imgui.begin_rect()
-        util.checkbox("Disable Small Monsters##Hitbox", "hitboxes.disable.SmallMonster")
-        util.checkbox("Disable Big Monsters##Hitbox", "hitboxes.disable.BigMonster")
-        util.checkbox("Disable Pets##Hitbox", "hitboxes.disable.Pet")
-        util.checkbox("Disable Self##Hitbox", "hitboxes.disable.MasterPlayer")
-        util.checkbox("Disable Players##Hitbox", "hitboxes.disable.Player")
-        util.checkbox("Disable Npc##Hitbox", "hitboxes.disable.Npc")
-        imgui.end_rect(5, 10)
-
-        imgui.same_line()
-        util.set_pos(5)
-
-        imgui.begin_rect()
-        imgui.push_item_width(250)
-
-        imgui.begin_disabled(config.current.hitboxes.use_one_color)
-        util.color_edit("Small Monsters##Hitbox", "hitboxes.color.SmallMonster")
-        util.color_edit("Big Monsters##Hitbox", "hitboxes.color.BigMonster")
-        util.color_edit("Pets##Hitbox", "hitboxes.color.Pet")
-        util.color_edit("Self##Hitbox", "hitboxes.color.MasterPlayer")
-        util.color_edit("Players##Hitbox", "hitboxes.color.Player")
-        util.color_edit("Npc##Hitbox", "hitboxes.color.Npc")
-        imgui.end_disabled()
-
-        imgui.pop_item_width()
-        imgui.end_rect(5, 10)
-
-        imgui.spacing()
-        imgui.spacing()
-
-        imgui.text("Color application order:\nMisc Type > Guard Type > Damage Angle > Damage Type > Char")
-        if imgui.tree_node("Damage Type") then
-            imgui.spacing()
-            util.box_type_setup(
-                config.current.hitboxes.damage_type,
-                "hitboxes.damage_type",
-                "damage_type",
-                function(t, i, j)
-                    return table_util.table_contains(table_util.values(ace.enum.damage_type), t[i])
-                end
-            )
-            imgui.tree_pop()
-        end
-        if imgui.tree_node("Damage Angle") then
-            imgui.spacing()
-            util.box_type_setup(
-                config.current.hitboxes.damage_angle,
-                "hitboxes.damage_angle",
-                "damage_angle",
-                function(t, i, j)
-                    return table_util.table_contains(table_util.values(ace.enum.damage_angle), t[i])
-                end
-            )
-            imgui.tree_pop()
-        end
-        if imgui.tree_node("Guard Type") then
-            imgui.spacing()
-            util.box_type_setup(
-                config.current.hitboxes.guard_type,
-                "hitboxes.guard_type",
-                "guard_type",
-                function(t, i, j)
-                    return table_util.table_contains(table_util.values(ace.enum.guard_type), t[i])
-                end
-            )
-            imgui.tree_pop()
-        end
-
-        local node = imgui.tree_node("Misc Type")
-        util.tooltip("Evaluated from top to bottom\nYou can add your own at HitboxViewer/data/custom_attack_type.lua")
-        if node then
-            imgui.spacing()
-            util.box_type_setup(config.current.hitboxes.misc_type, "hitboxes.misc_type", "misc_type", function(t, i, j)
-                return table_util.table_contains(data.custom_attack_type.sorted, t[i])
-            end, function(a, b)
-                return table_util.index(data.custom_attack_type.sorted, a)
-                    < table_util.index(data.custom_attack_type.sorted, b)
-            end)
-            imgui.tree_pop()
-        end
-        imgui.unindent(10)
-        imgui.spacing()
-    end
-end
-
-local function draw_hurtbox_info_header()
-    if config.current.gui.hurtbox_info.detach then
-        imgui.set_next_window_pos(
-            Vector2f.new(config.current.gui.hurtbox_info.pos_x, config.current.gui.hurtbox_info.pos_y),
-            window.condition
-        )
-        imgui.set_next_window_size(
-            Vector2f.new(config.current.gui.hurtbox_info.size_x, config.current.gui.hurtbox_info.size_y),
-            window.condition
-        )
-
-        config.current.gui.hurtbox_info.is_opened =
-            imgui.begin_window("Hurtbox Info", config.current.gui.hurtbox_info.is_opened, 0)
-        imgui.indent(10)
-        imgui.spacing()
-        hurtbox_info.draw()
-        imgui.unindent(10)
-        local pos = imgui.get_window_pos()
-        local size = imgui.get_window_size()
-        config.current.gui.hurtbox_info.pos_x, config.current.gui.hurtbox_info.pos_y = pos.x, pos.y
-        config.current.gui.hurtbox_info.size_x, config.current.gui.hurtbox_info.size_y = size.x, size.y
-        imgui.end_window()
+        imgui.pop_style_var(1)
+        imgui.end_menu()
     end
 
-    if not config.current.gui.hurtbox_info.is_opened then
-        config.current.gui.hurtbox_info.detach = false
+    if imgui.begin_menu(gui_util.tr("menu.draw_settings.name")) then
+        draw_settings.draw()
+
+        imgui.end_menu()
     end
 
-    if imgui.collapsing_header("Hurtbox Info") then
-        imgui.indent(10)
-        imgui.spacing()
-        if not config.current.gui.hurtbox_info.detach then
-            if imgui.button(util.spaced_string("Detach", 3) .. "##detatch_hurtbox_info") then
-                config.current.gui.hurtbox_info.detach = true
-                config.current.gui.hurtbox_info.is_opened = true
-            end
+    local config_gui = config.gui.current.gui
+    imgui.same_line()
 
-            hurtbox_info.draw()
-        else
-            imgui.text("Detached")
-        end
-
-        imgui.spacing()
-        imgui.unindent(10)
-        imgui.spacing()
-    end
-end
-
-local function draw_attack_log_header()
-    if config.current.gui.attack_log.detach then
-        imgui.set_next_window_pos(
-            Vector2f.new(config.current.gui.attack_log.pos_x, config.current.gui.attack_log.pos_y),
-            window.condition
-        )
-        imgui.set_next_window_size(
-            Vector2f.new(config.current.gui.attack_log.size_x, config.current.gui.attack_log.size_y),
-            window.condition
-        )
-
-        config.current.gui.attack_log.is_opened =
-            imgui.begin_window("Attack Log", config.current.gui.attack_log.is_opened, 0)
-        imgui.indent(10)
-        imgui.spacing()
-        attack_log_gui.draw()
-        imgui.unindent(10)
-        local pos = imgui.get_window_pos()
-        local size = imgui.get_window_size()
-        config.current.gui.attack_log.pos_x, config.current.gui.attack_log.pos_y = pos.x, pos.y
-        config.current.gui.attack_log.size_x, config.current.gui.attack_log.size_y = size.x, size.y
-        imgui.end_window()
+    if imgui.button(gui_util.tr("mod.button_attack_log")) then
+        config_gui.attack_log.is_opened = true
     end
 
-    if not config.current.gui.attack_log.is_opened then
-        config.current.gui.attack_log.detach = false
-    end
+    imgui.same_line()
 
-    if imgui.collapsing_header("Attack Log") then
-        imgui.indent(10)
-        imgui.spacing()
-        if not config.current.gui.attack_log.detach then
-            if imgui.button(util.spaced_string("Detach", 3) .. "##detatch_attack_log") then
-                config.current.gui.attack_log.detach = true
-                config.current.gui.attack_log.is_opened = true
-            end
-            attack_log_gui.draw()
-        else
-            imgui.text("Detached")
-        end
-
-        imgui.spacing()
-        imgui.unindent(10)
-        imgui.spacing()
+    if imgui.button(gui_util.tr("mod.button_hurtbox_info")) then
+        config_gui.hurtbox_info.is_opened = true
     end
 end
 
 function this.draw()
-    imgui.set_next_window_pos(
-        Vector2f.new(config.current.gui.main.pos_x, config.current.gui.main.pos_y),
-        window.condition
-    )
+    local gui_main = config.gui.current.gui.main
+
+    imgui.set_next_window_pos(Vector2f.new(gui_main.pos_x, gui_main.pos_y), this.window.condition)
     imgui.set_next_window_size(
-        Vector2f.new(config.current.gui.main.size_x, config.current.gui.main.size_y),
-        window.condition
+        Vector2f.new(gui_main.size_x, gui_main.size_y),
+        this.window.condition
     )
 
-    if not this.font then
-        ---@diagnostic disable-next-line: param-type-mismatch
-        this.font = imgui.load_font(nil, 16, { 0x1, 0xFFFF, 0 })
+    if config.lang.font then
+        imgui.push_font(config.lang.font)
     end
 
-    if this.font then
-        imgui.push_font(this.font)
-    end
-
-    config.current.gui.main.is_opened = imgui.begin_window(
-        string.format("%s %s", config.name, config.version),
-        config.current.gui.main.is_opened,
-        window.flags
+    gui_main.is_opened = imgui.begin_window(
+        string.format("%s %s", config.name, config.commit),
+        gui_main.is_opened,
+        this.window.flags
     )
 
-    if not config.current.gui.main.is_opened then
-        imgui.end_window()
-        local pos = imgui.get_window_pos()
-        local size = imgui.get_window_size()
-        config.current.gui.main.pos_x, config.current.gui.main.pos_y = pos.x, pos.y
-        config.current.gui.main.size_x, config.current.gui.main.size_y = size.x, size.y
-        config.save()
-        if this.font then
+    local pos = imgui.get_window_pos()
+    local size = imgui.get_window_size()
+
+    gui_main.pos_x, gui_main.pos_y = pos.x, pos.y
+    gui_main.size_x, gui_main.size_y = size.x, size.y
+
+    if not gui_main.is_opened then
+        if config.lang.font then
             imgui.pop_font()
         end
+
+        config.save_global()
+        imgui.end_window()
         return
     end
 
     if imgui.begin_menu_bar() then
-        if imgui.begin_menu("Mod", true) then
-            imgui.spacing()
-            imgui.indent(2)
-
-            local changed = false
-            if imgui.menu_item("Draw Hitboxes", nil, config.current.enabled_hitboxes) then
-                config.current.enabled_hitboxes = not config.current.enabled_hitboxes
-                config.save()
-            end
-
-            if imgui.menu_item("Draw Hurtboxes", nil, config.current.enabled_hurtboxes) then
-                config.current.enabled_hurtboxes = not config.current.enabled_hurtboxes
-                changed = true
-                config.save()
-            end
-
-            if imgui.menu_item("Draw Pressboxes", nil, config.current.enabled_pressboxes) then
-                config.current.enabled_pressboxes = not config.current.enabled_pressboxes
-                changed = true
-                config.save()
-            end
-
-            if changed and (config.current.enabled_hurtboxes or config.current.enabled_pressboxes) and rt.in_game() then
-                char.create_all_chars()
-            end
-
-            imgui.unindent(2)
-            imgui.spacing()
-            imgui.end_menu()
-        end
+        draw_menu_bar()
         imgui.end_menu_bar()
     end
 
-    draw_hurtboxes_header()
-    draw_hitboxes_header()
-    draw_pressboxes_header()
-    draw_settings_header()
-    draw_hurtbox_info_header()
-    draw_attack_log_header()
+    imgui.spacing()
+    imgui.indent(3)
 
-    if this.font then
+    hitbox.draw()
+    hurtbox.draw()
+    pressbox.draw()
+
+    if config.lang.font then
         imgui.pop_font()
     end
 
+    imgui.unindent(3)
+    imgui.spacing()
     imgui.end_window()
 end
 

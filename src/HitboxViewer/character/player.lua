@@ -14,33 +14,36 @@
 ---@field handling app.cHunterWeaponHandlingBase
 ---@field type app.WeaponDef.TYPE
 
-local char_base = require("HitboxViewer.character.char_base")
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
-local table_util = require("HitboxViewer.table_util")
-local util = require("HitboxViewer.util")
+local char_cls = require("HitboxViewer.character.char_base")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
+local game_data = require("HitboxViewer.util.game.data")
+local m = require("HitboxViewer.util.ref.methods")
+local s = require("HitboxViewer.util.ref.singletons")
+local util_game = require("HitboxViewer.util.game.init")
+local util_table = require("HitboxViewer.util.misc.table")
 
-local rt = data.runtime
-local rl = data.util.reverse_lookup
+local mod = data.mod
+local rl = game_data.reverse_lookup
 local ace = data.ace
 
 ---@class Player
 local this = {}
 ---@diagnostic disable-next-line: inject-field
 this.__index = this
-setmetatable(this, { __index = char_base })
+setmetatable(this, { __index = char_cls })
 
 ---@param type CharType
 ---@param base app.HunterCharacter
 ---@param name string
 ---@return Player
 function this:new(type, base, name)
-    local o = char_base.new(self, type, base, name)
+    local o = char_cls.new(self, type, base, name)
     ---@cast o Player
     setmetatable(o, self)
 
     local status = base:get_HunterStatus()
-    local rsc = util.get_component(o.game_object, "via.physics.RequestSetCollider") --[[@as via.physics.RequestSetCollider]]
+    local rsc = util_game.get_component(o.game_object, "via.physics.RequestSetCollider") --[[@as via.physics.RequestSetCollider]]
 
     o.status_flags = status._HunterStatusFlag
     o.direction = Vector3f.new(0, 0, 0)
@@ -59,7 +62,9 @@ function this:update_weapon()
 
     local weapon_type = self.base:get_WeaponType()
     if weapon_type ~= self.weapon.type then
-        self.weapon.userdata = rt.get_catalog():getWeaponActionParam(weapon_type)
+        local playman = s.get("app.PlayerManager")
+        local catalog = playman:get_Catalog()
+        self.weapon.userdata = catalog:getWeaponActionParam(weapon_type)
         self.weapon.type = weapon_type
         self.weapon.handling = self.base:get_WeaponHandling()
     end
@@ -73,7 +78,7 @@ function this:update_guard_type()
 
         if self.status_flags:check(guard_flag) then
             self.guard_type = guard_type
-            if not config.current.hurtboxes.guard_type.disable[self.guard_type] then
+            if not config.current.mod.hurtboxes.guard_type.disable[self.guard_type] then
                 return
             end
         end
@@ -81,8 +86,8 @@ function this:update_guard_type()
 end
 
 function this:update_direction()
-    local front_pos = util.calcCollidableCenter:call(nil, self.front_col) --[[@as Vector3f]]
-    local center_pos = util.calcCollidableCenter:call(nil, self.center_col) --[[@as Vector3f]]
+    local front_pos = m.calcCollidableCenter(self.front_col) --[[@as Vector3f]]
+    local center_pos = m.calcCollidableCenter(self.center_col) --[[@as Vector3f]]
     local dir = front_pos - center_pos
     dir:normalize()
     self.direction.x = dir.x
@@ -130,14 +135,14 @@ function this:update_hurtboxes()
     local ret = {}
     for col, box in pairs(self.hurtboxes) do
         local box_state, boxes = box:update()
-        if box_state == rt.enum.box_state.Draw and boxes then
+        if box_state == mod.enum.box_state.Draw and boxes then
             table.move(boxes, 1, #boxes, #ret + 1, ret)
-        elseif box_state == rt.enum.box_state.Dead then
+        elseif box_state == mod.enum.box_state.Dead then
             self.hurtboxes[col] = nil
         end
     end
 
-    if not table_util.empty(ret) then
+    if not util_table.empty(ret) then
         return ret
     end
 end

@@ -31,15 +31,16 @@
 ---@field entries_start integer
 ---@field row_count integer
 
-local circular_buffer = require("HitboxViewer.circular_buffer")
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
-local table_util = require("HitboxViewer.table_util")
+local circular_buffer = require("HitboxViewer.util.misc.circular_buffer")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
+local frame_counter = require("HitboxViewer.util.misc.frame_counter")
+local game_data = require("HitboxViewer.util.game.data")
+local util_table = require("HitboxViewer.util.misc.table")
 
 local ace = data.ace
-local rt = data.runtime
-local gui = data.gui
-local rl = data.util.reverse_lookup
+local mod = data.mod
+local rl = game_data.reverse_lookup
 
 ---@class AttackLog
 local this = {
@@ -66,13 +67,13 @@ end
 ---@param entry AttackLogEntry
 ---@return boolean
 function this:log(entry)
-    if rt.state.tick_count ~= self.last_tick then
-        self.last_tick = rt.state.tick_count
+    if frame_counter.frame ~= self.last_tick then
+        self.last_tick = frame_counter.frame
         self.this_tick = {}
     end
 
     if not self.this_tick[entry.attack_id] then
-        if not config.current.gui.attack_log.pause then
+        if not config.current.mod.hitboxes.pause_attack_log then
             self.entries:push_back(entry)
         end
 
@@ -83,7 +84,7 @@ function this:log(entry)
 end
 
 function this:clear()
-    self.entries = {}
+    self.entries:clear()
     self.this_tick = {}
     self.open_entries = {}
     self.last_tick = -1
@@ -155,14 +156,15 @@ end
 ---@param userdata app.col_user_data.AttackParamEm
 ---@return AttackLogEntryData
 function this.get_enemy_data(userdata)
+    local data_missing_string = config.lang:tr("misc.text_data_missing")
     return {
         motion_value = userdata._Attack,
-        element = gui.data_missing,
-        status = gui.data_missing,
-        part_break = gui.data_missing,
-        mount = gui.data_missing,
+        element = data_missing_string,
+        status = data_missing_string,
+        part_break = data_missing_string,
+        mount = data_missing_string,
         stun = userdata._StunDamage,
-        sharpness = gui.data_missing,
+        sharpness = data_missing_string,
         damage_type = ace.enum.damage_type[userdata:get_DamageType()],
         damage_angle = ace.enum.damage_angle[userdata:get_DamageAngle()],
         guard_type = ace.enum.guard_type[userdata:get_GuardType()],
@@ -210,14 +212,15 @@ end
 ---@param userdata app.col_user_data.AttackParamOt
 ---@return AttackLogEntryData
 function this.get_pet_data(userdata)
+    local data_missing_string = config.lang:tr("misc.text_data_missing")
     return {
         motion_value = userdata._Attack,
-        element = gui.data_missing,
-        status = gui.data_missing,
-        part_break = gui.data_missing,
-        mount = gui.data_missing,
+        element = data_missing_string,
+        status = data_missing_string,
+        part_break = data_missing_string,
+        mount = data_missing_string,
         stun = userdata._StunDamage,
-        sharpness = gui.data_missing,
+        sharpness = data_missing_string,
         damage_type = ace.enum.damage_type[userdata:get_DamageType()],
         damage_angle = ace.enum.damage_angle[userdata:get_DamageAngle()],
         guard_type = ace.enum.guard_type[userdata:get_GuardType()],
@@ -251,17 +254,18 @@ end
 ---@param userdata app.col_user_data.DamageParam
 ---@return AttackLogEntryData
 function this.get_hurtbox_data(userdata)
+    local data_missing_string = config.lang:tr("misc.text_data_missing")
     return {
         motion_value = 0,
-        element = gui.data_missing,
-        status = gui.data_missing,
-        part_break = gui.data_missing,
-        mount = gui.data_missing,
-        stun = gui.data_missing,
-        sharpness = gui.data_missing,
-        damage_type = gui.data_missing,
-        damage_angle = gui.data_missing,
-        guard_type = gui.data_missing,
+        element = data_missing_string,
+        status = data_missing_string,
+        part_break = data_missing_string,
+        mount = data_missing_string,
+        stun = data_missing_string,
+        sharpness = data_missing_string,
+        damage_type = data_missing_string,
+        damage_angle = data_missing_string,
+        guard_type = data_missing_string,
         attack_id = 0,
         more_data = {},
     }
@@ -288,7 +292,8 @@ function this.get_log_entry(char, userdata, rsc, resource_idx)
     local entry_data
 
     if
-        p_data_def:is_a("app.col_user_data.AttackParamPl") or p_data_def:is_a("app.col_user_data.AttackParamPlShell")
+        p_data_def:is_a("app.col_user_data.AttackParamPl")
+        or p_data_def:is_a("app.col_user_data.AttackParamPlShell")
     then
         ---@cast p_data app.col_user_data.AttackParamPl
         entry_data = this.get_player_data(p_data)
@@ -314,14 +319,15 @@ function this.get_log_entry(char, userdata, rsc, resource_idx)
 
     ---@type AttackLogEntryBase
     local entry_base = {
-        char_type = rt.enum.char.MasterPlayer == char.type and "Self" or rl(rt.enum.char, char.type),
+        char_type = mod.enum.char.MasterPlayer == char.type and "Self"
+            or rl(mod.enum.char, char.type),
         char_id = char.id,
         char_name = char.name,
         userdata_type = p_data_def,
         resource_idx = resource_idx,
         resource_path = resource:get_ResourcePath(),
     }
-    local ret = table_util.table_merge(entry_base, entry_data) --[[@as AttackLogEntry]]
+    local ret = util_table.merge(entry_base, entry_data) --[[@as AttackLogEntry]]
     ---@cast userdata app.col_user_data.AttackParam | app.col_user_data.DamageParam
     char.hitbox_userdata_cache[userdata] = ret
     return ret

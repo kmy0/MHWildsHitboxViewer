@@ -1,37 +1,30 @@
 local char_cache = require("HitboxViewer.character.char_cache")
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
+local game_data = require("HitboxViewer.util.game.data")
 local load_queue = require("HitboxViewer.box.hit.load_queue")
-local util = require("HitboxViewer.util")
+local util_game = require("HitboxViewer.util.game.init")
+local util_ref = require("HitboxViewer.util.ref.init")
 
-local rt = data.runtime
-local rl = data.util.reverse_lookup
+local mod = data.mod
+local rl = game_data.reverse_lookup
 
 local this = {}
 
-function this.get_shell_pre(args)
-    if not config.current.enabled_hitboxes then
-        return
-    end
-
-    local storage = thread.get_hook_storage()
-    storage["shellcolhit"] = sdk.to_managed_object(args[2])
-end
-
 function this.get_shell_post(retval)
-    if not config.current.enabled_hitboxes then
+    local config_mod = config.current.mod
+    if not config_mod.enabled_hitboxes then
         return
     end
 
-    local storage = thread.get_hook_storage()
-    if not storage or not storage["shellcolhit"] then
+    local shellcolhit = util_ref.get_this() --[[@as app.mcShellColHit?]]
+    if not shellcolhit then
         return
     end
 
-    local shellcolhit = storage["shellcolhit"] --[[@as app.mcShellColHit]]
     --FIXME: surely there must be better way to get actual owner of the shell???
     local shellcol_owner = shellcolhit:get_Owner()
-    local shell_base = util.get_component(shellcol_owner, "ace.ShellBase")
+    local shell_base = util_game.get_component(shellcol_owner, "ace.ShellBase")
     ---@cast shell_base ace.ShellBase
     local shell_owner = shell_base:get_ShellOwner()
     local shell_transform = shell_owner:get_Transform()
@@ -50,32 +43,32 @@ function this.get_shell_post(retval)
 
     if
         not char
-        or char.distance > config.current.draw.distance
-        or config.current.hitboxes.disable[rl(rt.enum.char, char.type)]
+        or char.distance > config_mod.draw.distance
+        or config_mod.hitboxes.disable[rl(mod.enum.char, char.type)]
     then
         return
     end
 
     local first_colider = shellcolhit._FirstCollider
-    local cols = util.system_array_to_lua(shellcolhit._SubColliders)
+    local cols = util_game.system_array_to_lua(shellcolhit._SubColliders)
     if first_colider then
         table.insert(cols, first_colider)
     end
 
-    load_queue:enqueue({
-        type = rt.enum.hitbox_load_data.shell,
+    load_queue:push_back({
+        type = mod.enum.hitbox_load_data.shell,
         char = char,
         colliders = cols,
         rsc = shellcolhit._ReqSetCol,
         res_idx = shellcolhit._CollisionResourceIndex,
         shellcolhit = shellcolhit,
     })
-
-    return retval
 end
 
 function this.get_attack_pre(args)
-    if not config.current.enabled_hitboxes or sdk.to_int64(args[3]) & 1 == 0 then
+    local config_mod = config.current.mod
+
+    if not config_mod.enabled_hitboxes or not util_ref.to_bool(args[3]) then
         return
     end
 
@@ -86,62 +79,52 @@ function this.get_attack_pre(args)
 
     if
         not char
-        or char.distance > config.current.draw.distance
-        or config.current.hitboxes.disable[rl(rt.enum.char, char.type)]
+        or char.distance > config_mod.draw.distance
+        or config_mod.hitboxes.disable[rl(mod.enum.char, char.type)]
     then
         return
     end
 
-    load_queue:enqueue({
-        type = rt.enum.hitbox_load_data.rsc,
+    load_queue:push_back({
+        type = mod.enum.hitbox_load_data.rsc,
         char = char,
         rsc = collider_switcher._RequestSetCollider,
-        res_idx = sdk.to_int64(args[4]) & 0xFFFFFFFF,
-        req_idx = sdk.to_int64(args[5]) & 0xFFFFFFFF,
+        res_idx = util_ref.to_int(args[4]),
+        req_idx = util_ref.to_int(args[5]),
     })
 end
 
-function this.get_kinsect_attack_pre(args)
-    if not config.current.enabled_hitboxes then
-        return
-    end
-
-    local storage = thread.get_hook_storage()
-    storage["insect"] = sdk.to_managed_object(args[2])
-end
-
 function this.get_kinsect_attack_post(retval)
-    if not config.current.enabled_hitboxes then
+    local config_mod = config.current.mod
+
+    if not config_mod.enabled_hitboxes then
         return
     end
 
-    local storage = thread.get_hook_storage()
-    if not storage or not storage["insect"] then
+    local insect = util_ref.get_this()--[[@as app.Wp10Insect?]]
+    if not insect then
         return
     end
 
-    local insect = storage["insect"] --[[@as app.Wp10Insect]]
     local owner = insect:get_Hunter()
     local game_object = owner:get_GameObject()
     local char = char_cache.get_char(game_object, owner)
 
     if
         not char
-        or char.distance > config.current.draw.distance
-        or config.current.hitboxes.disable[rl(rt.enum.char, char.type)]
+        or char.distance > config_mod.draw.distance
+        or config_mod.hitboxes.disable[rl(mod.enum.char, char.type)]
     then
         return
     end
 
     local components = insect._Components
 
-    load_queue:enqueue({
-        type = rt.enum.hitbox_load_data.base,
+    load_queue:push_back({
+        type = mod.enum.hitbox_load_data.base,
         char = char,
         rsc = components._RequestSetCol,
     })
-
-    return retval
 end
 
 return this

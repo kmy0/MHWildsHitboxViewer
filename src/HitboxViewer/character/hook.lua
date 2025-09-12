@@ -1,23 +1,16 @@
-local data = require("HitboxViewer.data")
+local frame_counter = require("HitboxViewer.util.misc.frame_counter")
 local load_queue = require("HitboxViewer.character.load_queue")
-
-local rt = data.runtime
+local util_ref = require("HitboxViewer.util.ref.init")
 
 local this = {}
 
-function this.get_base_pre(args)
-    local storage = thread.get_hook_storage()
-    storage["charbase"] = sdk.to_managed_object(args[2])
-end
-
 function this.get_base_post(retval)
-    local char_base = thread.get_hook_storage()["charbase"] --[[@as app.CharacterBase?]]
+    local char_base = util_ref.get_this() --[[@as app.CharacterBase?]]
     if not char_base then
         return
     end
 
-    load_queue:enqueue({ tick = rt.state.tick_count, char_base = char_base })
-    return retval
+    load_queue:push_back({ tick = frame_counter.frame, char_base = char_base })
 end
 
 return this

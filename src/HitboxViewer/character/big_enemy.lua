@@ -6,56 +6,54 @@
 ---@field pg_queue PGUpdateQueue
 ---@field scars table<string, ScarBox[]>
 
----@class (exact) PGUpdateQueue : QueueBase
+---@class (exact) PGUpdateQueue : Queue
 ---@field queue string[]
 ---@field get fun(self: PGUpdateQueue): fun(): string
 
-local char_base = require("HitboxViewer.character.char_base")
-local conditions = require("HitboxViewer.box.hurt.conditions")
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
-local queue_base = require("HitboxViewer.queue_base")
-local table_util = require("HitboxViewer.table_util")
+local char_cls = require("HitboxViewer.character.char_base")
+local conditions = require("HitboxViewer.box.hurt.conditions.init")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
+local queue = require("HitboxViewer.util.misc.queue")
+local util_misc = require("HitboxViewer.util.misc.init")
+local util_table = require("HitboxViewer.util.misc.table")
 
-local rt = data.runtime
+local mod = data.mod
 
 ---@class BigEnemy
 local this = {}
 ---@diagnostic disable-next-line: inject-field
 this.__index = this
-setmetatable(this, { __index = char_base })
+setmetatable(this, { __index = char_cls })
 
 ---@param base app.EnemyBossCharacter
 ---@param name string
 ---@param ctx app.cEnemyContext
 ---@return BigEnemy
 function this:new(base, name, ctx)
-    local o = char_base.new(self, rt.enum.char.BigMonster, base, name)
+    local o = char_cls.new(self, mod.enum.char.BigMonster, base, name)
     ---@cast o BigEnemy
     setmetatable(o, self)
     o.mc_holder = base._MiniComponentHolder
     o.browser = ctx:get_Browser()
     o.parts = {}
     o.ctx = ctx
-    o.pg_queue = queue_base:new() --[[@as PGUpdateQueue]]
+    o.pg_queue = queue:new() --[[@as PGUpdateQueue]]
     o.scars = {}
-
-    o.pg_queue.get = function()
-        ---@diagnostic disable-next-line: invisible
-        return o.pg_queue:_get(function()
-            return not rt.in_transition()
-        end, config.max_part_group_updates)
-    end
 
     return o
 end
 
 ---@return boolean
 function this:is_dead()
-    local _, is_dead = pcall(function()
-        return self.browser:get_IsDie()
+    local ret = false
+    util_misc.try(function()
+        ret = not self:is_valid()
+            or self.browser:get_reference_count() <= 1
+            or self.browser:get_IsDie()
     end)
-    return char_base.is_dead(self) or is_dead
+
+    return ret
 end
 
 ---@return PartGroup[]
@@ -84,14 +82,14 @@ function this:update_hurtboxes()
     end
 
     local ret = {}
-    if config.current.gui.main.is_opened or not conditions:empty() then
+    if config.gui.current.gui.hurtbox_info.is_opened or not conditions:empty() then
         if self.pg_queue:empty() then
-            self.pg_queue:swap(table_util.keys(self.parts))
+            self.pg_queue:extend_back(util_table.keys(self.parts))
         end
 
         ---@type table<string, integer>
         local updated = {}
-        for part_key in self.pg_queue:get() do
+        for part_key in self.pg_queue:iter(config.max_part_group_updates) do
             local part_group = self.parts[part_key]
             if part_group then
                 self.scars[part_key] = self.parts[part_key]:update()
@@ -119,7 +117,7 @@ function this:update_hurtboxes()
         table.move(boxes, 1, #boxes, #ret + 1, ret)
     end
 
-    if not table_util.empty(ret) then
+    if not util_table.empty(ret) then
         return ret
     end
 end

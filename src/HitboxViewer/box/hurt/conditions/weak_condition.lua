@@ -1,9 +1,9 @@
 ---@class WeakCondition : ConditionBase
 
 local condition_base = require("HitboxViewer.box.hurt.conditions.condition_base")
-local data = require("HitboxViewer.data")
+local data = require("HitboxViewer.data.init")
 
-local rt = data.runtime
+local mod = data.mod
 
 ---@class WeakCondition
 local this = {}
@@ -16,7 +16,7 @@ setmetatable(this, { __index = condition_base })
 ---@param key integer?
 ---@return WeakCondition
 function this:new(state, color, key)
-    local o = condition_base.new(self, rt.enum.condition_type.Weak, state, color, key)
+    local o = condition_base.new(self, mod.enum.condition_type.Weak, state, color, key)
     setmetatable(o, self)
     ---@cast o WeakCondition
     return o
@@ -32,11 +32,12 @@ end
 ---@return ConditionResult, integer
 function this:check(part_group)
     if part_group.part_data.is_weak then
-        return self.state == rt.enum.condition_state.Highlight and rt.enum.condition_result.Highlight
-            or rt.enum.condition_result.Hide,
+        return self.state == mod.enum.condition_state.Highlight
+                and mod.enum.condition_result.Highlight
+            or mod.enum.condition_result.Hide,
             self.color
     end
-    return rt.enum.condition_result.None, 0
+    return mod.enum.condition_result.None, 0
 end
 
 return this

@@ -1,34 +1,37 @@
-local box = require("HitboxViewer.box")
-local char = require("HitboxViewer.character")
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
+local box = require("HitboxViewer.box.init")
+local char = require("HitboxViewer.character.init")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
 local draw_queue = require("HitboxViewer.draw_queue")
+local frame_counter = require("HitboxViewer.util.misc.frame_counter")
+local queue = require("HitboxViewer.util.misc.queue")
+local util_game = require("HitboxViewer.util.game.init")
 
-local rt = data.runtime
+local mod = data.mod
 
 local this = {}
 
 function this.characters()
+    local config_mod = config.current.mod
     draw_queue:clear()
 
     if
         (
-            not config.current.enabled_hurtboxes
-            and not config.current.enabled_hitboxes
-            and not config.current.enabled_pressboxes
+            not config_mod.enabled_hurtboxes
+            and not config_mod.enabled_hitboxes
+            and not config_mod.enabled_pressboxes
         )
         or not char.get_master_player()
-        or rt.in_transition()
+        or mod.in_transition()
     then
         return
     end
 
-    local tick = rt.state.tick_count
-    local update_order = rt.map.update_order
+    local tick = frame_counter.frame
+    local update_order = mod.map.update_order
     local updated = 0
     local force_updated = 0
 
-    rt.update_camera()
     for i = 1, #update_order do
         local char_type = update_order[i]
         local characters = char.cache.by_type_by_gameobject[char_type]
@@ -53,7 +56,7 @@ function this.characters()
                     goto continue
                 end
 
-                out_of_range = not character:update_distance(rt.camera.origin)
+                out_of_range = not character:update_distance(util_game.get_camera_origin())
                 if not force_update then
                     updated = updated + 1
                 else
@@ -65,16 +68,16 @@ function this.characters()
                 goto continue
             end
 
-            if config.current.enabled_hitboxes then
-                draw_queue:enqueue(character:update_hitboxes())
+            if config_mod.enabled_hitboxes then
+                draw_queue:extend(character:update_hitboxes())
             end
 
-            if config.current.enabled_hurtboxes then
-                draw_queue:enqueue(character:update_hurtboxes())
+            if config_mod.enabled_hurtboxes then
+                draw_queue:extend(character:update_hurtboxes())
             end
 
-            if config.current.enabled_pressboxes then
-                draw_queue:enqueue(character:update_pressboxes())
+            if config_mod.enabled_pressboxes then
+                draw_queue:extend(character:update_pressboxes())
             end
 
             ::continue::
@@ -85,16 +88,16 @@ function this.characters()
 end
 
 function this.queues()
-    rt.state.tick_count = rt.state.tick_count + 1
+    if mod.in_transition() then
+        return
+    end
+
     char.get()
     box.get()
 end
 
 function this.clear()
-    rt.state.tick_count = 0
-    box.clear()
-    char.clear()
-    draw_queue.clear()
+    queue.clear_all()
 end
 
 return this

@@ -1,12 +1,12 @@
 ---@class (exact) BigEnemyHurtBox : EnemyHurtBox
 ---@field part_group PartGroup
 
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
 local enemy_hurtbox = require("HitboxViewer.box.hurt.enemy")
 local part_group = require("HitboxViewer.box.hurt.part_group")
 
-local rt = data.runtime
+local mod = data.mod
 
 ---@class BigEnemyHurtBox
 local this = {}
@@ -22,7 +22,15 @@ setmetatable(this, { __index = enemy_hurtbox })
 ---@param meat_data app.col_user_data.DamageParamEm
 ---@return BigEnemyHurtBox?
 function this:new(collidable, parent, resource_idx, set_idx, collidable_idx, meat_data)
-    local o = enemy_hurtbox.new(self, collidable, parent, resource_idx, set_idx, collidable_idx, meat_data)
+    local o = enemy_hurtbox.new(
+        self,
+        collidable,
+        parent,
+        resource_idx,
+        set_idx,
+        collidable_idx,
+        meat_data
+    )
 
     if not o then
         return
@@ -30,7 +38,7 @@ function this:new(collidable, parent, resource_idx, set_idx, collidable_idx, mea
 
     ---@cast o BigEnemyHurtBox
     setmetatable(o, self)
-    o.part_group = part_group:new(parent.parts, parent.ctx, parent.mc_holder, self, meat_data)
+    o.part_group = part_group:new(parent.parts, parent.ctx, parent.mc_holder, o, meat_data)
 
     if not o.part_group then
         return
@@ -40,19 +48,33 @@ end
 
 ---@return BoxState
 function this:update_data()
-    if not self.part_group.is_show and self.part_group.condition ~= rt.enum.condition_result.Highlight then
-        return rt.enum.box_state.None
+    local config_mod = config.current.mod
+
+    if not self.part_group.is_show then
+        return mod.enum.box_state.None
+    end
+
+    if
+        not self.part_group.is_highlight
+        and (
+            (
+                config_mod.hurtboxes.default_state ~= mod.enum.default_hurtbox_state.Draw
+                and self.part_group.condition ~= mod.enum.condition_result.Highlight
+            ) or self.part_group.condition == mod.enum.condition_result.Hide
+        )
+    then
+        return mod.enum.box_state.None
     end
 
     if self.part_group.is_highlight then
-        self.color = config.current.hurtboxes.color.highlight
-    elseif self.part_group.condition == rt.enum.condition_result.Highlight then
+        self.color = config_mod.hurtboxes.color.highlight
+    elseif self.part_group.condition == mod.enum.condition_result.Highlight then
         self.color = self.part_group.condition_color
     else
         return enemy_hurtbox.update_data(self)
     end
 
-    return rt.enum.box_state.Draw
+    return mod.enum.box_state.Draw
 end
 
 return this

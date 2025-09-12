@@ -1,12 +1,8 @@
 ---@class GuiData
----@field name_missing string
----@field data_missing string
 
 ---@class GuiData
-local this = {
-    name_missing = "???",
-    data_missing = " - ",
-}
+local this = {}
+
 ---@enum GuiColors
 this.colors = {
     bad = 0xff1947ff,
