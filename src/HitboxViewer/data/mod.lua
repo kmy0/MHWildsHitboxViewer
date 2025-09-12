@@ -1,29 +1,14 @@
 ---@class RuntimeData
----@field playman app.PlayerManager?
----@field flowman app.GameFlowManager?
----@field catalog app.cPlayerCatalogHolder?
----@field state State
 ---@field map Map
----@field camera Camera
-
----@class Camera
----@field transform via.Transform?
----@field origin Vector3f
-
----@class (exact) State
----@field tick_count integer
 
 ---@class (exact) Map
 ---@field update_order CharType[]
 
-local util = require("HitboxViewer.util")
+local frame_cache = require("HitboxViewer.util.misc.frame_cache")
+local s = require("HitboxViewer.util.ref.singletons")
 
 ---@class RuntimeData
 local this = {
-    state = { tick_count = 0 },
-    camera = {
-        origin = Vector3f.new(0, 0, 0),
-    },
     enum = {},
     ---@diagnostic disable-next-line: missing-fields
     map = {},
@@ -153,63 +138,31 @@ this.map.update_order = {
     this.enum.char.SmallMonster,
 }
 
----@return app.GameFlowManager
-function this.get_flowman()
-    if not this.flowman then
-        local obj = sdk.get_managed_singleton("app.GameFlowManager")
-        ---@cast obj app.GameFlowManager
-        this.flowman = obj
-    end
-    return this.flowman
-end
-
----@return app.PlayerManager
-function this.get_playman()
-    if not this.playman then
-        local obj = sdk.get_managed_singleton("app.PlayerManager")
-        ---@cast obj app.PlayerManager?
-        this.playman = obj
-    end
-    return this.playman
+---@return boolean
+function this.is_ok()
+    return this.in_game() and not this.in_transition()
 end
 
 ---@return boolean
 function this.in_game()
-    if not this.get_flowman() then
+    local flowman = s.get("app.GameFlowManager")
+    if not flowman then
         return false
     end
-    return this.get_flowman():get_CurrentGameScene() > 0
+    return flowman:get_CurrentGameScene() > 0
 end
 
 ---@return boolean
 function this.in_transition()
-    if not this.get_flowman() then
+    local flowman = s.get("app.GameFlowManager")
+    if not flowman then
         return true
     end
-    return this.get_flowman():get_NextGameStateType() ~= nil
+    return flowman:get_NextGameStateType() ~= nil
 end
 
----@return app.cPlayerCatalogHolder
-function this.get_catalog()
-    local playman = this.get_playman()
-    if not this.catalog then
-        local obj = playman:get_Catalog()
-        this.catalog = obj
-    end
-    return this.catalog
-end
-
-function this.update_camera()
-    if not this.camera.transform then
-        local main_view = util.get_main_view()
-        local camera = main_view:get_PrimaryCamera()
-        local game_object = camera:get_GameObject()
-        this.camera.transform = game_object:get_Transform()
-    end
-
-    if this.camera.transform then
-        this.camera.origin = this.camera.transform:get_Position()
-    end
-end
+this.is_ok = frame_cache.memoize(this.is_ok)
+this.in_game = frame_cache.memoize(this.in_game)
+this.in_transition = frame_cache.memoize(this.in_transition)
 
 return this

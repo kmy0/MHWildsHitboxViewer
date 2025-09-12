@@ -5,11 +5,11 @@
 ---@field key integer
 ---@field check fun(self: ConditionBase, part_data: PartGroup): ConditionResult, integer
 
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
-local table_util = require("HitboxViewer.table_util")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
+local util_table = require("HitboxViewer.util.misc.table")
 
-local rt = data.runtime
+local mod = data.mod
 
 ---@class ConditionBase
 local this = {}
@@ -23,9 +23,9 @@ this.__index = this
 ---@return ConditionBase
 function this:new(type, state, color, key)
     local o = {
-        color = color or config.default.hurtboxes.color.highlight,
+        color = color or config.default.mod.hurtboxes.color.highlight,
         type = type,
-        state = state or rt.enum.condition_state.Highlight,
+        state = state or mod.enum.condition_state.Highlight,
         key = key or self:_get_key(),
     }
     setmetatable(o, self)
@@ -42,7 +42,7 @@ end
 ---@protected
 ---@return integer
 function this:_get_key()
-    local keys = table_util.values(config.current.hurtboxes.conditions, function(o)
+    local keys = util_table.values(config.current.mod.hurtboxes.conditions, function(o)
         return o.key
     end)
     ---@cast keys integer[]

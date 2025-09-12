@@ -14,13 +14,15 @@
 ---@field order integer
 ---@field last_update_tick integer
 
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
-local table_util = require("HitboxViewer.table_util")
-local util = require("HitboxViewer.util")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
+local game_data = require("HitboxViewer.util.game.data")
+local util_misc = require("HitboxViewer.util.misc.init")
+local util_ref = require("HitboxViewer.util.ref.init")
+local util_table = require("HitboxViewer.util.misc.table")
 
-local rl = data.util.reverse_lookup
-local rt = data.runtime
+local rl = game_data.reverse_lookup
+local mod = data.mod
 
 local count = 0
 
@@ -37,7 +39,7 @@ function this:new(type, base, name)
     ---@type Character
     local o = {
         type = type,
-        type_name = rl(rt.enum.char, type),
+        type_name = rl(mod.enum.char, type),
         base = base,
         game_object = base:get_GameObject(),
         name = name,
@@ -64,7 +66,7 @@ end
 
 ---@return boolean
 function this:is_dead()
-    return not util.is_char_valid(self.base) or util.is_only_my_ref(self.base)
+    return not self:is_valid()
 end
 
 ---@param box HurtBoxBase
@@ -97,7 +99,7 @@ end
 
 ---@return boolean
 function this:is_out_of_range()
-    return self.distance > config.current.draw.distance
+    return self.distance > config.current.mod.draw.distance
 end
 
 ---@return boolean
@@ -107,17 +109,17 @@ end
 
 ---@return boolean
 function this:is_hurtbox_disabled()
-    return config.current.hurtboxes.disable[self.type_name]
+    return config.current.mod.hurtboxes.disable[self.type_name]
 end
 
 ---@return boolean
 function this:is_hitbox_disabled()
-    return config.current.hitboxes.disable[self.type_name]
+    return config.current.mod.hitboxes.disable[self.type_name]
 end
 
 ---@return boolean
 function this:is_pressbox_disabled()
-    return config.current.pressboxes.disable[self.type_name]
+    return config.current.mod.pressboxes.disable[self.type_name]
 end
 
 ---@protected
@@ -127,14 +129,14 @@ function this:_update_boxes(boxes)
     local ret = {}
     for col, box in pairs(boxes) do
         local box_state = box:update()
-        if box_state == rt.enum.box_state.Draw then
+        if box_state == mod.enum.box_state.Draw then
             table.insert(ret, box)
-        elseif box_state == rt.enum.box_state.Dead then
+        elseif box_state == mod.enum.box_state.Dead then
             boxes[col] = nil
         end
     end
 
-    if not table_util.empty(ret) then
+    if not util_table.empty(ret) then
         return ret
     end
 end
@@ -163,6 +165,20 @@ function this:update_pressboxes()
     end
 
     return self:_update_boxes(self.pressboxes)
+end
+
+---@param char app.CharacterBase?
+function this:is_valid(char)
+    local ret = false
+    util_misc.try(function()
+        char = char or self.base
+        if not char then
+            return
+        end
+
+        ret = char:get_Valid() and not util_ref.is_only_my_ref(char)
+    end)
+    return ret
 end
 
 return this

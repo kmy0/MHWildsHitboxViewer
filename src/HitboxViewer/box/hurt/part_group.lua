@@ -7,6 +7,7 @@
 ---@field condition_color integer
 ---@field hurtboxes BigEnemyHurtBox[]
 ---@field guid string
+---@field last_updated integer
 
 ---@class (exact) PartData
 ---@field hitzone table<string, integer>
@@ -22,16 +23,19 @@
 ---@field _dmg_part app.cEmModuleParts.cDamageParts
 ---@field _break_parts app.cEmModuleParts.cBreakParts?
 
-local conditions = require("HitboxViewer.box.hurt.conditions")
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
+local conditions = require("HitboxViewer.box.hurt.conditions.init")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
+local frame_counter = require("HitboxViewer.util.misc.frame_counter")
+local game_data = require("HitboxViewer.util.game.data")
+local game_lang = require("HitboxViewer.util.game.lang")
+local m = require("HitboxViewer.util.ref.methods")
 local scar_box = require("HitboxViewer.box.hurt.scar")
-local table_util = require("HitboxViewer.table_util")
-local util = require("HitboxViewer.util")
+local util_game = require("HitboxViewer.util.game.init")
+local util_table = require("HitboxViewer.util.misc.table")
 
-local gui = data.gui
 local ace = data.ace
-local rt = data.runtime
+local mod = data.mod
 
 ---@class PartGroup
 local this = {}
@@ -76,9 +80,9 @@ end
 ---@param fixed_part_type System.Int32
 ---@return string?
 local function get_part_name(fixed_part_type)
-    local part_type_enum = util.get_part_type(fixed_part_type)
-    local guid = util.EmPartsName(nil, part_type_enum) --[[@as System.Guid]]
-    local ret = util.get_message_local(guid, util.get_language(), true)
+    local part_type_enum = game_data.fixed_to_enum("app.EnemyDef.PARTS_TYPE", fixed_part_type)
+    local guid = m.EmPartsName(part_type_enum)
+    local ret = game_lang.get_message_local(guid, game_lang.get_language(), true)
     if string.len(ret) > 0 then
         return ret
     end
@@ -124,27 +128,19 @@ local function get_scar_parts(part_index, mc_holder, param_parts)
     ---@type ScarBox[]
     local ret = {}
     local mc_scarman = mc_holder._ScarManager
-    local scar_holder_list = mc_scarman._ScarList
-    local scar_holder_list_size = scar_holder_list:get_Count()
 
-    for i = 0, scar_holder_list_size - 1 do
-        local scar_holder = scar_holder_list:get_Item(i)
-        ---@cast scar_holder app.EnemyScarHolder
+    util_game.do_something(mc_scarman._ScarList, function(_, _, scar_holder)
         local scar_part = scar_holder._Parts
         if scar_part:get_PartsIndex_1() == part_index then
-            local scar_list = scar_holder._ScarCompList
-            local scar_list_size = scar_list:get_Count()
-            for j = 0, scar_list_size - 1 do
-                local scar = scar_list:get_Item(j)
-                ---@cast scar app.EnemyScar
+            util_game.do_something(scar_holder._ScarCompList, function(_, _, scar)
                 scar_part = scar:get_Parts()
                 local hitzone = get_hitzone(scar_part._MeatGuid_1, param_parts)
                 table.insert(ret, scar_box:new(hitzone, scar, scar_part))
-            end
+            end)
         end
-    end
+    end)
 
-    if not table_util.empty(ret) then
+    if not util_table.empty(ret) then
         return ret
     end
 end
@@ -166,12 +162,13 @@ local function get_part_data(enemy_ctx, enemy_mc_holder, meat_data)
         local weakpoint = param_parts:get_WeakPointList()[part_index] --[[@as app.user_data.EmParamParts.cWeakPoint]]
         dmg_part = enemy_ctx.Parts:get_WeakPointParts()[part_index] --[[@as app.cEmModuleParts.cDamageParts]]
         weak_hitzone = get_hitzone(weakpoint._MeatGuid, param_parts)
-        name = gui.name_missing
+        name = config.lang:tr("misc.text_name_missing")
     else
         local em_cparts = param_parts:get_PartsList()[part_index] --[[@as app.user_data.EmParamParts.cParts]]
         dmg_part = enemy_ctx.Parts:get_DmgParts()[part_index] --[[@as app.cEmModuleParts.cDamageParts]]
         break_part, is_lost = get_break_parts(part_index, enemy_ctx, enemy_ctx.Parts)
-        name = get_part_name(em_cparts._PartsType:get_Value()) or gui.name_missing
+        name = get_part_name(em_cparts._PartsType:get_Value())
+            or config.lang:tr("misc.text_name_missing")
         hitzones = get_hitzones(em_cparts, param_parts)
         scars = get_scar_parts(part_index, enemy_mc_holder, param_parts)
     end
@@ -205,21 +202,22 @@ end
 function this:new(cache, enemy_ctx, enemy_mc_holder, enemy_hurtbox, meat_data)
     local dmg_cparts = meat_data:get_Parts()
     local guid = dmg_cparts:get_PartsGuid()
-    local formated_guid = util.format_guid(guid)
+    local formated_guid = util_game.format_guid(guid)
 
     ---@type PartGroup
     local o
     if not cache[formated_guid] then
         local name, part_data = get_part_data(enemy_ctx, enemy_mc_holder, meat_data)
         o = {
-            is_show = config.current.hurtboxes.default_state == rt.enum.default_hurtbox_state.Draw,
+            is_show = true,
             is_highlight = false,
             hurtboxes = {},
-            condition = rt.enum.condition_result.None,
+            condition = mod.enum.condition_result.None,
             condition_color = 0,
             part_data = part_data,
             name = name,
             guid = formated_guid,
+            last_updated = 0,
         }
         setmetatable(o, self)
     else
@@ -246,7 +244,7 @@ function this:update()
     if self.part_data.scar_boxes then
         for _, scar in pairs(self.part_data.scar_boxes) do
             local box_state = scar:update()
-            if box_state == rt.enum.box_state.Draw then
+            if box_state == mod.enum.box_state.Draw then
                 table.insert(ret, scar)
             end
         end
@@ -262,9 +260,15 @@ function this:update()
     end
 
     self.condition, self.condition_color = conditions.check_part_group(self)
-    if not table_util.empty(ret) then
+    self.last_updated = frame_counter.frame
+    if not util_table.empty(ret) then
         return ret
     end
+end
+
+---@return boolean
+function this:is_updated()
+    return frame_counter.frame - self.last_updated < 60 * 3
 end
 
 ---@param elem_name string

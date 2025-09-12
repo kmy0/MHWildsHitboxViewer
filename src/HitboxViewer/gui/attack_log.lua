@@ -1,45 +1,35 @@
 local attack_log = require("HitboxViewer.attack_log")
-local config = require("HitboxViewer.config")
-local table_util = require("HitboxViewer.table_util")
-local util = require("HitboxViewer.gui.util")
+local config = require("HitboxViewer.config.init")
+local gui_util = require("HitboxViewer.gui.util")
+local util_table = require("HitboxViewer.util.misc.table")
 
-local this = {}
-
-local table_data = {
-    name = "attack_log",
-    flags = 1 << 8 | 1 << 7 | 1 << 0 | 1 << 10 | 3 << 13,
-    col_count = 15,
-    headers = {
-        "Row",
-        "Char Type",
-        "Char Name",
-        "Attack ID",
-        "Damage Type",
-        "Damage Angle",
-        "Guard Type",
-        "Motion",
-        "Element",
-        "Status",
-        "Mount",
-        "Part Break",
-        "Stun",
-        "Sharpness",
-        "More Data",
+local this = {
+    window = {
+        flags = 0,
+        condition = 2,
     },
-    header_to_key = {
-        ["Char Type"] = "char_type",
-        ["Char Name"] = "char_name",
-        ["Attack ID"] = "attack_id",
-        ["Damage Type"] = "damage_type",
-        ["Motion"] = "motion_value",
-        ["Element"] = "element",
-        ["Mount"] = "mount",
-        ["Part Break"] = "part_break",
-        ["Status"] = "status",
-        ["Sharpness"] = "sharpness",
-        ["Stun"] = "stun",
-        ["Damage Angle"] = "damage_angle",
-        ["Guard Type"] = "guard_type",
+    table = {
+        name = "attack_log",
+        -- BordersH, BordersInnerH, Sortable, BordersOuterV, SizingStretchProp, ContextMenuInBody, Hideable
+        flags = 26021,
+        col_count = 15,
+        headers = {
+            "row",
+            "char_type",
+            "char_name",
+            "attack_id",
+            "damage_type",
+            "damage_angle",
+            "guard_type",
+            "motion_value",
+            "element",
+            "status",
+            "mount",
+            "part_break",
+            "stun",
+            "sharpness",
+            "more_data",
+        },
     },
 }
 
@@ -47,15 +37,18 @@ local table_data = {
 ---@param title string
 ---@param i integer
 local function draw_more_data(more_data, title, i)
-    attack_log.open_entries[i] = imgui.begin_window("Row " .. i, attack_log.open_entries[i])
+    attack_log.open_entries[i] = imgui.begin_window(
+        string.format("%s %s", config.lang:tr("mod.table_attack_log.header_row"), i),
+        attack_log.open_entries[i]
+    )
 
     imgui.text(title)
     ---@diagnostic disable-next-line: param-type-mismatch
-    if imgui.begin_table(title, 2, table_data.flags) then
-        imgui.table_setup_column("Key")
-        imgui.table_setup_column("Value")
+    if imgui.begin_table(title, 2, 1921) then
+        imgui.table_setup_column(gui_util.tr("mod.table_attack_log.header_key"))
+        imgui.table_setup_column(gui_util.tr("mod.table_attack_log.header_value"))
 
-        local keys = table_util.keys(more_data)
+        local keys = util_table.keys(more_data)
         ---@cast keys string[]
         table.sort(keys)
         for _, k in ipairs(keys) do
@@ -70,67 +63,125 @@ local function draw_more_data(more_data, title, i)
     imgui.end_window()
 end
 
-function this.draw()
-    if not config.current.gui.attack_log.detach then
-        imgui.same_line()
-    end
-
-    if imgui.button(util.spaced_string("Clear", 3) .. "##clear_attack_log") then
-        attack_log:clear()
-    end
-    imgui.same_line()
+local function draw_table()
     if
-        imgui.button(
-            config.current.gui.attack_log.pause and util.spaced_string("Resume", 3)
-                or util.spaced_string("Pause", 3) .. "##attack_log_state"
+        imgui.begin_table(
+            this.table.name,
+            this.table.col_count,
+            this.table.flags --[[@as ImGuiTableFlags]]
         )
     then
-        config.current.gui.attack_log.pause = not config.current.gui.attack_log.pause
-    end
+        for _, header in ipairs(this.table.headers) do
+            imgui.table_setup_column(gui_util.tr("mod.table_attack_log.header_" .. header))
+        end
 
-    if config.current.enabled_hitboxes then
-        if
-            imgui.begin_table(table_data.name, table_data.col_count, table_data.flags --[[@as ImGuiTableFlags]])
-        then
-            for _, header in ipairs(table_data.headers) do
-                imgui.table_setup_column(header)
-            end
+        imgui.table_headers_row()
+        for i = #attack_log.entries, 1, -1 do
+            imgui.table_next_row()
+            local entry = attack_log.entries[i]
 
-            imgui.table_headers_row()
-            for i = #attack_log.entries, 1, -1 do
-                imgui.table_next_row()
-                local entry = attack_log.entries[i]
+            for col = 1, this.table.col_count do
+                imgui.table_set_column_index(col - 1)
+                local header = this.table.headers[col]
 
-                for col = 1, table_data.col_count do
-                    imgui.table_set_column_index(col - 1)
-                    local header = table_data.headers[col]
-
-                    if header == "Row" then
-                        imgui.text(i --[[@as string]])
-                    elseif header == "Char Name" then
-                        imgui.text(entry[table_data.header_to_key[header]])
-                    elseif header == "More Data" then
-                        if
-                            (
-                                imgui.button(util.spaced_string("Click##attack_log_click" .. i, 3))
-                                and not attack_log.open_entries[i]
-                            ) or attack_log.open_entries[i]
-                        then
-                            attack_log.open_entries[i] = true
-                            draw_more_data(
-                                entry.more_data,
-                                string.format("%s, %s - %s", entry.char_name, entry.char_id, entry.attack_id),
-                                i
-                            )
-                        end
-                    else
-                        imgui.text(entry[table_data.header_to_key[header]])
+                if header == "row" then
+                    imgui.text(i)
+                elseif header == "more_data" then
+                    if
+                        (
+                            imgui.button(gui_util.tr("mod.button_click", i))
+                            and not attack_log.open_entries[i]
+                        ) or attack_log.open_entries[i]
+                    then
+                        attack_log.open_entries[i] = true
+                        draw_more_data(
+                            entry.more_data,
+                            string.format(
+                                "%s, %s - %s",
+                                entry.char_name,
+                                entry.char_id,
+                                entry.attack_id
+                            ),
+                            i
+                        )
                     end
+                else
+                    imgui.text(entry[header])
                 end
             end
-            imgui.end_table()
         end
+
+        imgui.end_table()
     end
+end
+
+function this.draw()
+    local gui_attack_log = config.gui.current.gui.attack_log
+    local config_mod = config.current.mod
+
+    imgui.set_next_window_pos(
+        Vector2f.new(gui_attack_log.pos_x, gui_attack_log.pos_y),
+        this.window.condition
+    )
+    imgui.set_next_window_size(
+        Vector2f.new(gui_attack_log.size_x, gui_attack_log.size_y),
+        this.window.condition
+    )
+
+    if config.lang.font then
+        imgui.push_font(config.lang.font)
+    end
+
+    gui_attack_log.is_opened = imgui.begin_window(
+        gui_util.tr("mod.window_attack_log"),
+        gui_attack_log.is_opened,
+        this.window.flags
+    )
+
+    local pos = imgui.get_window_pos()
+    local size = imgui.get_window_size()
+
+    gui_attack_log.pos_x, gui_attack_log.pos_y = pos.x, pos.y
+    gui_attack_log.size_x, gui_attack_log.size_y = size.x, size.y
+
+    if not gui_attack_log.is_opened then
+        if config.lang.font then
+            imgui.pop_font()
+        end
+
+        config.save_global()
+        imgui.end_window()
+        return
+    end
+
+    imgui.indent(3)
+    imgui.spacing()
+
+    if imgui.button(gui_util.tr("mod.button_clear")) then
+        attack_log:clear()
+    end
+
+    imgui.same_line()
+
+    if
+        imgui.button(
+            config_mod.hitboxes.pause_attack_log and gui_util.tr("mod.button_resume")
+                or gui_util.tr("mod.button_pause")
+        )
+    then
+        config_mod.hitboxes.pause_attack_log = not config_mod.hitboxes.pause_attack_log
+        config:save()
+    end
+
+    draw_table()
+
+    if config.lang.font then
+        imgui.pop_font()
+    end
+
+    imgui.unindent(3)
+    imgui.spacing()
+    imgui.end_window()
 end
 
 return this

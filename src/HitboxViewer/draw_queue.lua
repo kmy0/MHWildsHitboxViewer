@@ -1,17 +1,19 @@
----@class DrawQueue : QueueBase
----@field queue BoxBase[]
----@field sorted boolean
----@field enqueue fun(self: DrawQueue , boxes: BoxBase[]?)
+---@class DrawQueue
+---@field protected _queue BoxBase[]
+---@field protected _sorted boolean
 
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
-local queue_base = require("HitboxViewer.queue_base")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
+local queue = require("HitboxViewer.util.misc.queue")
 
-local rt = data.runtime
+local mod = data.mod
 
 ---@class DrawQueue
-local this = queue_base:new()
-this.sorted = false
+local this = {
+    _sorted = true,
+    _queue = {},
+}
+table.insert(queue.instances, this)
 
 ---@param x BoxBase
 ---@param y BoxBase
@@ -27,51 +29,59 @@ end
 
 ---@param box BoxBase
 local function draw_shape(box)
-    if box.shape_type == rt.enum.shape.Capsule or box.shape_type == rt.enum.shape.ContinuousCapsule then
+    local config_draw = config.current.mod.draw
+
+    if
+        box.shape_type == mod.enum.shape.Capsule
+        or box.shape_type == mod.enum.shape.ContinuousCapsule
+    then
         hb_draw.capsule(
             box.shape_data.pos_a,
             box.shape_data.pos_b,
             box.shape_data.radius,
             box.color,
-            config.current.draw.outline,
-            config.current.draw.outline_color
+            config_draw.outline,
+            config_draw.outline_color
         )
-    elseif box.shape_type == rt.enum.shape.Sphere or box.shape_type == rt.enum.shape.ContinuousSphere then
+    elseif
+        box.shape_type == mod.enum.shape.Sphere
+        or box.shape_type == mod.enum.shape.ContinuousSphere
+    then
         hb_draw.sphere(
             box.shape_data.pos,
             box.shape_data.radius,
             box.color,
-            config.current.draw.outline,
-            config.current.draw.outline_color
+            config_draw.outline,
+            config_draw.outline_color
         )
-    elseif box.shape_type == rt.enum.shape.Box then
+    elseif box.shape_type == mod.enum.shape.Box then
         hb_draw.box(
             box.shape_data.pos,
             box.shape_data.extent,
             box.shape_data.rot,
             box.color,
-            config.current.draw.outline,
-            config.current.draw.outline_color
+            config_draw.outline,
+            config_draw.outline_color
         )
-    elseif box.shape_type == rt.enum.shape.Cylinder then
+    elseif box.shape_type == mod.enum.shape.Cylinder then
         hb_draw.cylinder(
             box.shape_data.pos_a,
             box.shape_data.pos_b,
             box.shape_data.radius,
             box.color,
-            config.current.draw.outline,
-            config.current.draw.outline_color
+            config_draw.outline,
+            config_draw.outline_color
         )
-    elseif box.shape_type == rt.enum.shape.Triangle then
+    elseif box.shape_type == mod.enum.shape.Triangle then
         hb_draw.triangle(
             box.shape_data.pos,
             box.shape_data.extent,
             box.shape_data.rot,
             box.color,
-            config.current.draw.outline,
-            config.current.draw.outline_color
+            config_draw.outline,
+            config_draw.outline_color
         )
-    elseif box.shape_type == rt.enum.shape.SlicedCylinder then
+    elseif box.shape_type == mod.enum.shape.SlicedCylinder then
         hb_draw.sliced_cylinder(
             box.shape_data.pos_a,
             box.shape_data.pos_b,
@@ -79,39 +89,39 @@ local function draw_shape(box)
             box.shape_data.direction,
             box.shape_data.degrees,
             box.color,
-            config.current.draw.outline,
-            config.current.draw.outline_color
+            config_draw.outline,
+            config_draw.outline_color
         )
     end
 end
 
 ---@param boxes BoxBase[]?
-function this:enqueue(boxes)
+function this:extend(boxes)
     if boxes then
-        table.move(boxes, 1, #boxes, #self.queue + 1, self.queue)
-        self.sorted = false
+        table.move(boxes, 1, #boxes, #self._queue + 1, self._queue)
+        self._sorted = false
     end
 end
 
 function this:sort()
-    table.sort(self.queue, sort_boxes)
-    self.sorted = true
+    table.sort(self._queue, sort_boxes)
+    self._sorted = true
 end
 
 function this:draw()
-    if not self.sorted then
+    if not self._sorted then
         self:sort()
     end
 
-    for i = 1, #self.queue do
-        local box = self.queue[i]
+    for i = 1, #self._queue do
+        local box = self._queue[i]
         box.sort = i
         draw_shape(box)
     end
 end
 
-function this.clear()
-    this.queue = {}
+function this:clear()
+    self._queue = {}
 end
 
 return this

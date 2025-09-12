@@ -2,11 +2,11 @@
 ---@field sorted ConditionBase[]
 ---@field by_type table<ConditionType, ConditionBase[]>
 
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
-local table_util = require("HitboxViewer.table_util")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
+local util_table = require("HitboxViewer.util.misc.table")
 
-local rt = data.runtime
+local mod = data.mod
 ---@type table<ConditionType, ConditionBase>
 local condition_ctor = {
     [1] = require("HitboxViewer.box.hurt.conditions.element_condition"),
@@ -29,22 +29,27 @@ function this.sort()
     end)
     for i = 1, #this.sorted do
         local cond = this.sorted[i]
-        table_util.insert_nested_value(this.by_type, { cond.type }, cond)
+        util_table.insert_nested_value(this.by_type, { cond.type }, cond)
     end
+    this.save()
 end
 
+---@return boolean
 function this.init()
-    for _, condition_struct in pairs(config.current.hurtboxes.conditions) do
+    for _, condition_struct in pairs(config.current.mod.hurtboxes.conditions) do
         if not condition_struct.type or not condition_ctor[condition_struct.type] then
             this.restore_default()
-            return
+            return true
         end
         this.new_condition(condition_struct.type, condition_struct)
     end
+
+    return true
 end
 
 function this.restore_default()
-    config.current.hurtboxes.conditions = config.default.hurtboxes.conditions
+    config.current.mod.hurtboxes.conditions =
+        util_table.deep_copy(config.default.mod.hurtboxes.conditions)
     this.clear()
     this.init()
 end
@@ -70,8 +75,8 @@ function this.save()
         ---@type table<string, any>
         table.insert(t, this._serialize(cond))
     end
-    config.current.hurtboxes.conditions = t
-    config.save()
+    config.current.mod.hurtboxes.conditions = t
+    config:save()
 end
 
 ---@param part_group PartGroup
@@ -79,46 +84,29 @@ end
 function this.check_part_group(part_group)
     for i = 1, #this.sorted do
         local cond = this.sorted[i]
-        if cond.type ~= rt.enum.condition_type.Scar then
+        if cond.type ~= mod.enum.condition_type.Scar then
             local state, color = cond:check(part_group)
-            if state ~= rt.enum.condition_result.None then
+            if state ~= mod.enum.condition_result.None then
                 return state, color
             end
         end
     end
-    return rt.enum.condition_result.None, 0
+    return mod.enum.condition_result.None, 0
 end
 
 ---@param scar_state string
 ---@return ConditionResult, integer
 function this.check_scar(scar_state)
-    local t = this.by_type[rt.enum.condition_type.Scar] or {}
+    local t = this.by_type[mod.enum.condition_type.Scar] or {}
     for i = 1, #t do
         local cond = t[i]
         ---@cast cond ScarCondition
         local state, color = cond:check(scar_state)
-        if state ~= rt.enum.condition_result.None then
+        if state ~= mod.enum.condition_result.None then
             return state, color
         end
     end
-    return rt.enum.condition_result.None, 0
-end
-
----@param cond_a ConditionBase?
----@param cond_b ConditionBase?
----@return boolean
-function this.swap_order(cond_a, cond_b)
-    if not cond_a or not cond_b then
-        return false
-    end
-
-    local key_a = cond_a.key
-    local key_b = cond_b.key
-    cond_b.key = key_a
-    cond_a.key = key_b
-    this.sort()
-    this.save()
-    return true
+    return mod.enum.condition_result.None, 0
 end
 
 ---@param old_cond ConditionBase
@@ -145,16 +133,15 @@ function this.new_condition(cond_type, serial)
     end
     table.insert(this.sorted, cond)
     this.sort()
-    this.save()
     return cond
 end
 
 ---@param cond ConditionBase
 function this.remove(cond)
-    table_util.table_remove(this.sorted, function(t, i, j)
+    util_table.remove(this.sorted, function(t, i, j)
         return t[i] ~= cond
     end)
-    table_util.table_remove(this.by_type[cond.type], function(t, i, j)
+    util_table.remove(this.by_type[cond.type], function(t, i, j)
         return t[i] ~= cond
     end)
     this.save()
@@ -162,7 +149,7 @@ end
 
 ---@boolean
 function this.empty()
-    return table_util.empty(this.sorted)
+    return util_table.empty(this.sorted)
 end
 
 function this.clear()

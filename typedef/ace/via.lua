@@ -64,3 +64,10 @@
 ---@class via.SceneView : via.clr.ManagedObject
 ---@field get_PrimaryCamera fun(self: via.SceneView): via.Camera
 ---@field get_WindowSize fun(self: via.SceneView): via.Size
+
+---@class via.SceneManager : NativeSingleton
+---@field get_MainView fun(self: via.SceneManager): via.SceneView
+---@field get_CurrentScene fun(self: via.SceneManager): via.Scene
+
+---@class via.Application : NativeSingleton
+---@field get_DeltaTime fun(self: via.Application): System.Single

@@ -9,12 +9,12 @@
 ---@field protected _scar_part app.cEmModuleScar.cScarParts
 
 local box_base = require("HitboxViewer.box.box_base")
-local char = require("HitboxViewer.character")
-local conditions = require("HitboxViewer.box.hurt.conditions")
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
+local conditions = require("HitboxViewer.box.hurt.conditions.init")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
+local util_game = require("HitboxViewer.util.game.init")
 
-local rt = data.runtime
+local mod = data.mod
 local ace = data.ace
 
 ---@class ScarBox
@@ -27,13 +27,13 @@ this.__index = this
 ---@param scar_part app.cEmModuleScar.cScarParts
 ---@return ScarBox
 function this:new(hitzone, scar, scar_part)
-    local o = box_base.new(self, rt.enum.box.ScarBox, rt.enum.shape.Sphere)
+    local o = box_base.new(self, mod.enum.box.ScarBox, mod.enum.shape.Sphere)
     ---@cast o ScarBox
     setmetatable(o, self)
     o.show = false
     o.highlight = false
     o.hitzone = hitzone
-    o.condition = rt.enum.condition_result.None
+    o.condition = mod.enum.condition_result.None
     o.condition_color = 0
     o._scar = scar
     o._scar_part = scar_part
@@ -44,25 +44,28 @@ end
 function this:update_shape()
     self.shape_data.pos = self._scar:get_Pos()
     self.pos = self.shape_data.pos
-    self.distance = (rt.camera.origin - self.pos):length()
-    return rt.enum.box_state.Draw
+    self.distance = (util_game.get_camera_origin() - self.pos):length()
+    return mod.enum.box_state.Draw
 end
 
 function this:update_data()
-    if not self.is_enabled or (not self.show and self.condition ~= rt.enum.condition_result.Highlight) then
-        return rt.enum.box_state.None
+    local config_mod = config.current.mod
+
+    if
+        not self.is_enabled
+        or (not self.show and self.condition ~= mod.enum.condition_result.Highlight)
+    then
+        return mod.enum.box_state.None
     end
 
-    if config.current.hurtboxes.use_one_color then
-        self.color = config.current.hurtboxes.color.one_color
-    elseif self.highlight then
-        self.color = config.current.hurtboxes.color.highlight
-    elseif self.condition == rt.enum.condition_result.Highlight then
+    if self.highlight then
+        self.color = config_mod.hurtboxes.color.highlight
+    elseif self.condition == mod.enum.condition_result.Highlight then
         self.color = self.condition_color
     else
-        self.color = config.current.hurtboxes.color.BigMonster
+        self.color = config_mod.hurtboxes.color.BigMonster
     end
-    return rt.enum.box_state.Draw
+    return mod.enum.box_state.Draw
 end
 
 ---@return BoxState
