@@ -6,7 +6,7 @@ local data = require("HitboxViewer.data")
 local guard_box = require("HitboxViewer.box.hurt.guard")
 local hurtbox_base = require("HitboxViewer.box.hurt.hurtbox_base")
 
-local rt = data.runtime
+local rt = data.mod
 
 ---@class PlayerHurtBox
 local this = {}

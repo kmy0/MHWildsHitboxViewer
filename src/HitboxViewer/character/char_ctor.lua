@@ -10,10 +10,10 @@ local bigenemy = require("HitboxViewer.character.big_enemy")
 local char_base_ = require("HitboxViewer.character.char_base")
 local data = require("HitboxViewer.data")
 local player = require("HitboxViewer.character.player")
-local util = require("HitboxViewer.util")
+local util = require("HitboxViewer._util")
 
 local gui = data.gui
-local rt = data.runtime
+local rt = data.mod
 
 local this = {}
 
@@ -61,7 +61,8 @@ local function get_pet_data(char_base)
     end
 
     local hunter_extend = owner:get_HunterExtend()
-    local ret = char_base_:new(rt.enum.char.Pet, char_base, get_hunter_name(hunter_extend) .. " - Pet")
+    local ret =
+        char_base_:new(rt.enum.char.Pet, char_base, get_hunter_name(hunter_extend) .. " - Pet")
     ---@type Pet
     return ret
 end
@@ -72,8 +73,11 @@ end
 local function get_enemy_data(base_char_type, char_base)
     local holder = char_base._Context
     local ctx = holder:get_Em()
-    local name = util.get_message_local(util.getEnemyNameGuid:call(nil, ctx:get_EmID()), util.get_language(), true)
-        or gui.name_missing
+    local name = util.get_message_local(
+        util.getEnemyNameGuid:call(nil, ctx:get_EmID()),
+        util.get_language(),
+        true
+    ) or gui.name_missing
     if base_char_type == rt.enum.base_char.BigMonster then
         ---@cast char_base app.EnemyBossCharacter
         return bigenemy:new(char_base, name, ctx)
@@ -96,7 +100,10 @@ function this.get_character(base_char_type, char_base)
         return get_pet_data(char_base)
     end
 
-    if base_char_type == rt.enum.base_char.BigMonster or base_char_type == rt.enum.base_char.SmallMonster then
+    if
+        base_char_type == rt.enum.base_char.BigMonster
+        or base_char_type == rt.enum.base_char.SmallMonster
+    then
         ---@cast char_base app.EnemyBossCharacter|app.EnemyZakoCharacter
         return get_enemy_data(base_char_type, char_base)
     end

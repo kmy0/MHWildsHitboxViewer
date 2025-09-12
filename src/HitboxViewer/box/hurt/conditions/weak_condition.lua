@@ -3,7 +3,7 @@
 local condition_base = require("HitboxViewer.box.hurt.conditions.condition_base")
 local data = require("HitboxViewer.data")
 
-local rt = data.runtime
+local rt = data.mod
 
 ---@class WeakCondition
 local this = {}
@@ -32,7 +32,8 @@ end
 ---@return ConditionResult, integer
 function this:check(part_group)
     if part_group.part_data.is_weak then
-        return self.state == rt.enum.condition_state.Highlight and rt.enum.condition_result.Highlight
+        return self.state == rt.enum.condition_state.Highlight
+                and rt.enum.condition_result.Highlight
             or rt.enum.condition_result.Hide,
             self.color
     end

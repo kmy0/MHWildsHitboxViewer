@@ -6,7 +6,7 @@ local box_base = require("HitboxViewer.box.box_base")
 local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
 
-local rt = data.runtime
+local rt = data.mod
 local ace = data.ace
 
 ---@class GuardBox
@@ -36,7 +36,8 @@ function this:update_shape()
     local userdata = self.parent.weapon.userdata
     local field_name = ace.map.guard_name_to_field_name[self.parent.guard_type]
         or ace.map.guard_name_to_field_name["GUARD"]
-    local angle = ace.map.guard_name_to_angle[self.parent.guard_type] or userdata:get_field(field_name)
+    local angle = ace.map.guard_name_to_angle[self.parent.guard_type]
+        or userdata:get_field(field_name)
 
     if not angle then
         angle = userdata:get_field(ace.map.guard_name_to_field_name["GUARD"])

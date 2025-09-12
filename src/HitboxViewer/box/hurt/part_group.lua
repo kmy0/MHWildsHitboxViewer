@@ -27,11 +27,11 @@ local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
 local scar_box = require("HitboxViewer.box.hurt.scar")
 local table_util = require("HitboxViewer.table_util")
-local util = require("HitboxViewer.util")
+local util = require("HitboxViewer._util")
 
 local gui = data.gui
 local ace = data.ace
-local rt = data.runtime
+local rt = data.mod
 
 ---@class PartGroup
 local this = {}

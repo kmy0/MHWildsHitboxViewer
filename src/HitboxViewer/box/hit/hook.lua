@@ -2,10 +2,10 @@ local char_cache = require("HitboxViewer.character.char_cache")
 local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
 local load_queue = require("HitboxViewer.box.hit.load_queue")
-local util = require("HitboxViewer.util")
+local util = require("HitboxViewer._util")
 
-local rt = data.runtime
-local rl = data.util.reverse_lookup
+local rt = data.mod
+local rl = game_data.reverse_lookup
 
 local this = {}
 

@@ -7,9 +7,9 @@ local char_ctor = require("HitboxViewer.character.char_ctor")
 local col_load_queue = require("HitboxViewer.box.collidable_queue")
 local data = require("HitboxViewer.data")
 local table_util = require("HitboxViewer.table_util")
-local util = require("HitboxViewer.util")
+local util = require("HitboxViewer._util")
 
-local rt = data.runtime
+local rt = data.mod
 local ace = data.ace
 
 ---@class Characters
@@ -27,7 +27,8 @@ end
 
 ---@param char_type CharType
 function this.is_empty(char_type)
-    return not this.by_type_by_gameobject[char_type] or table_util.empty(this.by_type_by_gameobject[char_type])
+    return not this.by_type_by_gameobject[char_type]
+        or table_util.empty(this.by_type_by_gameobject[char_type])
 end
 
 ---@param char Character
@@ -57,7 +58,9 @@ function this.get_char(game_object, char_base)
         return
     end
 
-    local base_char_type = rt.enum.base_char[ace.map.char_type_to_name[char_base:get_type_definition():get_full_name()]]
+    local base_char_type = rt.enum.base_char[ace.map.char_type_to_name[char_base
+        :get_type_definition()
+        :get_full_name()]]
     if base_char_type then
         local o = char_ctor.get_character(base_char_type, char_base)
         if o then
@@ -72,10 +75,12 @@ end
 ---@return MasterPlayer?
 function this.get_master_player()
     if not this.master_player or util.is_only_my_ref(this.master_player.base) then
-        if not rt.get_playman() then
+        local playman = s.get("app.PlayerManager")
+        if not playman then
             return
         end
-        local player_info = rt.get_playman():getMasterPlayer()
+
+        local player_info = playman:getMasterPlayer()
         if player_info then
             local hunter_char = player_info:get_Character()
             local game_object = hunter_char:get_GameObject()

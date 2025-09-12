@@ -8,7 +8,7 @@ local hurtbox_info = require("HitboxViewer.gui.hurtbox_info")
 local table_util = require("HitboxViewer.table_util")
 local util = require("HitboxViewer.gui.util")
 
-local rt = data.runtime
+local rt = data.mod
 local ace = data.ace
 
 local this = {}
@@ -57,9 +57,15 @@ local function draw_hurtboxes_header()
         util.tooltip("Player only")
         if node then
             imgui.spacing()
-            util.checkbox("Disable Top Guard Indicator##GuardHurtbox", "hurtboxes.guard_type.disable_top")
+            util.checkbox(
+                "Disable Top Guard Indicator##GuardHurtbox",
+                "hurtboxes.guard_type.disable_top"
+            )
             util.tooltip("Hide Guard Indicator on Players Top Hurtbox")
-            util.checkbox("Disable Bottom Guard Indicator##GuardHurtbox", "hurtboxes.guard_type.disable_bottom")
+            util.checkbox(
+                "Disable Bottom Guard Indicator##GuardHurtbox",
+                "hurtboxes.guard_type.disable_bottom"
+            )
             util.tooltip("Hide Guard Indicator on Players Bottom Hurtbox")
             imgui.spacing()
             util.box_type_setup(
@@ -93,7 +99,8 @@ local function draw_hurtboxes_header()
                 for _, monster in pairs(char.cache.by_type_by_gameobject[rt.enum.char.BigMonster]) do
                     ---@cast monster BigEnemy
                     for _, part in pairs(monster.parts) do
-                        part.is_show = config.current.hurtboxes.default_state == rt.enum.default_hurtbox_state.Draw
+                        part.is_show = config.current.hurtboxes.default_state
+                            == rt.enum.default_hurtbox_state.Draw
                     end
                 end
             end
@@ -163,9 +170,14 @@ local function draw_pressboxes_header()
 
         if imgui.tree_node("Layer") then
             imgui.spacing()
-            util.box_type_setup(config.current.pressboxes.layer, "pressboxes.layer", "layer", function(t, i, j)
-                return table_util.table_contains(table_util.values(ace.enum.col_layer), t[i])
-            end)
+            util.box_type_setup(
+                config.current.pressboxes.layer,
+                "pressboxes.layer",
+                "layer",
+                function(t, i, j)
+                    return table_util.table_contains(table_util.values(ace.enum.col_layer), t[i])
+                end
+            )
             imgui.tree_pop()
         end
 
@@ -210,13 +222,16 @@ local function draw_settings_header()
                     config.current.hitboxes.color[key] = config.current.hitboxes.color.one_color
                 end
                 for key, _ in pairs(config.current.hitboxes.damage_type.color) do
-                    config.current.hitboxes.damage_type.color[key] = config.current.hitboxes.color.one_color
+                    config.current.hitboxes.damage_type.color[key] =
+                        config.current.hitboxes.color.one_color
                 end
                 for key, _ in pairs(config.current.hitboxes.damage_angle.color) do
-                    config.current.hitboxes.damage_angle.color[key] = config.current.hitboxes.color.one_color
+                    config.current.hitboxes.damage_angle.color[key] =
+                        config.current.hitboxes.color.one_color
                 end
                 for key, _ in pairs(config.current.hitboxes.guard_type.color) do
-                    config.current.hitboxes.guard_type.color[key] = config.current.hitboxes.color.one_color
+                    config.current.hitboxes.guard_type.color[key] =
+                        config.current.hitboxes.color.one_color
                 end
             end
 
@@ -239,7 +254,8 @@ local function draw_settings_header()
                     config.current.hurtboxes.color[key] = config.current.hurtboxes.color.one_color
                 end
                 for key, _ in pairs(config.current.hurtboxes.guard_type.color) do
-                    config.current.hurtboxes.guard_type.color[key] = config.current.hurtboxes.color.one_color
+                    config.current.hurtboxes.guard_type.color[key] =
+                        config.current.hurtboxes.color.one_color
                 end
             end
 
@@ -253,7 +269,9 @@ local function draw_settings_header()
             util.checkbox("Use Single Color##Pressbox", "pressboxes.use_one_color")
             imgui.same_line()
 
-            if imgui.button(util.spaced_string("Apply Pressbox Color To All Pressbox Colors", 3)) then
+            if
+                imgui.button(util.spaced_string("Apply Pressbox Color To All Pressbox Colors", 3))
+            then
                 util.open_popup("confirm_all_colors_pressbox", 62, 30)
             end
 
@@ -262,10 +280,12 @@ local function draw_settings_header()
                     config.current.pressboxes.color[key] = config.current.pressboxes.color.one_color
                 end
                 for key, _ in pairs(config.current.pressboxes.press_level.color) do
-                    config.current.pressboxes.press_level.color[key] = config.current.pressboxes.color.one_color
+                    config.current.pressboxes.press_level.color[key] =
+                        config.current.pressboxes.color.one_color
                 end
                 for key, _ in pairs(config.current.pressboxes.layer.color) do
-                    config.current.pressboxes.layer.color[key] = config.current.pressboxes.color.one_color
+                    config.current.pressboxes.layer.color[key] =
+                        config.current.pressboxes.color.one_color
                 end
             end
 
@@ -326,7 +346,9 @@ local function draw_hitboxes_header()
         imgui.spacing()
         imgui.spacing()
 
-        imgui.text("Color application order:\nMisc Type > Guard Type > Damage Angle > Damage Type > Char")
+        imgui.text(
+            "Color application order:\nMisc Type > Guard Type > Damage Angle > Damage Type > Char"
+        )
         if imgui.tree_node("Damage Type") then
             imgui.spacing()
             util.box_type_setup(
@@ -365,15 +387,23 @@ local function draw_hitboxes_header()
         end
 
         local node = imgui.tree_node("Misc Type")
-        util.tooltip("Evaluated from top to bottom\nYou can add your own at HitboxViewer/data/custom_attack_type.lua")
+        util.tooltip(
+            "Evaluated from top to bottom\nYou can add your own at HitboxViewer/data/custom_attack_type.lua"
+        )
         if node then
             imgui.spacing()
-            util.box_type_setup(config.current.hitboxes.misc_type, "hitboxes.misc_type", "misc_type", function(t, i, j)
-                return table_util.table_contains(data.custom_attack_type.sorted, t[i])
-            end, function(a, b)
-                return table_util.index(data.custom_attack_type.sorted, a)
-                    < table_util.index(data.custom_attack_type.sorted, b)
-            end)
+            util.box_type_setup(
+                config.current.hitboxes.misc_type,
+                "hitboxes.misc_type",
+                "misc_type",
+                function(t, i, j)
+                    return table_util.table_contains(data.custom_attack_type.sorted, t[i])
+                end,
+                function(a, b)
+                    return table_util.index(data.custom_attack_type.sorted, a)
+                        < table_util.index(data.custom_attack_type.sorted, b)
+                end
+            )
             imgui.tree_pop()
         end
         imgui.unindent(10)
@@ -384,11 +414,17 @@ end
 local function draw_hurtbox_info_header()
     if config.current.gui.hurtbox_info.detach then
         imgui.set_next_window_pos(
-            Vector2f.new(config.current.gui.hurtbox_info.pos_x, config.current.gui.hurtbox_info.pos_y),
+            Vector2f.new(
+                config.current.gui.hurtbox_info.pos_x,
+                config.current.gui.hurtbox_info.pos_y
+            ),
             window.condition
         )
         imgui.set_next_window_size(
-            Vector2f.new(config.current.gui.hurtbox_info.size_x, config.current.gui.hurtbox_info.size_y),
+            Vector2f.new(
+                config.current.gui.hurtbox_info.size_x,
+                config.current.gui.hurtbox_info.size_y
+            ),
             window.condition
         )
 
@@ -401,7 +437,8 @@ local function draw_hurtbox_info_header()
         local pos = imgui.get_window_pos()
         local size = imgui.get_window_size()
         config.current.gui.hurtbox_info.pos_x, config.current.gui.hurtbox_info.pos_y = pos.x, pos.y
-        config.current.gui.hurtbox_info.size_x, config.current.gui.hurtbox_info.size_y = size.x, size.y
+        config.current.gui.hurtbox_info.size_x, config.current.gui.hurtbox_info.size_y =
+            size.x, size.y
         imgui.end_window()
     end
 
@@ -537,7 +574,11 @@ function this.draw()
                 config.save()
             end
 
-            if changed and (config.current.enabled_hurtboxes or config.current.enabled_pressboxes) and rt.in_game() then
+            if
+                changed
+                and (config.current.enabled_hurtboxes or config.current.enabled_pressboxes)
+                and rt.in_game()
+            then
                 char.create_all_chars()
             end
 

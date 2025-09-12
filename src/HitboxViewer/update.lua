@@ -4,7 +4,7 @@ local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
 local draw_queue = require("HitboxViewer.draw_queue")
 
-local rt = data.runtime
+local rt = data.mod
 
 local this = {}
 
@@ -28,7 +28,6 @@ function this.characters()
     local updated = 0
     local force_updated = 0
 
-    rt.update_camera()
     for i = 1, #update_order do
         local char_type = update_order[i]
         local characters = char.cache.by_type_by_gameobject[char_type]

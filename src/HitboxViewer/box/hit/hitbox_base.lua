@@ -8,8 +8,8 @@ local colldable_base = require("HitboxViewer.box.collidable_base")
 local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
 
-local rt = data.runtime
-local rl = data.util.reverse_lookup
+local rt = data.mod
+local rl = game_data.reverse_lookup
 
 ---@class HitBoxBase
 local this = {}
@@ -26,7 +26,15 @@ setmetatable(this, { __index = colldable_base })
 ---@param shellcolhit app.mcShellColHit?
 ---@return HitBoxBase?
 function this:new(collidable, parent, resource_idx, set_idx, collidable_idx, log_entry, shellcolhit)
-    local o = colldable_base.new(self, collidable, parent, rt.enum.box.HitBox, resource_idx, set_idx, collidable_idx)
+    local o = colldable_base.new(
+        self,
+        collidable,
+        parent,
+        rt.enum.box.HitBox,
+        resource_idx,
+        set_idx,
+        collidable_idx
+    )
 
     if not o then
         return
@@ -62,7 +70,10 @@ end
 
 ---@return BoxState
 function this:update()
-    if self.shellcolhit and self.shellcolhit:get_reference_count() <= 1 or rt.state.tick_count - self.tick > 1200 then
+    if
+        self.shellcolhit and self.shellcolhit:get_reference_count() <= 1
+        or rt.state.tick_count - self.tick > 1200
+    then
         return rt.enum.box_state.Dead
     end
 

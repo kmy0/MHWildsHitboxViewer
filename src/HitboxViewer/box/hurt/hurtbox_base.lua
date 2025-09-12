@@ -4,8 +4,8 @@ local colldable_base = require("HitboxViewer.box.collidable_base")
 local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
 
-local rt = data.runtime
-local rl = data.util.reverse_lookup
+local rt = data.mod
+local rl = game_data.reverse_lookup
 
 ---@class HurtBoxBase
 local this = {}
@@ -20,7 +20,15 @@ setmetatable(this, { __index = colldable_base })
 ---@param collidable_idx integer
 ---@return HurtBoxBase?
 function this:new(collidable, parent, resource_idx, set_idx, collidable_idx)
-    local o = colldable_base.new(self, collidable, parent, rt.enum.box.HurtBox, resource_idx, set_idx, collidable_idx)
+    local o = colldable_base.new(
+        self,
+        collidable,
+        parent,
+        rt.enum.box.HurtBox,
+        resource_idx,
+        set_idx,
+        collidable_idx
+    )
 
     if not o then
         return

@@ -8,7 +8,7 @@ local friend = {
     npc = require("HitboxViewer.box.hurt.hurtbox_base"),
     pet = require("HitboxViewer.box.hurt.hurtbox_base"),
 }
-local rt = data.runtime
+local rt = data.mod
 
 local this = {
     conditions = require("HitboxViewer.box.hurt.conditions"),

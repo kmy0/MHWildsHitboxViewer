@@ -17,7 +17,7 @@ local data = require("HitboxViewer.data")
 local queue_base = require("HitboxViewer.queue_base")
 local table_util = require("HitboxViewer.table_util")
 
-local rt = data.runtime
+local rt = data.mod
 
 ---@class BigEnemy
 local this = {}

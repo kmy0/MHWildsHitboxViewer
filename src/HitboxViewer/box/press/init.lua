@@ -9,7 +9,7 @@ local friend = {
     pet = require("HitboxViewer.box.press.pressbox_base"),
 }
 
-local rt = data.runtime
+local rt = data.mod
 
 local this = {
     queue = require("HitboxViewer.box.press.load_queue"),

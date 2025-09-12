@@ -33,7 +33,7 @@
 
 local data = require("HitboxViewer.data")
 
-local rt = data.runtime
+local rt = data.mod
 
 ---@class BoxBase
 local this = {}
@@ -90,7 +90,10 @@ end
 
 ---@return BoxState
 function this:update()
-    if self:update_data() == rt.enum.box_state.Draw and self:update_shape() == rt.enum.box_state.Draw then
+    if
+        self:update_data() == rt.enum.box_state.Draw
+        and self:update_shape() == rt.enum.box_state.Draw
+    then
         return rt.enum.box_state.Draw
     end
     return rt.enum.box_state.None

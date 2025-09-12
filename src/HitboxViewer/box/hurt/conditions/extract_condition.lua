@@ -4,8 +4,8 @@
 local condition_base = require("HitboxViewer.box.hurt.conditions.condition_base")
 local data = require("HitboxViewer.data")
 
-local rt = data.runtime
-local rl = data.util.reverse_lookup
+local rt = data.mod
+local rl = game_data.reverse_lookup
 
 ---@class ExtractCondition
 local this = {}
@@ -36,7 +36,8 @@ end
 ---@return ConditionResult, integer
 function this:check(part_group)
     if rl(rt.enum.extract, self.sub_type) == part_group.part_data.extract then
-        return self.state == rt.enum.condition_state.Highlight and rt.enum.condition_result.Highlight
+        return self.state == rt.enum.condition_state.Highlight
+                and rt.enum.condition_result.Highlight
             or rt.enum.condition_result.Hide,
             self.color
     end

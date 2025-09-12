@@ -18,10 +18,10 @@ local char_base = require("HitboxViewer.character.char_base")
 local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
 local table_util = require("HitboxViewer.table_util")
-local util = require("HitboxViewer.util")
+local util = require("HitboxViewer._util")
 
-local rt = data.runtime
-local rl = data.util.reverse_lookup
+local rt = data.mod
+local rl = game_data.reverse_lookup
 local ace = data.ace
 
 ---@class Player
@@ -59,7 +59,7 @@ function this:update_weapon()
 
     local weapon_type = self.base:get_WeaponType()
     if weapon_type ~= self.weapon.type then
-        self.weapon.userdata = rt.get_catalog():getWeaponActionParam(weapon_type)
+        self.weapon.userdata = s.get("app.PlayerManager"):getWeaponActionParam(weapon_type)
         self.weapon.type = weapon_type
         self.weapon.handling = self.base:get_WeaponHandling()
     end

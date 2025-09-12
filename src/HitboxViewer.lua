@@ -10,7 +10,7 @@ data.init()
 config.init()
 box.hurtbox.conditions.init()
 
-local rt = data.runtime
+local rt = data.mod
 
 hb_draw.register(function()
     draw_queue:draw()
@@ -33,7 +33,8 @@ sdk.hook(
     box.hitbox.hook.get_shell_post
 )
 sdk.hook(
-    sdk.find_type_definition("app.Wp10Insect"):get_method("requestActiveAttackCol(app.Wp10InsectDef.INSECT_ATK_TYPE)") --[[@as REMethodDefinition]],
+    sdk.find_type_definition("app.Wp10Insect")
+        :get_method("requestActiveAttackCol(app.Wp10InsectDef.INSECT_ATK_TYPE)") --[[@as REMethodDefinition]],
     box.hitbox.hook.get_kinsect_attack_pre,
     box.hitbox.hook.get_kinsect_attack_post
 )

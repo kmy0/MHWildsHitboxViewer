@@ -9,7 +9,7 @@ local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
 local table_util = require("HitboxViewer.table_util")
 
-local rt = data.runtime
+local rt = data.mod
 
 ---@class ConditionBase
 local this = {}

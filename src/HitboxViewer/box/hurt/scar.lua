@@ -14,7 +14,7 @@ local conditions = require("HitboxViewer.box.hurt.conditions")
 local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
 
-local rt = data.runtime
+local rt = data.mod
 local ace = data.ace
 
 ---@class ScarBox
@@ -49,7 +49,10 @@ function this:update_shape()
 end
 
 function this:update_data()
-    if not self.is_enabled or (not self.show and self.condition ~= rt.enum.condition_result.Highlight) then
+    if
+        not self.is_enabled
+        or (not self.show and self.condition ~= rt.enum.condition_result.Highlight)
+    then
         return rt.enum.box_state.None
     end
 

@@ -4,8 +4,8 @@
 local condition_base = require("HitboxViewer.box.hurt.conditions.condition_base")
 local data = require("HitboxViewer.data")
 
-local rt = data.runtime
-local rl = data.util.reverse_lookup
+local rt = data.mod
+local rl = game_data.reverse_lookup
 
 ---@class ScarCondition
 local this = {}
@@ -37,7 +37,8 @@ end
 function this:check(scar_state)
     local match = rl(rt.enum.scar, self.sub_type)
     if match == scar_state then
-        return self.state == rt.enum.condition_state.Highlight and rt.enum.condition_result.Highlight
+        return self.state == rt.enum.condition_state.Highlight
+                and rt.enum.condition_result.Highlight
             or rt.enum.condition_result.Hide,
             self.color
     end

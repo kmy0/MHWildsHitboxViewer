@@ -5,7 +5,7 @@ local data = require("HitboxViewer.data")
 local table_util = require("HitboxViewer.table_util")
 local util = require("HitboxViewer.gui.util")
 
-local rt = data.runtime
+local rt = data.mod
 local gui = data.gui
 
 local this = {}
@@ -68,7 +68,12 @@ local function draw_scar_rows(scars)
 
             if header == "Part Name" then
                 imgui.text(scar.state)
-            elseif header == "Enabled" or header == "Extract" or header == "Weak" or header == "Break" then
+            elseif
+                header == "Enabled"
+                or header == "Extract"
+                or header == "Weak"
+                or header == "Break"
+            then
                 imgui.text(gui.data_missing)
             else
                 imgui.text(scar.hitzone[table_data.header_to_key[header]] --[[@as string]])
@@ -128,13 +133,20 @@ local function draw_table(monster)
             elseif header == "Scars" then
                 if part.part_data.scar_boxes then
                     imgui.spacing()
-                    if imgui.arrow_button("##scars_click" .. row, part.part_data.is_scar_gui_open and 3 or 1) then
+                    if
+                        imgui.arrow_button(
+                            "##scars_click" .. row,
+                            part.part_data.is_scar_gui_open and 3 or 1
+                        )
+                    then
                         part.part_data.is_scar_gui_open = not part.part_data.is_scar_gui_open
                     end
                     imgui.spacing()
                 end
             else
-                imgui.text(part.part_data.hitzone[table_data.header_to_key[header]] --[[@as string]])
+                imgui.text(
+                    part.part_data.hitzone[table_data.header_to_key[header]] --[[@as string]]
+                )
             end
         end
 
@@ -209,7 +221,8 @@ function this.draw_condition(cond)
         imgui.pop_item_width()
 
         imgui.push_item_width(304)
-        changed, cond.from = imgui.slider_int("##from_" .. cond.key, cond.from, 0, 300, "From " .. cond.from)
+        changed, cond.from =
+            imgui.slider_int("##from_" .. cond.key, cond.from, 0, 300, "From " .. cond.from)
         save = changed or save
 
         if changed and cond.from > cond.to then

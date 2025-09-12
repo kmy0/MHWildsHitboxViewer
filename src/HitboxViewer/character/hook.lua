@@ -1,7 +1,7 @@
 local data = require("HitboxViewer.data")
 local load_queue = require("HitboxViewer.character.load_queue")
 
-local rt = data.runtime
+local rt = data.mod
 
 local this = {}
 

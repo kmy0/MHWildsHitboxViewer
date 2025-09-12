@@ -17,10 +17,10 @@
 local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
 local table_util = require("HitboxViewer.table_util")
-local util = require("HitboxViewer.util")
+local util = require("HitboxViewer._util")
 
-local rl = data.util.reverse_lookup
-local rt = data.runtime
+local rl = game_data.reverse_lookup
+local rt = data.mod
 
 local count = 0
 

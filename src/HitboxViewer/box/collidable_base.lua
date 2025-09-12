@@ -12,7 +12,7 @@
 local box_base = require("HitboxViewer.box.box_base")
 local data = require("HitboxViewer.data")
 
-local rt = data.runtime
+local rt = data.mod
 local ace = data.ace
 
 ---@class CollidableBase
@@ -75,14 +75,19 @@ function this:update_shape()
             self.shape_data.radius = self.shape:read_float(0x80)
 
             self.pos = (self.shape_data.pos_a + self.shape_data.pos_b) * 0.5
-        elseif self.shape_type == rt.enum.shape.Sphere or self.shape_type == rt.enum.shape.ContinuousSphere then
+        elseif
+            self.shape_type == rt.enum.shape.Sphere
+            or self.shape_type == rt.enum.shape.ContinuousSphere
+        then
             self.shape_data.pos.x = self.shape:read_float(0x60)
             self.shape_data.pos.y = self.shape:read_float(0x64)
             self.shape_data.pos.z = self.shape:read_float(0x68)
             self.shape_data.radius = self.shape:read_float(0x6c)
 
             self.pos = self.shape_data.pos
-        elseif self.shape_type == rt.enum.shape.Box or self.shape_type == rt.enum.shape.Triangle then
+        elseif
+            self.shape_type == rt.enum.shape.Box or self.shape_type == rt.enum.shape.Triangle
+        then
             self.shape_data.pos.x = self.shape:read_float(0x90)
             self.shape_data.pos.y = self.shape:read_float(0x94)
             self.shape_data.pos.z = self.shape:read_float(0x98)

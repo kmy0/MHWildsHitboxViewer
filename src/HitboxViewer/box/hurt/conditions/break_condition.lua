@@ -4,8 +4,8 @@
 local condition_base = require("HitboxViewer.box.hurt.conditions.condition_base")
 local data = require("HitboxViewer.data")
 
-local rt = data.runtime
-local rl = data.util.reverse_lookup
+local rt = data.mod
+local rl = game_data.reverse_lookup
 
 ---@class BreakCondition
 local this = {}
@@ -35,9 +35,12 @@ end
 ---@param part_group PartGroup
 ---@return ConditionResult, integer
 function this:check(part_group)
-    local match = (part_group.part_data.can_break and (part_group.part_data.is_broken and "Broken" or "Yes")) or "No"
+    local match = (
+        part_group.part_data.can_break and (part_group.part_data.is_broken and "Broken" or "Yes")
+    ) or "No"
     if match == rl(rt.enum.break_state, self.sub_type) then
-        return self.state == rt.enum.condition_state.Highlight and rt.enum.condition_result.Highlight
+        return self.state == rt.enum.condition_state.Highlight
+                and rt.enum.condition_result.Highlight
             or rt.enum.condition_result.Hide,
             self.color
     end

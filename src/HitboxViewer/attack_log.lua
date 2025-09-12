@@ -37,9 +37,9 @@ local data = require("HitboxViewer.data")
 local table_util = require("HitboxViewer.table_util")
 
 local ace = data.ace
-local rt = data.runtime
+local rt = data.mod
 local gui = data.gui
-local rl = data.util.reverse_lookup
+local rl = game_data.reverse_lookup
 
 ---@class AttackLog
 local this = {
@@ -288,7 +288,8 @@ function this.get_log_entry(char, userdata, rsc, resource_idx)
     local entry_data
 
     if
-        p_data_def:is_a("app.col_user_data.AttackParamPl") or p_data_def:is_a("app.col_user_data.AttackParamPlShell")
+        p_data_def:is_a("app.col_user_data.AttackParamPl")
+        or p_data_def:is_a("app.col_user_data.AttackParamPlShell")
     then
         ---@cast p_data app.col_user_data.AttackParamPl
         entry_data = this.get_player_data(p_data)
@@ -314,7 +315,8 @@ function this.get_log_entry(char, userdata, rsc, resource_idx)
 
     ---@type AttackLogEntryBase
     local entry_base = {
-        char_type = rt.enum.char.MasterPlayer == char.type and "Self" or rl(rt.enum.char, char.type),
+        char_type = rt.enum.char.MasterPlayer == char.type and "Self"
+            or rl(rt.enum.char, char.type),
         char_id = char.id,
         char_name = char.name,
         userdata_type = p_data_def,

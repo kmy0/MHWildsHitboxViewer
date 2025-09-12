@@ -1,12 +1,12 @@
 local base = require("HitboxViewer.box.hit.hitbox_base")
-local util = require("HitboxViewer.util")
+local util = require("HitboxViewer._util")
 local enemy = { big_enemy = base, small_enemy = base }
 local friend = { player = base, npc = base, pet = base }
 local attack_log = require("HitboxViewer.attack_log")
 local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
 
-local rt = data.runtime
+local rt = data.mod
 
 local this = {
     hook = require("HitboxViewer.box.hit.hook"),
@@ -22,7 +22,13 @@ local function get_collidable(load_data)
             for i = 0, load_data.rsc:getNumCollidables(load_data.res_idx, load_data.req_idx) - 1 do
                 local col = load_data.rsc:getCollidable(load_data.res_idx, load_data.req_idx, i)
                 if col then
-                    coroutine.yield(col, col:get_UserData(), load_data.res_idx, load_data.req_idx, i)
+                    coroutine.yield(
+                        col,
+                        col:get_UserData(),
+                        load_data.res_idx,
+                        load_data.req_idx,
+                        i
+                    )
                 end
             end
         elseif load_data.type == rt.enum.hitbox_load_data.base then
@@ -67,7 +73,9 @@ function this.get()
             if
                 char:has_hitbox(col)
                 or not log_entry
-                or config.current.hitboxes.misc_type.disable[data.custom_attack_type.check(log_entry)]
+                or config.current.hitboxes.misc_type.disable[data.custom_attack_type.check(
+                    log_entry
+                )]
                 or config.current.hitboxes.guard_type.disable[log_entry.guard_type]
                 or config.current.hitboxes.damage_angle.disable[log_entry.damage_angle]
                 or config.current.hitboxes.damage_type.disable[log_entry.damage_type]
@@ -81,7 +89,15 @@ function this.get()
 
             if char.type == rt.enum.char.Npc then
                 ---@cast char Npc
-                box = friend.npc:new(col, char, resource_idx, set_idx, collidable_idx, log_entry, load_data.shellcolhit)
+                box = friend.npc:new(
+                    col,
+                    char,
+                    resource_idx,
+                    set_idx,
+                    collidable_idx,
+                    log_entry,
+                    load_data.shellcolhit
+                )
             elseif char.type == rt.enum.char.Player or char.type == rt.enum.char.MasterPlayer then
                 ---@cast char Player
                 box = friend.player:new(
@@ -95,7 +111,15 @@ function this.get()
                 )
             elseif char.type == rt.enum.char.Pet then
                 ---@cast char Pet
-                box = friend.pet:new(col, char, resource_idx, set_idx, collidable_idx, log_entry, load_data.shellcolhit)
+                box = friend.pet:new(
+                    col,
+                    char,
+                    resource_idx,
+                    set_idx,
+                    collidable_idx,
+                    log_entry,
+                    load_data.shellcolhit
+                )
             elseif char.type == rt.enum.char.BigMonster then
                 ---@cast char BigEnemy
                 box = enemy.big_enemy:new(

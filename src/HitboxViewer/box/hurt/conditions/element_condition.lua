@@ -6,8 +6,8 @@
 local condition_base = require("HitboxViewer.box.hurt.conditions.condition_base")
 local data = require("HitboxViewer.data")
 
-local rt = data.runtime
-local rl = data.util.reverse_lookup
+local rt = data.mod
+local rl = game_data.reverse_lookup
 
 ---@class ElementCondition
 local this = {}
@@ -44,14 +44,16 @@ function this:check(part_group)
     if self.sub_type ~= rt.enum.element.All then
         local value = part_group.part_data.hitzone[rl(rt.enum.element, self.sub_type)]
         if value >= self.from and value <= self.to then
-            return self.state == rt.enum.condition_state.Highlight and rt.enum.condition_result.Highlight
+            return self.state == rt.enum.condition_state.Highlight
+                    and rt.enum.condition_result.Highlight
                 or rt.enum.condition_result.Hide,
                 self.color
         end
     else
         for _, value in pairs(part_group.part_data.hitzone) do
             if value >= self.from and value <= self.to then
-                return self.state == rt.enum.condition_state.Highlight and rt.enum.condition_result.Highlight
+                return self.state == rt.enum.condition_state.Highlight
+                        and rt.enum.condition_result.Highlight
                     or rt.enum.condition_result.Hide,
                     self.color
             end

@@ -6,7 +6,7 @@ local data = require("HitboxViewer.data")
 local enemy_hurtbox = require("HitboxViewer.box.hurt.enemy")
 local part_group = require("HitboxViewer.box.hurt.part_group")
 
-local rt = data.runtime
+local rt = data.mod
 
 ---@class BigEnemyHurtBox
 local this = {}
@@ -22,7 +22,15 @@ setmetatable(this, { __index = enemy_hurtbox })
 ---@param meat_data app.col_user_data.DamageParamEm
 ---@return BigEnemyHurtBox?
 function this:new(collidable, parent, resource_idx, set_idx, collidable_idx, meat_data)
-    local o = enemy_hurtbox.new(self, collidable, parent, resource_idx, set_idx, collidable_idx, meat_data)
+    local o = enemy_hurtbox.new(
+        self,
+        collidable,
+        parent,
+        resource_idx,
+        set_idx,
+        collidable_idx,
+        meat_data
+    )
 
     if not o then
         return
@@ -40,7 +48,10 @@ end
 
 ---@return BoxState
 function this:update_data()
-    if not self.part_group.is_show and self.part_group.condition ~= rt.enum.condition_result.Highlight then
+    if
+        not self.part_group.is_show
+        and self.part_group.condition ~= rt.enum.condition_result.Highlight
+    then
         return rt.enum.box_state.None
     end
 

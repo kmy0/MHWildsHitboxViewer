@@ -7,7 +7,7 @@ local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
 local queue_base = require("HitboxViewer.queue_base")
 
-local rt = data.runtime
+local rt = data.mod
 
 ---@class DrawQueue
 local this = queue_base:new()
@@ -27,7 +27,10 @@ end
 
 ---@param box BoxBase
 local function draw_shape(box)
-    if box.shape_type == rt.enum.shape.Capsule or box.shape_type == rt.enum.shape.ContinuousCapsule then
+    if
+        box.shape_type == rt.enum.shape.Capsule
+        or box.shape_type == rt.enum.shape.ContinuousCapsule
+    then
         hb_draw.capsule(
             box.shape_data.pos_a,
             box.shape_data.pos_b,
@@ -36,7 +39,10 @@ local function draw_shape(box)
             config.current.draw.outline,
             config.current.draw.outline_color
         )
-    elseif box.shape_type == rt.enum.shape.Sphere or box.shape_type == rt.enum.shape.ContinuousSphere then
+    elseif
+        box.shape_type == rt.enum.shape.Sphere
+        or box.shape_type == rt.enum.shape.ContinuousSphere
+    then
         hb_draw.sphere(
             box.shape_data.pos,
             box.shape_data.radius,

@@ -20,7 +20,7 @@ local config = require("HitboxViewer.config")
 local data = require("HitboxViewer.data")
 local queue_base = require("HitboxViewer.queue_base")
 
-local rt = data.runtime
+local rt = data.mod
 
 ---@class HitBoxLoadQueue
 local this = queue_base:new()

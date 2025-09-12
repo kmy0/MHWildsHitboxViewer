@@ -5,7 +5,7 @@ local data = require("HitboxViewer.data")
 local draw_queue = require("HitboxViewer.draw_queue")
 local table_util = require("HitboxViewer.table_util")
 
-local rt = data.runtime
+local rt = data.mod
 
 local this = {}
 
