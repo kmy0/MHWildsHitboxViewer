@@ -18,6 +18,8 @@ local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
 local game_data = require("HitboxViewer.util.game.data")
 local util = require("HitboxViewer._util")
+local util_game = require("HitboxViewer.util.game.init")
+local util_misc = require("HitboxViewer.util.misc.init")
 local util_table = require("HitboxViewer.util.misc.table")
 
 local rl = game_data.reverse_lookup
@@ -65,7 +67,7 @@ end
 
 ---@return boolean
 function this:is_dead()
-    return not util.is_char_valid(self.base) or util.is_only_my_ref(self.base)
+    return not self:is_valid()
 end
 
 ---@param box HurtBoxBase
@@ -164,6 +166,20 @@ function this:update_pressboxes()
     end
 
     return self:_update_boxes(self.pressboxes)
+end
+
+---@param char app.CharacterBase?
+function this:is_valid(char)
+    local ret = false
+    util_misc.try(function()
+        char = char or self.base
+        if not char then
+            return
+        end
+
+        ret = char:get_Valid() and not util_game.is_only_my_ref(char)
+    end)
+    return ret
 end
 
 return this

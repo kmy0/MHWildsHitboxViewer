@@ -1,6 +1,7 @@
+local char_cls = require("HitboxViewer.character.char_base")
 local data = require("HitboxViewer.data.init")
 local load_queue = require("HitboxViewer.character.load_queue")
-local util = require("HitboxViewer._util")
+local util_game = require("HitboxViewer.util.game.init")
 
 local mod = data.mod
 
@@ -10,24 +11,21 @@ local this = {
 }
 
 function this.create_all_chars()
-    local transforms = util.get_all_components("app.CharacterBase")
-    local size = transforms:get_Count()
-    for i = 0, size - 1 do
-        ---@type app.CharacterBase
-        local char_base = transforms:get_Item(i)
+    local chars = util_game.get_all_components("app.CharacterBase")
+    util_game.do_something(chars, function(system_array, index, value)
         load_queue:enqueue({
             tick = mod.state.tick_count,
-            game_object = char_base:get_GameObject(),
-            char_base = char_base,
+            game_object = value:get_GameObject(),
+            char_base = value,
         })
-    end
+    end)
 end
 
 --FIXME: when chars are created trough app.CharacterBase.doStart hook, some elements are not created yet
 -- and things throw exceptions, couldnt find anything better to hook
 function this.get()
     for load_data in load_queue:get() do
-        if load_data.char_base and not util.is_char_valid(load_data.char_base) then
+        if load_data.char_base and not char_cls:is_valid(load_data.char_base) then
             goto continue
         end
 

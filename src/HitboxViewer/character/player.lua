@@ -18,7 +18,8 @@ local char_base = require("HitboxViewer.character.char_base")
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
 local game_data = require("HitboxViewer.util.game.data")
-local util = require("HitboxViewer._util")
+local m = require("HitboxViewer.util.ref.methods")
+local util_game = require("HitboxViewer.util.game.init")
 local util_table = require("HitboxViewer.util.misc.table")
 
 local mod = data.mod
@@ -41,7 +42,7 @@ function this:new(type, base, name)
     setmetatable(o, self)
 
     local status = base:get_HunterStatus()
-    local rsc = util.get_component(o.game_object, "via.physics.RequestSetCollider") --[[@as via.physics.RequestSetCollider]]
+    local rsc = util_game.get_component(o.game_object, "via.physics.RequestSetCollider") --[[@as via.physics.RequestSetCollider]]
 
     o.status_flags = status._HunterStatusFlag
     o.direction = Vector3f.new(0, 0, 0)
@@ -82,8 +83,8 @@ function this:update_guard_type()
 end
 
 function this:update_direction()
-    local front_pos = util.calcCollidableCenter:call(nil, self.front_col) --[[@as Vector3f]]
-    local center_pos = util.calcCollidableCenter:call(nil, self.center_col) --[[@as Vector3f]]
+    local front_pos = m.calcCollidableCenter(self.front_col) --[[@as Vector3f]]
+    local center_pos = m.calcCollidableCenter(self.center_col) --[[@as Vector3f]]
     local dir = front_pos - center_pos
     dir:normalize()
     self.direction.x = dir.x

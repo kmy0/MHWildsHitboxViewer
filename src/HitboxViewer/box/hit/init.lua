@@ -2,7 +2,7 @@ local attack_log = require("HitboxViewer.attack_log")
 local base = require("HitboxViewer.box.hit.hitbox_base")
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
-local util = require("HitboxViewer._util")
+local m = require("HitboxViewer.util.ref.methods")
 
 local mod = data.mod
 
@@ -38,7 +38,7 @@ local function get_collidable(load_data)
                 for j = 0, load_data.rsc:getNumRequestSetsFromIndex(i) - 1 do
                     for k = 0, load_data.rsc:getNumCollidablesFromIndex(i, j) - 1 do
                         local col = load_data.rsc:getCollidableFromIndex(i, j, k)
-                        if col and util.isCollidableValid:call(nil, col) then
+                        if col and m.isCollidableValid(col) then
                             coroutine.yield(col, col:get_UserData(), i, j, k)
                         end
                     end

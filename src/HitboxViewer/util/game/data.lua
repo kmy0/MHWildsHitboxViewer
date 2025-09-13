@@ -4,6 +4,34 @@ local util_table = require("HitboxViewer.util.misc.table")
 
 local this = {}
 local rl = {}
+---@type {fixed: table<string, table<System.Enum, string>>, enum: table<string, table<System.Enum, string>>}}
+local enums = {
+    fixed = {},
+    enum = {},
+}
+
+---@generic T, T2
+---@param fixed_type `T`
+---@param enum_type `T2`
+---@return table<`T`, string>, table<`T2`, string>
+local function get_enums(fixed_type, enum_type)
+    local fixed_t = enums.fixed[fixed_type]
+    local enum_t = enums.enum[enum_type]
+
+    if not fixed_t then
+        enums.fixed[fixed_type] = {}
+        this.get_enum(fixed_type, enums.fixed[fixed_type])
+        fixed_t = enums.fixed[fixed_type]
+    end
+
+    if not enum_t then
+        enums.enum[enum_type] = {}
+        this.get_enum(enum_type, enums.enum[enum_type])
+        enum_t = enums.enum[enum_type]
+    end
+
+    return fixed_t, enum_t
+end
 
 ---@generic K, V
 ---@param table table<K, V>
@@ -95,6 +123,29 @@ function this.get_enum(type_def_name, t, as_string, ignore_values)
     end
 
     return t
+end
+
+---@generic T
+---@param fixed_type `T`
+---@param enum_value integer
+---@return `T`
+function this.enum_to_fixed(fixed_type, enum_value)
+    ---@cast fixed_type string
+    local enum_type = fixed_type:match("(.+)_Fixed$")
+    local fixed_t, enum_t = get_enums(fixed_type, enum_type)
+    local enum_name = enum_t[enum_value]
+    return this.reverse_lookup(fixed_t, enum_name)
+end
+
+---@generic T
+---@param enum_type `T`
+---@param fixed_value integer
+---@return `T`
+function this.fixed_to_enum(enum_type, fixed_value)
+    local fixed_type = enum_type .. "_Fixed"
+    local fixed_t, enum_t = get_enums(fixed_type, enum_type)
+    local fixed_name = fixed_t[fixed_value]
+    return this.reverse_lookup(enum_t, fixed_name)
 end
 
 return this

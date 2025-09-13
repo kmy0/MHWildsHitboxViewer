@@ -25,8 +25,11 @@
 local conditions = require("HitboxViewer.box.hurt.conditions.init")
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
+local game_data = require("HitboxViewer.util.game.data")
+local game_lang = require("HitboxViewer.util.game.lang")
+local m = require("HitboxViewer.util.ref.methods")
 local scar_box = require("HitboxViewer.box.hurt.scar")
-local util = require("HitboxViewer._util")
+local util_game = require("HitboxViewer.util.game.init")
 local util_table = require("HitboxViewer.util.misc.table")
 
 local gui = data.gui
@@ -76,9 +79,9 @@ end
 ---@param fixed_part_type System.Int32
 ---@return string?
 local function get_part_name(fixed_part_type)
-    local part_type_enum = util.get_part_type(fixed_part_type)
-    local guid = util.EmPartsName(nil, part_type_enum) --[[@as System.Guid]]
-    local ret = util.get_message_local(guid, util.get_language(), true)
+    local part_type_enum = game_data.fixed_to_enum("app.EnemyDef.PARTS_TYPE", fixed_part_type)
+    local guid = m.EmPartsName(part_type_enum)
+    local ret = game_lang.get_message_local(guid, game_lang.get_language(), true)
     if string.len(ret) > 0 then
         return ret
     end
@@ -205,7 +208,7 @@ end
 function this:new(cache, enemy_ctx, enemy_mc_holder, enemy_hurtbox, meat_data)
     local dmg_cparts = meat_data:get_Parts()
     local guid = dmg_cparts:get_PartsGuid()
-    local formated_guid = util.format_guid(guid)
+    local formated_guid = util_game.format_guid(guid)
 
     ---@type PartGroup
     local o

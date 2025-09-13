@@ -15,6 +15,7 @@ local conditions = require("HitboxViewer.box.hurt.conditions.init")
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
 local queue_base = require("HitboxViewer.queue_base")
+local util_misc = require("HitboxViewer.util.misc.init")
 local util_table = require("HitboxViewer.util.misc.table")
 
 local mod = data.mod
@@ -52,10 +53,12 @@ end
 
 ---@return boolean
 function this:is_dead()
-    local _, is_dead = pcall(function()
-        return self.browser:get_IsDie()
+    local ret = false
+    util_misc.try(function()
+        ret = self.browser:get_IsDie() or not self:is_valid()
     end)
-    return char_base.is_dead(self) or is_dead
+
+    return ret
 end
 
 ---@return PartGroup[]

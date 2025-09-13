@@ -4,6 +4,7 @@ local data = require("HitboxViewer.data.init")
 local game_data = require("HitboxViewer.util.game.data")
 local load_queue = require("HitboxViewer.box.hit.load_queue")
 local util = require("HitboxViewer._util")
+local util_game = require("HitboxViewer.util.game.init")
 
 local mod = data.mod
 local rl = game_data.reverse_lookup
@@ -32,7 +33,7 @@ function this.get_shell_post(retval)
     local shellcolhit = storage["shellcolhit"] --[[@as app.mcShellColHit]]
     --FIXME: surely there must be better way to get actual owner of the shell???
     local shellcol_owner = shellcolhit:get_Owner()
-    local shell_base = util.get_component(shellcol_owner, "ace.ShellBase")
+    local shell_base = util_game.get_component(shellcol_owner, "ace.ShellBase")
     ---@cast shell_base ace.ShellBase
     local shell_owner = shell_base:get_ShellOwner()
     local shell_transform = shell_owner:get_Transform()
@@ -58,7 +59,7 @@ function this.get_shell_post(retval)
     end
 
     local first_colider = shellcolhit._FirstCollider
-    local cols = util.system_array_to_lua(shellcolhit._SubColliders)
+    local cols = util_game.system_array_to_lua(shellcolhit._SubColliders)
     if first_colider then
         table.insert(cols, first_colider)
     end

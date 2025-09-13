@@ -3,10 +3,12 @@
 ---@field by_gameobject table<via.GameObject, Character>
 ---@field by_type_by_gameobject table<CharType, table<via.GameObject, Character>>
 
+local char_cls = require("HitboxViewer.character.char_base")
 local char_ctor = require("HitboxViewer.character.char_ctor")
 local col_load_queue = require("HitboxViewer.box.collidable_queue")
 local data = require("HitboxViewer.data.init")
 local util = require("HitboxViewer._util")
+local util_game = require("HitboxViewer.util.game.init")
 local util_table = require("HitboxViewer.util.misc.table")
 
 local mod = data.mod
@@ -46,14 +48,14 @@ function this.get_char(game_object, char_base)
     end
 
     if not char_base then
-        char_base = util.get_component(game_object, "app.CharacterBase") --[[@as app.CharacterBase?]]
+        char_base = util_game.get_component(game_object, "app.CharacterBase") --[[@as app.CharacterBase?]]
     end
 
-    if not char_base or not char_base:get_Started() or not util.is_char_valid(char_base) then
+    if not char_base or not char_base:get_Started() or not char_cls:is_valid(char_base) then
         return
     end
 
-    local rsc = util.get_component(game_object, "via.physics.RequestSetCollider") --[[@as via.physics.RequestSetCollider?]]
+    local rsc = util_game.get_component(game_object, "via.physics.RequestSetCollider") --[[@as via.physics.RequestSetCollider?]]
     if not rsc then
         return
     end
@@ -74,7 +76,7 @@ end
 
 ---@return MasterPlayer?
 function this.get_master_player()
-    if not this.master_player or util.is_only_my_ref(this.master_player.base) then
+    if not this.master_player or not char_cls:is_valid(this.master_player.base) then
         local playman = s.get("app.PlayerManager")
         if not playman then
             return

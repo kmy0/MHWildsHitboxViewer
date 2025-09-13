@@ -9,8 +9,9 @@
 local bigenemy = require("HitboxViewer.character.big_enemy")
 local char_base_ = require("HitboxViewer.character.char_base")
 local data = require("HitboxViewer.data.init")
+local game_lang = require("HitboxViewer.util.game.lang")
+local m = require("HitboxViewer.util.ref.methods")
 local player = require("HitboxViewer.character.player")
-local util = require("HitboxViewer._util")
 
 local gui = data.gui
 local mod = data.mod
@@ -30,7 +31,7 @@ local function get_hunter_name(hunter_extend)
     if hunter_extend:get_IsNpc() then
         ---@cast hunter_extend app.HunterCharacter.cHunterExtendNpc
         local id = get_npc_id(hunter_extend)
-        return util.getNpcName:call(nil, id) or gui.name_missing
+        return m.getNpcName(id) or gui.name_missing
     end
     ---@cast hunter_extend app.HunterCharacter.cHunterExtendPlayer
     local ctx_holder = hunter_extend._ContextHolder
@@ -73,9 +74,9 @@ end
 local function get_enemy_data(base_char_type, char_base)
     local holder = char_base._Context
     local ctx = holder:get_Em()
-    local name = util.get_message_local(
-        util.getEnemyNameGuid:call(nil, ctx:get_EmID()),
-        util.get_language(),
+    local name = game_lang.get_message_local(
+        m.getEnemyNameGuid(ctx:get_EmID()),
+        game_lang.get_language(),
         true
     ) or gui.name_missing
     if base_char_type == mod.enum.base_char.BigMonster then
