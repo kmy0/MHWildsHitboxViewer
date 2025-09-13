@@ -1,7 +1,7 @@
 ---@class WeakCondition : ConditionBase
 
 local condition_base = require("HitboxViewer.box.hurt.conditions.condition_base")
-local data = require("HitboxViewer.data")
+local data = require("HitboxViewer.data.init")
 
 local rt = data.mod
 

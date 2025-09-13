@@ -1,6 +1,6 @@
 local char_cache = require("HitboxViewer.character.char_cache")
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
 local load_queue = require("HitboxViewer.box.hit.load_queue")
 local util = require("HitboxViewer._util")
 

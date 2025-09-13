@@ -1,7 +1,7 @@
-local char = require("HitboxViewer.character")
-local conditions = require("HitboxViewer.box.hurt.conditions")
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
+local char = require("HitboxViewer.character.init")
+local conditions = require("HitboxViewer.box.hurt.conditions.init")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
 local table_util = require("HitboxViewer.table_util")
 local util = require("HitboxViewer.gui.util")
 

@@ -1,8 +1,8 @@
 ---@class (exact) HurtBoxBase : CollidableBase
 
 local colldable_base = require("HitboxViewer.box.collidable_base")
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
 
 local rt = data.mod
 local rl = game_data.reverse_lookup

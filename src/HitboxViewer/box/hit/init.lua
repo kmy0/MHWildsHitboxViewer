@@ -3,8 +3,8 @@ local util = require("HitboxViewer._util")
 local enemy = { big_enemy = base, small_enemy = base }
 local friend = { player = base, npc = base, pet = base }
 local attack_log = require("HitboxViewer.attack_log")
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
 
 local rt = data.mod
 

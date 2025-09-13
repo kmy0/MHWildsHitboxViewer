@@ -5,7 +5,7 @@
 
 local char_ctor = require("HitboxViewer.character.char_ctor")
 local col_load_queue = require("HitboxViewer.box.collidable_queue")
-local data = require("HitboxViewer.data")
+local data = require("HitboxViewer.data.init")
 local table_util = require("HitboxViewer.table_util")
 local util = require("HitboxViewer._util")
 

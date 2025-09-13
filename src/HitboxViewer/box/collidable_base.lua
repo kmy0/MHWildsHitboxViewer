@@ -10,7 +10,7 @@
 ---@field collidable_idx integer
 
 local box_base = require("HitboxViewer.box.box_base")
-local data = require("HitboxViewer.data")
+local data = require("HitboxViewer.data.init")
 
 local rt = data.mod
 local ace = data.ace

@@ -1,5 +1,5 @@
 local attack_log = require("HitboxViewer.attack_log")
-local config = require("HitboxViewer.config")
+local config = require("HitboxViewer.config.init")
 local table_util = require("HitboxViewer.table_util")
 local util = require("HitboxViewer.gui.util")
 
@@ -90,7 +90,11 @@ function this.draw()
 
     if config.current.enabled_hitboxes then
         if
-            imgui.begin_table(table_data.name, table_data.col_count, table_data.flags --[[@as ImGuiTableFlags]])
+            imgui.begin_table(
+                table_data.name,
+                table_data.col_count,
+                table_data.flags --[[@as ImGuiTableFlags]]
+            )
         then
             for _, header in ipairs(table_data.headers) do
                 imgui.table_setup_column(header)
@@ -119,7 +123,12 @@ function this.draw()
                             attack_log.open_entries[i] = true
                             draw_more_data(
                                 entry.more_data,
-                                string.format("%s, %s - %s", entry.char_name, entry.char_id, entry.attack_id),
+                                string.format(
+                                    "%s, %s - %s",
+                                    entry.char_name,
+                                    entry.char_id,
+                                    entry.attack_id
+                                ),
                                 i
                             )
                         end

@@ -15,8 +15,8 @@
 ---@field type app.WeaponDef.TYPE
 
 local char_base = require("HitboxViewer.character.char_base")
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
 local table_util = require("HitboxViewer.table_util")
 local util = require("HitboxViewer._util")
 

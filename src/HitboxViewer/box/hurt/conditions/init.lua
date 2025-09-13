@@ -2,8 +2,8 @@
 ---@field sorted ConditionBase[]
 ---@field by_type table<ConditionType, ConditionBase[]>
 
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
 local table_util = require("HitboxViewer.table_util")
 
 local rt = data.mod

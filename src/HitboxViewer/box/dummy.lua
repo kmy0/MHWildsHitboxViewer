@@ -1,7 +1,7 @@
 local box_base = require("HitboxViewer.box.box_base")
-local character = require("HitboxViewer.character")
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
+local character = require("HitboxViewer.character.init")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
 local draw_queue = require("HitboxViewer.draw_queue")
 local table_util = require("HitboxViewer.table_util")
 

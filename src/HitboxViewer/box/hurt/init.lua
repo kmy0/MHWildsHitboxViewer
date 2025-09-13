@@ -1,4 +1,4 @@
-local data = require("HitboxViewer.data")
+local data = require("HitboxViewer.data.init")
 local enemy = {
     big_enemy = require("HitboxViewer.box.hurt.big_enemy"),
     small_enemy = require("HitboxViewer.box.hurt.enemy"),
@@ -11,7 +11,7 @@ local friend = {
 local rt = data.mod
 
 local this = {
-    conditions = require("HitboxViewer.box.hurt.conditions"),
+    conditions = require("HitboxViewer.box.hurt.conditions.init"),
     queue = require("HitboxViewer.box.hurt.load_queue"),
 }
 

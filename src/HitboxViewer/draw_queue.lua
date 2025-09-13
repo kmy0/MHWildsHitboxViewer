@@ -3,8 +3,8 @@
 ---@field sorted boolean
 ---@field enqueue fun(self: DrawQueue , boxes: BoxBase[]?)
 
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
 local queue_base = require("HitboxViewer.queue_base")
 
 local rt = data.mod

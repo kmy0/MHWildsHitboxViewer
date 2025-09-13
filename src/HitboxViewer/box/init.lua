@@ -1,12 +1,12 @@
 local col_queue = require("HitboxViewer.box.collidable_queue")
-local data = require("HitboxViewer.data")
+local data = require("HitboxViewer.data.init")
 
 local rt = data.mod
 
 local this = {
-    hitbox = require("HitboxViewer.box.hit"),
-    hurtbox = require("HitboxViewer.box.hurt"),
-    pressbox = require("HitboxViewer.box.press"),
+    hitbox = require("HitboxViewer.box.hit.init"),
+    hurtbox = require("HitboxViewer.box.hurt.init"),
+    pressbox = require("HitboxViewer.box.press.init"),
     dummy = require("HitboxViewer.box.dummy"),
 }
 

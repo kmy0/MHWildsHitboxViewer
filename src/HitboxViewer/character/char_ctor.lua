@@ -8,7 +8,7 @@
 
 local bigenemy = require("HitboxViewer.character.big_enemy")
 local char_base_ = require("HitboxViewer.character.char_base")
-local data = require("HitboxViewer.data")
+local data = require("HitboxViewer.data.init")
 local player = require("HitboxViewer.character.player")
 local util = require("HitboxViewer._util")
 

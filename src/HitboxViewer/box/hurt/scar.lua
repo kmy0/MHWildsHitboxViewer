@@ -9,10 +9,10 @@
 ---@field protected _scar_part app.cEmModuleScar.cScarParts
 
 local box_base = require("HitboxViewer.box.box_base")
-local char = require("HitboxViewer.character")
-local conditions = require("HitboxViewer.box.hurt.conditions")
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
+local char = require("HitboxViewer.character.init")
+local conditions = require("HitboxViewer.box.hurt.conditions.init")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
 
 local rt = data.mod
 local ace = data.ace

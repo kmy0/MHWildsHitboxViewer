@@ -167,5 +167,7 @@ function this.in_transition()
 end
 
 this.is_ok = frame_cache.memoize(this.is_ok)
+this.in_game = frame_cache.memoize(this.in_game)
+this.in_transition = frame_cache.memoize(this.in_transition)
 
 return this

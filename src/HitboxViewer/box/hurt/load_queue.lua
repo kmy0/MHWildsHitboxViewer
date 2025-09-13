@@ -5,8 +5,8 @@
 ---@class (exact) HurtBoxLoadData : BoxLoadData
 ---@field userdata app.col_user_data.DamageParam
 
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
 local queue_base = require("HitboxViewer.queue_base")
 
 local rt = data.mod

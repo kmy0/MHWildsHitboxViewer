@@ -1,4 +1,4 @@
-local config = require("HitboxViewer.config")
+local config = require("HitboxViewer.config.init")
 local table_util = require("HitboxViewer.table_util")
 local util = require("HitboxViewer._util")
 

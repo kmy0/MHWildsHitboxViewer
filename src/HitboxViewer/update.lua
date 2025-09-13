@@ -1,7 +1,7 @@
-local box = require("HitboxViewer.box")
-local char = require("HitboxViewer.character")
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
+local box = require("HitboxViewer.box.init")
+local char = require("HitboxViewer.character.init")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
 local draw_queue = require("HitboxViewer.draw_queue")
 
 local rt = data.mod

@@ -1,8 +1,8 @@
 ---@class (exact) BigEnemyHurtBox : EnemyHurtBox
 ---@field part_group PartGroup
 
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
 local enemy_hurtbox = require("HitboxViewer.box.hurt.enemy")
 local part_group = require("HitboxViewer.box.hurt.part_group")
 

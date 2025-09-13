@@ -3,8 +3,8 @@
 ---@field parent_hurtbox PlayerHurtBox
 
 local box_base = require("HitboxViewer.box.box_base")
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
 
 local rt = data.mod
 local ace = data.ace

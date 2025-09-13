@@ -3,8 +3,8 @@
 ---@field layer string
 
 local colldable_base = require("HitboxViewer.box.collidable_base")
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
 
 local ace = data.ace
 local rt = data.mod

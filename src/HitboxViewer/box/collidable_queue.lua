@@ -13,8 +13,8 @@
 ---@field collidable_idx integer
 ---@field userdata via.physics.UserData
 
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
 local queue_base = require("HitboxViewer.queue_base")
 
 local rt = data.mod

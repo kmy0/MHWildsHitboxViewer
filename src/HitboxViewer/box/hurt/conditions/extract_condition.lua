@@ -2,7 +2,7 @@
 ---@field sub_type ExtractType
 
 local condition_base = require("HitboxViewer.box.hurt.conditions.condition_base")
-local data = require("HitboxViewer.data")
+local data = require("HitboxViewer.data.init")
 
 local rt = data.mod
 local rl = game_data.reverse_lookup

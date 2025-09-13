@@ -1,8 +1,8 @@
 ---@class (exact) PlayerHurtBox : HurtBoxBase
 ---@field guard_box GuardBox
 
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
 local guard_box = require("HitboxViewer.box.hurt.guard")
 local hurtbox_base = require("HitboxViewer.box.hurt.hurtbox_base")
 

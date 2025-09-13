@@ -5,8 +5,8 @@
 ---@field key integer
 ---@field check fun(self: ConditionBase, part_data: PartGroup): ConditionResult, integer
 
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
 local table_util = require("HitboxViewer.table_util")
 
 local rt = data.mod

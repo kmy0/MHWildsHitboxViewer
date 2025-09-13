@@ -31,7 +31,7 @@
 
 ---@alias ShapeData CylinderShape | BoxShape | SphereShape | SlicedCylinderShape
 
-local data = require("HitboxViewer.data")
+local data = require("HitboxViewer.data.init")
 
 local rt = data.mod
 

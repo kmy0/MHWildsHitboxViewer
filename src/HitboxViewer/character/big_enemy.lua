@@ -11,9 +11,9 @@
 ---@field get fun(self: PGUpdateQueue): fun(): string
 
 local char_base = require("HitboxViewer.character.char_base")
-local conditions = require("HitboxViewer.box.hurt.conditions")
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
+local conditions = require("HitboxViewer.box.hurt.conditions.init")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
 local queue_base = require("HitboxViewer.queue_base")
 local table_util = require("HitboxViewer.table_util")
 

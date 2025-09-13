@@ -1,4 +1,4 @@
-local data = require("HitboxViewer.data")
+local data = require("HitboxViewer.data.init")
 local enemy = {
     big_enemy = require("HitboxViewer.box.press.pressbox_base"),
     small_enemy = require("HitboxViewer.box.press.pressbox_base"),

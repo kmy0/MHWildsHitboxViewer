@@ -22,9 +22,9 @@
 ---@field _dmg_part app.cEmModuleParts.cDamageParts
 ---@field _break_parts app.cEmModuleParts.cBreakParts?
 
-local conditions = require("HitboxViewer.box.hurt.conditions")
-local config = require("HitboxViewer.config")
-local data = require("HitboxViewer.data")
+local conditions = require("HitboxViewer.box.hurt.conditions.init")
+local config = require("HitboxViewer.config.init")
+local data = require("HitboxViewer.data.init")
 local scar_box = require("HitboxViewer.box.hurt.scar")
 local table_util = require("HitboxViewer.table_util")
 local util = require("HitboxViewer._util")
