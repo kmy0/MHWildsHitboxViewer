@@ -7,8 +7,9 @@
 local colldable_base = require("HitboxViewer.box.collidable_base")
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
+local game_data = require("HitboxViewer.util.game.data")
 
-local rt = data.mod
+local mod = data.mod
 local rl = game_data.reverse_lookup
 
 ---@class HitBoxBase
@@ -30,7 +31,7 @@ function this:new(collidable, parent, resource_idx, set_idx, collidable_idx, log
         self,
         collidable,
         parent,
-        rt.enum.box.HitBox,
+        mod.enum.box.HitBox,
         resource_idx,
         set_idx,
         collidable_idx
@@ -45,7 +46,7 @@ function this:new(collidable, parent, resource_idx, set_idx, collidable_idx, log
     o.log_entry = log_entry
     o.shellcolhit = shellcolhit
     o.is_shown = false
-    o.tick = rt.state.tick_count
+    o.tick = mod.state.tick_count
     return o
 end
 
@@ -62,26 +63,26 @@ function this:update_data()
     elseif config.current.hitboxes.damage_type.color_enable[self.log_entry.damage_type] then
         self.color = config.current.hitboxes.damage_type.color[self.log_entry.damage_type]
     else
-        self.color = config.current.hitboxes.color[rl(rt.enum.char, self.parent.type)]
+        self.color = config.current.hitboxes.color[rl(mod.enum.char, self.parent.type)]
     end
 
-    return rt.enum.box_state.Draw
+    return mod.enum.box_state.Draw
 end
 
 ---@return BoxState
 function this:update()
     if
         self.shellcolhit and self.shellcolhit:get_reference_count() <= 1
-        or rt.state.tick_count - self.tick > 1200
+        or mod.state.tick_count - self.tick > 1200
     then
-        return rt.enum.box_state.Dead
+        return mod.enum.box_state.Dead
     end
 
     local box_state = colldable_base.update(self)
-    if box_state == rt.enum.box_state.Draw then
+    if box_state == mod.enum.box_state.Draw then
         self.is_shown = true
-    elseif box_state == rt.enum.box_state.None and self.is_shown then
-        box_state = rt.enum.box_state.Dead
+    elseif box_state == mod.enum.box_state.None and self.is_shown then
+        box_state = mod.enum.box_state.Dead
     end
     return box_state
 end

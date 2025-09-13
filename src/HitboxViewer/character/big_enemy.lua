@@ -15,9 +15,9 @@ local conditions = require("HitboxViewer.box.hurt.conditions.init")
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
 local queue_base = require("HitboxViewer.queue_base")
-local table_util = require("HitboxViewer.table_util")
+local util_table = require("HitboxViewer.util.misc.table")
 
-local rt = data.mod
+local mod = data.mod
 
 ---@class BigEnemy
 local this = {}
@@ -30,7 +30,7 @@ setmetatable(this, { __index = char_base })
 ---@param ctx app.cEnemyContext
 ---@return BigEnemy
 function this:new(base, name, ctx)
-    local o = char_base.new(self, rt.enum.char.BigMonster, base, name)
+    local o = char_base.new(self, mod.enum.char.BigMonster, base, name)
     ---@cast o BigEnemy
     setmetatable(o, self)
     o.mc_holder = base._MiniComponentHolder
@@ -43,7 +43,7 @@ function this:new(base, name, ctx)
     o.pg_queue.get = function()
         ---@diagnostic disable-next-line: invisible
         return o.pg_queue:_get(function()
-            return not rt.in_transition()
+            return not mod.in_transition()
         end, config.max_part_group_updates)
     end
 
@@ -86,7 +86,7 @@ function this:update_hurtboxes()
     local ret = {}
     if config.current.gui.main.is_opened or not conditions:empty() then
         if self.pg_queue:empty() then
-            self.pg_queue:swap(table_util.keys(self.parts))
+            self.pg_queue:swap(util_table.keys(self.parts))
         end
 
         ---@type table<string, integer>
@@ -119,7 +119,7 @@ function this:update_hurtboxes()
         table.move(boxes, 1, #boxes, #ret + 1, ret)
     end
 
-    if not table_util.empty(ret) then
+    if not util_table.empty(ret) then
         return ret
     end
 end

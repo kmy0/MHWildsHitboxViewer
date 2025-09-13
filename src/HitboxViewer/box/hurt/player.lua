@@ -6,7 +6,7 @@ local data = require("HitboxViewer.data.init")
 local guard_box = require("HitboxViewer.box.hurt.guard")
 local hurtbox_base = require("HitboxViewer.box.hurt.hurtbox_base")
 
-local rt = data.mod
+local mod = data.mod
 
 ---@class PlayerHurtBox
 local this = {}
@@ -39,20 +39,20 @@ function this:update()
     ---@type HurtBoxBase[]?
     local ret
 
-    if box_state == rt.enum.box_state.Draw then
+    if box_state == mod.enum.box_state.Draw then
         ret = {}
         table.insert(ret, self)
     end
 
     if
-        box_state == rt.enum.box_state.Draw
+        box_state == mod.enum.box_state.Draw
         and (
             (self.set_idx == 1 and not config.current.hurtboxes.guard_type.disable_top)
             or (self.set_idx == 2 and not config.current.hurtboxes.guard_type.disable_bottom)
         )
     then
         local guard_state = self.guard_box:update()
-        if guard_state == rt.enum.box_state.Draw then
+        if guard_state == mod.enum.box_state.Draw then
             ---@cast ret HurtBoxBase[]
             table.insert(ret, self.guard_box)
         end

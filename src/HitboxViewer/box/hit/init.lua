@@ -1,23 +1,24 @@
-local base = require("HitboxViewer.box.hit.hitbox_base")
-local util = require("HitboxViewer._util")
-local enemy = { big_enemy = base, small_enemy = base }
-local friend = { player = base, npc = base, pet = base }
 local attack_log = require("HitboxViewer.attack_log")
+local base = require("HitboxViewer.box.hit.hitbox_base")
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
+local util = require("HitboxViewer._util")
 
-local rt = data.mod
+local mod = data.mod
 
 local this = {
     hook = require("HitboxViewer.box.hit.hook"),
     queue = require("HitboxViewer.box.hit.load_queue"),
 }
 
+local enemy = { big_enemy = base, small_enemy = base }
+local friend = { player = base, npc = base, pet = base }
+
 ---@param load_data HitBoxLoadData
 ---@return fun(): via.physics.Collidable, via.physics.RequestSetColliderUserData, integer, integer, integer
 local function get_collidable(load_data)
     return coroutine.wrap(function()
-        if load_data.type == rt.enum.hitbox_load_data.rsc then
+        if load_data.type == mod.enum.hitbox_load_data.rsc then
             ---@cast load_data HitBoxLoadDataRsc
             for i = 0, load_data.rsc:getNumCollidables(load_data.res_idx, load_data.req_idx) - 1 do
                 local col = load_data.rsc:getCollidable(load_data.res_idx, load_data.req_idx, i)
@@ -31,7 +32,7 @@ local function get_collidable(load_data)
                     )
                 end
             end
-        elseif load_data.type == rt.enum.hitbox_load_data.base then
+        elseif load_data.type == mod.enum.hitbox_load_data.base then
             ---@cast load_data HitBoxLoadData
             for i = 0, load_data.rsc:get_NumRequestSets() - 1 do
                 for j = 0, load_data.rsc:getNumRequestSetsFromIndex(i) - 1 do
@@ -87,7 +88,7 @@ function this.get()
                 attack_log:log(log_entry)
             end
 
-            if char.type == rt.enum.char.Npc then
+            if char.type == mod.enum.char.Npc then
                 ---@cast char Npc
                 box = friend.npc:new(
                     col,
@@ -98,7 +99,7 @@ function this.get()
                     log_entry,
                     load_data.shellcolhit
                 )
-            elseif char.type == rt.enum.char.Player or char.type == rt.enum.char.MasterPlayer then
+            elseif char.type == mod.enum.char.Player or char.type == mod.enum.char.MasterPlayer then
                 ---@cast char Player
                 box = friend.player:new(
                     col,
@@ -109,7 +110,7 @@ function this.get()
                     log_entry,
                     load_data.shellcolhit
                 )
-            elseif char.type == rt.enum.char.Pet then
+            elseif char.type == mod.enum.char.Pet then
                 ---@cast char Pet
                 box = friend.pet:new(
                     col,
@@ -120,7 +121,7 @@ function this.get()
                     log_entry,
                     load_data.shellcolhit
                 )
-            elseif char.type == rt.enum.char.BigMonster then
+            elseif char.type == mod.enum.char.BigMonster then
                 ---@cast char BigEnemy
                 box = enemy.big_enemy:new(
                     col,
@@ -131,7 +132,7 @@ function this.get()
                     log_entry,
                     load_data.shellcolhit
                 )
-            elseif char.type == rt.enum.char.SmallMonster then
+            elseif char.type == mod.enum.char.SmallMonster then
                 ---@cast char SmallEnemy
                 box = enemy.small_enemy:new(
                     col,

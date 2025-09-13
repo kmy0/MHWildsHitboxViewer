@@ -2,7 +2,7 @@ local data = require("HitboxViewer.data.init")
 local load_queue = require("HitboxViewer.character.load_queue")
 local util = require("HitboxViewer._util")
 
-local rt = data.mod
+local mod = data.mod
 
 local this = {
     hook = require("HitboxViewer.character.hook"),
@@ -16,7 +16,7 @@ function this.create_all_chars()
         ---@type app.CharacterBase
         local char_base = transforms:get_Item(i)
         load_queue:enqueue({
-            tick = rt.state.tick_count,
+            tick = mod.state.tick_count,
             game_object = char_base:get_GameObject(),
             char_base = char_base,
         })

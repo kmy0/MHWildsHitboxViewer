@@ -1,10 +1,11 @@
 local char_cache = require("HitboxViewer.character.char_cache")
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
+local game_data = require("HitboxViewer.util.game.data")
 local load_queue = require("HitboxViewer.box.hit.load_queue")
 local util = require("HitboxViewer._util")
 
-local rt = data.mod
+local mod = data.mod
 local rl = game_data.reverse_lookup
 
 local this = {}
@@ -51,7 +52,7 @@ function this.get_shell_post(retval)
     if
         not char
         or char.distance > config.current.draw.distance
-        or config.current.hitboxes.disable[rl(rt.enum.char, char.type)]
+        or config.current.hitboxes.disable[rl(mod.enum.char, char.type)]
     then
         return
     end
@@ -63,7 +64,7 @@ function this.get_shell_post(retval)
     end
 
     load_queue:enqueue({
-        type = rt.enum.hitbox_load_data.shell,
+        type = mod.enum.hitbox_load_data.shell,
         char = char,
         colliders = cols,
         rsc = shellcolhit._ReqSetCol,
@@ -87,13 +88,13 @@ function this.get_attack_pre(args)
     if
         not char
         or char.distance > config.current.draw.distance
-        or config.current.hitboxes.disable[rl(rt.enum.char, char.type)]
+        or config.current.hitboxes.disable[rl(mod.enum.char, char.type)]
     then
         return
     end
 
     load_queue:enqueue({
-        type = rt.enum.hitbox_load_data.rsc,
+        type = mod.enum.hitbox_load_data.rsc,
         char = char,
         rsc = collider_switcher._RequestSetCollider,
         res_idx = sdk.to_int64(args[4]) & 0xFFFFFFFF,
@@ -128,7 +129,7 @@ function this.get_kinsect_attack_post(retval)
     if
         not char
         or char.distance > config.current.draw.distance
-        or config.current.hitboxes.disable[rl(rt.enum.char, char.type)]
+        or config.current.hitboxes.disable[rl(mod.enum.char, char.type)]
     then
         return
     end
@@ -136,7 +137,7 @@ function this.get_kinsect_attack_post(retval)
     local components = insect._Components
 
     load_queue:enqueue({
-        type = rt.enum.hitbox_load_data.base,
+        type = mod.enum.hitbox_load_data.base,
         char = char,
         rsc = components._RequestSetCol,
     })

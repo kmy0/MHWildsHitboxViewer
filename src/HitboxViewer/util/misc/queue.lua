@@ -110,7 +110,7 @@ function this:reverse_iter(n)
 
     return function()
         if count >= max_items or self:empty() then
-            return nil
+            return
         end
 
         count = count + 1

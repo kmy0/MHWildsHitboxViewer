@@ -4,7 +4,7 @@
 
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
-local table_util = require("HitboxViewer.table_util")
+local util_table = require("HitboxViewer.util.misc.table")
 
 local rt = data.mod
 ---@type table<ConditionType, ConditionBase>
@@ -29,7 +29,7 @@ function this.sort()
     end)
     for i = 1, #this.sorted do
         local cond = this.sorted[i]
-        table_util.insert_nested_value(this.by_type, { cond.type }, cond)
+        util_table.insert_nested_value(this.by_type, { cond.type }, cond)
     end
 end
 
@@ -151,10 +151,10 @@ end
 
 ---@param cond ConditionBase
 function this.remove(cond)
-    table_util.table_remove(this.sorted, function(t, i, j)
+    util_table.table_remove(this.sorted, function(t, i, j)
         return t[i] ~= cond
     end)
-    table_util.table_remove(this.by_type[cond.type], function(t, i, j)
+    util_table.table_remove(this.by_type[cond.type], function(t, i, j)
         return t[i] ~= cond
     end)
     this.save()
@@ -162,7 +162,7 @@ end
 
 ---@boolean
 function this.empty()
-    return table_util.empty(this.sorted)
+    return util_table.empty(this.sorted)
 end
 
 function this.clear()

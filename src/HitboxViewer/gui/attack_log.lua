@@ -1,7 +1,7 @@
 local attack_log = require("HitboxViewer.attack_log")
 local config = require("HitboxViewer.config.init")
-local table_util = require("HitboxViewer.table_util")
 local util = require("HitboxViewer.gui.util")
+local util_table = require("HitboxViewer.util.misc.table")
 
 local this = {}
 
@@ -55,7 +55,7 @@ local function draw_more_data(more_data, title, i)
         imgui.table_setup_column("Key")
         imgui.table_setup_column("Value")
 
-        local keys = table_util.keys(more_data)
+        local keys = util_table.keys(more_data)
         ---@cast keys string[]
         table.sort(keys)
         for _, k in ipairs(keys) do

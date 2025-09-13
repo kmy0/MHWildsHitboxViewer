@@ -9,7 +9,7 @@ local friend = {
     pet = require("HitboxViewer.box.press.pressbox_base"),
 }
 
-local rt = data.mod
+local mod = data.mod
 
 local this = {
     queue = require("HitboxViewer.box.press.load_queue"),
@@ -21,7 +21,7 @@ function this.get()
         local box
         local char = load_data.char
 
-        if char.type == rt.enum.char.Npc then
+        if char.type == mod.enum.char.Npc then
             ---@cast char Npc
             box = friend.npc:new(
                 load_data.col,
@@ -31,7 +31,7 @@ function this.get()
                 load_data.collidable_idx,
                 load_data.userdata
             )
-        elseif char.type == rt.enum.char.Player or char.type == rt.enum.char.MasterPlayer then
+        elseif char.type == mod.enum.char.Player or char.type == mod.enum.char.MasterPlayer then
             ---@cast char Player
             box = friend.player:new(
                 load_data.col,
@@ -41,7 +41,7 @@ function this.get()
                 load_data.collidable_idx,
                 load_data.userdata
             )
-        elseif char.type == rt.enum.char.Pet then
+        elseif char.type == mod.enum.char.Pet then
             ---@cast char Pet
             box = friend.pet:new(
                 load_data.col,
@@ -51,7 +51,7 @@ function this.get()
                 load_data.collidable_idx,
                 load_data.userdata
             )
-        elseif char.type == rt.enum.char.BigMonster then
+        elseif char.type == mod.enum.char.BigMonster then
             ---@cast char BigEnemy
             box = enemy.big_enemy:new(
                 load_data.col,
@@ -61,7 +61,7 @@ function this.get()
                 load_data.collidable_idx,
                 load_data.userdata
             )
-        elseif char.type == rt.enum.char.SmallMonster then
+        elseif char.type == mod.enum.char.SmallMonster then
             ---@cast char SmallEnemy
             box = enemy.small_enemy:new(
                 load_data.col,

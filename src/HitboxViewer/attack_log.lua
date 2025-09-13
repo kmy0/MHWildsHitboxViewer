@@ -34,7 +34,7 @@
 local circular_buffer = require("HitboxViewer.circular_buffer")
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
-local table_util = require("HitboxViewer.table_util")
+local util_table = require("HitboxViewer.util.misc.table")
 
 local ace = data.ace
 local rt = data.mod
@@ -323,7 +323,7 @@ function this.get_log_entry(char, userdata, rsc, resource_idx)
         resource_idx = resource_idx,
         resource_path = resource:get_ResourcePath(),
     }
-    local ret = table_util.table_merge(entry_base, entry_data) --[[@as AttackLogEntry]]
+    local ret = util_table.table_merge(entry_base, entry_data) --[[@as AttackLogEntry]]
     ---@cast userdata app.col_user_data.AttackParam | app.col_user_data.DamageParam
     char.hitbox_userdata_cache[userdata] = ret
     return ret

@@ -26,12 +26,12 @@ local conditions = require("HitboxViewer.box.hurt.conditions.init")
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
 local scar_box = require("HitboxViewer.box.hurt.scar")
-local table_util = require("HitboxViewer.table_util")
 local util = require("HitboxViewer._util")
+local util_table = require("HitboxViewer.util.misc.table")
 
 local gui = data.gui
 local ace = data.ace
-local rt = data.mod
+local mod = data.mod
 
 ---@class PartGroup
 local this = {}
@@ -144,7 +144,7 @@ local function get_scar_parts(part_index, mc_holder, param_parts)
         end
     end
 
-    if not table_util.empty(ret) then
+    if not util_table.empty(ret) then
         return ret
     end
 end
@@ -212,10 +212,10 @@ function this:new(cache, enemy_ctx, enemy_mc_holder, enemy_hurtbox, meat_data)
     if not cache[formated_guid] then
         local name, part_data = get_part_data(enemy_ctx, enemy_mc_holder, meat_data)
         o = {
-            is_show = config.current.hurtboxes.default_state == rt.enum.default_hurtbox_state.Draw,
+            is_show = config.current.hurtboxes.default_state == mod.enum.default_hurtbox_state.Draw,
             is_highlight = false,
             hurtboxes = {},
-            condition = rt.enum.condition_result.None,
+            condition = mod.enum.condition_result.None,
             condition_color = 0,
             part_data = part_data,
             name = name,
@@ -246,7 +246,7 @@ function this:update()
     if self.part_data.scar_boxes then
         for _, scar in pairs(self.part_data.scar_boxes) do
             local box_state = scar:update()
-            if box_state == rt.enum.box_state.Draw then
+            if box_state == mod.enum.box_state.Draw then
                 table.insert(ret, scar)
             end
         end
@@ -262,7 +262,7 @@ function this:update()
     end
 
     self.condition, self.condition_color = conditions.check_part_group(self)
-    if not table_util.empty(ret) then
+    if not util_table.empty(ret) then
         return ret
     end
 end

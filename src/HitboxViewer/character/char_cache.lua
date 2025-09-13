@@ -6,10 +6,10 @@
 local char_ctor = require("HitboxViewer.character.char_ctor")
 local col_load_queue = require("HitboxViewer.box.collidable_queue")
 local data = require("HitboxViewer.data.init")
-local table_util = require("HitboxViewer.table_util")
 local util = require("HitboxViewer._util")
+local util_table = require("HitboxViewer.util.misc.table")
 
-local rt = data.mod
+local mod = data.mod
 local ace = data.ace
 
 ---@class Characters
@@ -28,7 +28,7 @@ end
 ---@param char_type CharType
 function this.is_empty(char_type)
     return not this.by_type_by_gameobject[char_type]
-        or table_util.empty(this.by_type_by_gameobject[char_type])
+        or util_table.empty(this.by_type_by_gameobject[char_type])
 end
 
 ---@param char Character
@@ -58,14 +58,14 @@ function this.get_char(game_object, char_base)
         return
     end
 
-    local base_char_type = rt.enum.base_char[ace.map.char_type_to_name[char_base
+    local base_char_type = mod.enum.base_char[ace.map.char_type_to_name[char_base
         :get_type_definition()
         :get_full_name()]]
     if base_char_type then
         local o = char_ctor.get_character(base_char_type, char_base)
         if o then
             this.by_gameobject[game_object] = o
-            table_util.set_nested_value(this.by_type_by_gameobject, { o.type, game_object }, o)
+            util_table.set_nested_value(this.by_type_by_gameobject, { o.type, game_object }, o)
             col_load_queue:enqueue({ char = o, rsc = rsc })
             return o
         end

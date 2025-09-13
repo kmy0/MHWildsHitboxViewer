@@ -5,8 +5,8 @@ local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
 local dummies = require("HitboxViewer.box.dummy")
 local hurtbox_info = require("HitboxViewer.gui.hurtbox_info")
-local table_util = require("HitboxViewer.table_util")
 local util = require("HitboxViewer.gui.util")
+local util_table = require("HitboxViewer.util.misc.table")
 
 local rt = data.mod
 local ace = data.ace
@@ -73,7 +73,7 @@ local function draw_hurtboxes_header()
                 "hurtboxes.guard_type",
                 "guard_type",
                 function(t, i, j)
-                    return table_util.table_contains(ace.map.guard_names, t[i])
+                    return util_table.table_contains(ace.map.guard_names, t[i])
                 end
             )
             imgui.tree_pop()
@@ -91,7 +91,7 @@ local function draw_hurtboxes_header()
                 util.combo(
                     "Default Hurtbox State",
                     "hurtboxes.default_state",
-                    table_util.sort(table_util.keys(rt.enum.default_hurtbox_state), function(a, b)
+                    util_table.sort(util_table.keys(rt.enum.default_hurtbox_state), function(a, b)
                         return rt.enum.default_hurtbox_state[a] < rt.enum.default_hurtbox_state[b]
                     end)
                 )
@@ -162,7 +162,7 @@ local function draw_pressboxes_header()
                 "pressboxes.press_level",
                 "press_level",
                 function(t, i, j)
-                    return table_util.table_contains(table_util.values(ace.enum.press_level), t[i])
+                    return util_table.table_contains(util_table.values(ace.enum.press_level), t[i])
                 end
             )
             imgui.tree_pop()
@@ -175,7 +175,7 @@ local function draw_pressboxes_header()
                 "pressboxes.layer",
                 "layer",
                 function(t, i, j)
-                    return table_util.table_contains(table_util.values(ace.enum.col_layer), t[i])
+                    return util_table.table_contains(util_table.values(ace.enum.col_layer), t[i])
                 end
             )
             imgui.tree_pop()
@@ -356,7 +356,7 @@ local function draw_hitboxes_header()
                 "hitboxes.damage_type",
                 "damage_type",
                 function(t, i, j)
-                    return table_util.table_contains(table_util.values(ace.enum.damage_type), t[i])
+                    return util_table.table_contains(util_table.values(ace.enum.damage_type), t[i])
                 end
             )
             imgui.tree_pop()
@@ -368,7 +368,7 @@ local function draw_hitboxes_header()
                 "hitboxes.damage_angle",
                 "damage_angle",
                 function(t, i, j)
-                    return table_util.table_contains(table_util.values(ace.enum.damage_angle), t[i])
+                    return util_table.table_contains(util_table.values(ace.enum.damage_angle), t[i])
                 end
             )
             imgui.tree_pop()
@@ -380,7 +380,7 @@ local function draw_hitboxes_header()
                 "hitboxes.guard_type",
                 "guard_type",
                 function(t, i, j)
-                    return table_util.table_contains(table_util.values(ace.enum.guard_type), t[i])
+                    return util_table.table_contains(util_table.values(ace.enum.guard_type), t[i])
                 end
             )
             imgui.tree_pop()
@@ -397,11 +397,11 @@ local function draw_hitboxes_header()
                 "hitboxes.misc_type",
                 "misc_type",
                 function(t, i, j)
-                    return table_util.table_contains(data.custom_attack_type.sorted, t[i])
+                    return util_table.table_contains(data.custom_attack_type.sorted, t[i])
                 end,
                 function(a, b)
-                    return table_util.index(data.custom_attack_type.sorted, a)
-                        < table_util.index(data.custom_attack_type.sorted, b)
+                    return util_table.index(data.custom_attack_type.sorted, a)
+                        < util_table.index(data.custom_attack_type.sorted, b)
                 end
             )
             imgui.tree_pop()

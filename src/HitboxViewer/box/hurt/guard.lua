@@ -6,7 +6,7 @@ local box_base = require("HitboxViewer.box.box_base")
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
 
-local rt = data.mod
+local mod = data.mod
 local ace = data.ace
 
 ---@class GuardBox
@@ -19,7 +19,7 @@ setmetatable(this, { __index = box_base })
 ---@param parent_hurtbox PlayerHurtBox
 ---@return GuardBox
 function this:new(parent, parent_hurtbox)
-    local o = box_base.new(self, rt.enum.box.GuardBox, rt.enum.shape.SlicedCylinder)
+    local o = box_base.new(self, mod.enum.box.GuardBox, mod.enum.shape.SlicedCylinder)
     setmetatable(o, self)
     ---@cast o GuardBox
     o.parent = parent
@@ -30,7 +30,7 @@ end
 ---@return BoxState
 function this:update_shape()
     if not self.parent.guard_type then
-        return rt.enum.box_state.None
+        return mod.enum.box_state.None
     end
 
     local userdata = self.parent.weapon.userdata
@@ -51,7 +51,7 @@ function this:update_shape()
     self.shape_data.pos_a = self.parent_hurtbox.shape_data.pos_a + self.parent.direction * 0.01
     self.shape_data.pos_b = self.parent_hurtbox.shape_data.pos_b + self.parent.direction * 0.01
     self.pos = (self.shape_data.pos_a + self.shape_data.pos_b) * 0.5
-    self.distance = (rt.camera.origin - self.pos):length()
+    self.distance = (mod.camera.origin - self.pos):length()
 
     local dir = self.shape_data.pos_a - self.shape_data.pos_b
     dir:normalize()
@@ -59,17 +59,17 @@ function this:update_shape()
     self.shape_data.pos_a = self.shape_data.pos_a + dir * self.parent_hurtbox.shape_data.radius
     self.shape_data.pos_b = self.shape_data.pos_b - dir * self.parent_hurtbox.shape_data.radius
 
-    return rt.enum.box_state.Draw
+    return mod.enum.box_state.Draw
 end
 
 ---@return BoxState
 function this:update_data()
     if not self.parent.guard_type then
-        return rt.enum.box_state.None
+        return mod.enum.box_state.None
     end
 
     if config.current.hurtboxes.guard_type.disable[self.parent.guard_type] then
-        return rt.enum.box_state.None
+        return mod.enum.box_state.None
     end
 
     if config.current.hurtboxes.use_one_color then
@@ -79,7 +79,7 @@ function this:update_data()
     else
         self.color = config.current.hurtboxes.color.highlight
     end
-    return rt.enum.box_state.Draw
+    return mod.enum.box_state.Draw
 end
 
 return this

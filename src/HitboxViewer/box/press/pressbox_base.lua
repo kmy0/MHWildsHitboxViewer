@@ -5,9 +5,10 @@
 local colldable_base = require("HitboxViewer.box.collidable_base")
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
+local game_data = require("HitboxViewer.util.game.data")
 
 local ace = data.ace
-local rt = data.mod
+local mod = data.mod
 local rl = game_data.reverse_lookup
 
 ---@class PressBoxBase
@@ -28,7 +29,7 @@ function this:new(collidable, parent, resource_idx, set_idx, collidable_idx, pre
         self,
         collidable,
         parent,
-        rt.enum.box.HurtBox,
+        mod.enum.box.HurtBox,
         resource_idx,
         set_idx,
         collidable_idx
@@ -54,7 +55,7 @@ function this:update_data()
         config.current.pressboxes.press_level.disable[self.press_level]
         or config.current.pressboxes.layer.disable[self.layer]
     then
-        return rt.enum.box_state.None
+        return mod.enum.box_state.None
     end
 
     if config.current.pressboxes.use_one_color then
@@ -64,10 +65,10 @@ function this:update_data()
     elseif config.current.pressboxes.layer.color_enable[self.layer] then
         self.color = config.current.pressboxes.layer.color[self.layer]
     else
-        self.color = config.current.pressboxes.color[rl(rt.enum.char, self.parent.type)]
+        self.color = config.current.pressboxes.color[rl(mod.enum.char, self.parent.type)]
     end
 
-    return rt.enum.box_state.Draw
+    return mod.enum.box_state.Draw
 end
 
 return this

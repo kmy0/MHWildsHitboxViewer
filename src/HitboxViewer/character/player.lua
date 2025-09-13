@@ -17,10 +17,11 @@
 local char_base = require("HitboxViewer.character.char_base")
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
-local table_util = require("HitboxViewer.table_util")
+local game_data = require("HitboxViewer.util.game.data")
 local util = require("HitboxViewer._util")
+local util_table = require("HitboxViewer.util.misc.table")
 
-local rt = data.mod
+local mod = data.mod
 local rl = game_data.reverse_lookup
 local ace = data.ace
 
@@ -130,14 +131,14 @@ function this:update_hurtboxes()
     local ret = {}
     for col, box in pairs(self.hurtboxes) do
         local box_state, boxes = box:update()
-        if box_state == rt.enum.box_state.Draw and boxes then
+        if box_state == mod.enum.box_state.Draw and boxes then
             table.move(boxes, 1, #boxes, #ret + 1, ret)
-        elseif box_state == rt.enum.box_state.Dead then
+        elseif box_state == mod.enum.box_state.Dead then
             self.hurtboxes[col] = nil
         end
     end
 
-    if not table_util.empty(ret) then
+    if not util_table.empty(ret) then
         return ret
     end
 end

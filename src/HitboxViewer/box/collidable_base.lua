@@ -12,7 +12,7 @@
 local box_base = require("HitboxViewer.box.box_base")
 local data = require("HitboxViewer.data.init")
 
-local rt = data.mod
+local mod = data.mod
 local ace = data.ace
 
 ---@class CollidableBase
@@ -38,7 +38,7 @@ function this:new(collidable, parent, box_type, resource_idx, set_idx, collidabl
     end
 
     local shape_name = ace.enum.shape[shape:get_ShapeType()]
-    local shape_type = rt.enum.shape[shape_name]
+    local shape_type = mod.enum.shape[shape_name]
 
     if not shape_type then
         return
@@ -62,9 +62,9 @@ function this:update_shape()
     self.is_enabled = self.collidable:read_byte(0x10) ~= 0
     if self.is_enabled then
         if
-            self.shape_type == rt.enum.shape.Capsule
-            or self.shape_type == rt.enum.shape.Cylinder
-            or self.shape_type == rt.enum.shape.ContinuousCapsule
+            self.shape_type == mod.enum.shape.Capsule
+            or self.shape_type == mod.enum.shape.Cylinder
+            or self.shape_type == mod.enum.shape.ContinuousCapsule
         then
             self.shape_data.pos_a.x = self.shape:read_float(0x60)
             self.shape_data.pos_a.y = self.shape:read_float(0x64)
@@ -76,8 +76,8 @@ function this:update_shape()
 
             self.pos = (self.shape_data.pos_a + self.shape_data.pos_b) * 0.5
         elseif
-            self.shape_type == rt.enum.shape.Sphere
-            or self.shape_type == rt.enum.shape.ContinuousSphere
+            self.shape_type == mod.enum.shape.Sphere
+            or self.shape_type == mod.enum.shape.ContinuousSphere
         then
             self.shape_data.pos.x = self.shape:read_float(0x60)
             self.shape_data.pos.y = self.shape:read_float(0x64)
@@ -86,7 +86,7 @@ function this:update_shape()
 
             self.pos = self.shape_data.pos
         elseif
-            self.shape_type == rt.enum.shape.Box or self.shape_type == rt.enum.shape.Triangle
+            self.shape_type == mod.enum.shape.Box or self.shape_type == mod.enum.shape.Triangle
         then
             self.shape_data.pos.x = self.shape:read_float(0x90)
             self.shape_data.pos.y = self.shape:read_float(0x94)
@@ -107,16 +107,16 @@ function this:update_shape()
             self.pos = self.shape_data.pos
         end
 
-        self.distance = (rt.camera.origin - self.pos):length()
-        return rt.enum.box_state.Draw
+        self.distance = (mod.camera.origin - self.pos):length()
+        return mod.enum.box_state.Draw
     end
-    return rt.enum.box_state.None
+    return mod.enum.box_state.None
 end
 
 ---@return BoxState
 function this:update()
     if self.collidable:get_reference_count() <= 1 then
-        return rt.enum.box_state.Dead
+        return mod.enum.box_state.Dead
     end
     return box_base.update(self)
 end

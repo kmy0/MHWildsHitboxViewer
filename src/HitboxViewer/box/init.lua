@@ -1,7 +1,7 @@
 local col_queue = require("HitboxViewer.box.collidable_queue")
 local data = require("HitboxViewer.data.init")
 
-local rt = data.mod
+local mod = data.mod
 
 local this = {
     hitbox = require("HitboxViewer.box.hit.init"),
@@ -56,8 +56,8 @@ function this.get()
                 data_type:is_a("app.col_user_data.DamageParam")
                 or (
                     (
-                        load_data.char.type == rt.enum.char.Player
-                        or load_data.char.type == rt.enum.char.MasterPlayer
+                        load_data.char.type == mod.enum.char.Player
+                        or load_data.char.type == mod.enum.char.MasterPlayer
                     )
                     and resource_idx == 0
                     and collidable_idx == 0

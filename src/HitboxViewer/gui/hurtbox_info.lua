@@ -2,8 +2,8 @@ local char = require("HitboxViewer.character.init")
 local conditions = require("HitboxViewer.box.hurt.conditions.init")
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
-local table_util = require("HitboxViewer.table_util")
 local util = require("HitboxViewer.gui.util")
+local util_table = require("HitboxViewer.util.misc.table")
 
 local rt = data.mod
 local gui = data.gui
@@ -185,7 +185,7 @@ function this.draw_condition(cond)
     changed, value = imgui.combo(
         "##combo_type_" .. cond.key,
         cond.type,
-        table_util.sort(table_util.keys(rt.enum.condition_type), function(a, b)
+        util_table.sort(util_table.keys(rt.enum.condition_type), function(a, b)
             return rt.enum.condition_type[a] < rt.enum.condition_type[b]
         end)
     )
@@ -199,7 +199,7 @@ function this.draw_condition(cond)
     changed, cond.state = imgui.combo(
         "##condition_state_" .. cond.key,
         cond.state,
-        table_util.sort(table_util.keys(rt.enum.condition_state), function(a, b)
+        util_table.sort(util_table.keys(rt.enum.condition_state), function(a, b)
             return rt.enum.condition_state[a] < rt.enum.condition_state[b]
         end)
     )
@@ -213,7 +213,7 @@ function this.draw_condition(cond)
         changed, cond.sub_type = imgui.combo(
             "##combo_element" .. cond.key,
             cond.sub_type,
-            table_util.sort(table_util.keys(rt.enum.element), function(a, b)
+            util_table.sort(util_table.keys(rt.enum.element), function(a, b)
                 return rt.enum.element[a] < rt.enum.element[b]
             end)
         )
@@ -244,7 +244,7 @@ function this.draw_condition(cond)
         changed, cond.sub_type = imgui.combo(
             "##combo_extract" .. cond.key,
             cond.sub_type,
-            table_util.sort(table_util.keys(rt.enum.extract), function(a, b)
+            util_table.sort(util_table.keys(rt.enum.extract), function(a, b)
                 return rt.enum.extract[a] < rt.enum.extract[b]
             end)
         )
@@ -257,7 +257,7 @@ function this.draw_condition(cond)
         changed, cond.sub_type = imgui.combo(
             "##combo_break" .. cond.key,
             cond.sub_type,
-            table_util.sort(table_util.keys(rt.enum.break_state), function(a, b)
+            util_table.sort(util_table.keys(rt.enum.break_state), function(a, b)
                 return rt.enum.break_state[a] < rt.enum.break_state[b]
             end)
         )
@@ -277,7 +277,7 @@ function this.draw_condition(cond)
 
     imgui.separator()
     if dir ~= nil then
-        local index = table_util.index(conditions.sorted, cond) --[[@as integer]]
+        local index = util_table.index(conditions.sorted, cond) --[[@as integer]]
         if dir then
             index = index - 1
         else

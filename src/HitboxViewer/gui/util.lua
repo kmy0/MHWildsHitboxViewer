@@ -1,6 +1,6 @@
 local config = require("HitboxViewer.config.init")
-local table_util = require("HitboxViewer.table_util")
 local util = require("HitboxViewer._util")
+local util_table = require("HitboxViewer.util.misc.table")
 
 local this = {}
 
@@ -145,11 +145,11 @@ end
 ---@param predicate (fun(t: table, i: integer, j:integer) : boolean)?
 ---@param sort (fun(a: string, b: string): boolean)?
 function this.box_type_setup(box_type, box_config_key, type_name, predicate, sort)
-    local keys = table_util.keys(box_type.disable)
+    local keys = util_table.keys(box_type.disable)
     ---@cast keys string[]
 
     if predicate then
-        keys = table_util.table_remove(keys, predicate)
+        keys = util_table.table_remove(keys, predicate)
     end
 
     table.sort(keys, sort)

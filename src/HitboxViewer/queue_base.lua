@@ -2,7 +2,7 @@
 ---@class (exact) QueueBase
 ---@field queue QueueDataBase[]
 
-local table_util = require("HitboxViewer.table_util")
+local util_table = require("HitboxViewer.util.misc.table")
 
 ---@class QueueBase
 local this = {}
@@ -66,7 +66,7 @@ function this:get()
 end
 
 function this:empty()
-    return table_util.empty(self.queue)
+    return util_table.empty(self.queue)
 end
 
 return this

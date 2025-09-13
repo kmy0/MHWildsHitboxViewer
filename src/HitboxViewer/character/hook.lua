@@ -1,7 +1,7 @@
 local data = require("HitboxViewer.data.init")
 local load_queue = require("HitboxViewer.character.load_queue")
 
-local rt = data.mod
+local mod = data.mod
 
 local this = {}
 
@@ -16,7 +16,7 @@ function this.get_base_post(retval)
         return
     end
 
-    load_queue:enqueue({ tick = rt.state.tick_count, char_base = char_base })
+    load_queue:enqueue({ tick = mod.state.tick_count, char_base = char_base })
     return retval
 end
 
