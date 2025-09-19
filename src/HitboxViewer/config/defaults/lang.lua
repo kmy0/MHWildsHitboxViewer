@@ -75,7 +75,7 @@ return {
         color_guard = "Guard Color",
         table_attack_log = {
             header_row = "Row",
-            header_char_type = "Char_Type",
+            header_char_type = "Char Type",
             header_char_name = "Char Name",
             header_attack_id = "Attack ID",
             header_damage_type = "Damage Type",
