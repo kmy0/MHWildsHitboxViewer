@@ -41,6 +41,7 @@
 ---@class app.cEmModuleParts.cBreakParts : via.clr.ManagedObject
 ---@field get_MaxBreakCount fun(self: app.cEmModuleParts.cBreakParts) : System.Int32
 ---@field get_IsBreakAll fun(self: app.cEmModuleParts.cBreakParts) : System.Boolean
+---@field get_IsLostParts fun(self: app.cEmModuleParts.cBreakParts) : System.Boolean
 
 ---@class app.user_data.EmParamParts.cWeakPoint : app.user_data.EmParamParts.cPartsBase
 ---@field _MeatGuid System.Guid
@@ -71,6 +72,7 @@
 ---@field get_WeakPointPartsNum fun(self: app.cEmModuleParts) : System.Int32
 ---@field getLostPartsCount fun(self: app.cEmModuleParts) : System.Int32
 ---@field getLostPartsIndex fun(self: app.cEmModuleParts, lost_part_index: System.Int32) : System.Int32
+---@field get_BreakParts fun(self: app.cEmModuleParts): System.Array<app.cEmModuleParts.cBreakParts>
 
 ---@class app.cEnemyContextHolder : app.cGameContextHolder
 ---@field get_Em fun(self: app.cEnemyContextHolder) : app.cEnemyContext

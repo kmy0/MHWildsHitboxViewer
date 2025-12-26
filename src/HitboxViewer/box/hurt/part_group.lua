@@ -15,7 +15,7 @@
 ---@field can_break boolean
 ---@field is_broken boolean
 ---@field is_weak boolean
----@field is_lost boolean
+---@field can_lost boolean
 ---@field scar_boxes ScarBox[]?
 ---@field is_scar_gui_open boolean
 ---@field extract string
@@ -62,19 +62,27 @@ end
 ---@param module_parts app.cEmModuleParts
 ---@return app.cEmModuleParts.cBreakParts?, boolean?
 local function get_break_parts(part_index, enemy_ctx, module_parts)
-    ---@type app.cEmModuleParts.cBreakParts
-    local ret = enemy_ctx.Parts:get_BreakPartsByPartsIdx()[part_index]
-    if ret:get_MaxBreakCount() > 0 then
-        return ret, false
+    ---@type app.cEmModuleParts.cBreakParts?
+    local ret
+
+    local break_parts = enemy_ctx.Parts:get_BreakParts()
+    local param_parts = enemy_ctx.Parts._ParamParts
+
+    util_game.do_something(break_parts, function(_, index, break_part)
+        local part_indexes = param_parts:getLinkPartsIndexByBreakPartsIndex(index)
+        util_game.do_something(part_indexes, function(_, _, value)
+            if value == part_index then
+                ret = break_part
+                return false
+            end
+        end)
+    end)
+
+    if ret then
+        return ret, ret:get_IsLostParts()
     end
 
-    local lost_part_count = module_parts:getLostPartsCount()
-    for i = 0, lost_part_count - 1 do
-        local lost_part_index = module_parts:getLostPartsIndex(i)
-        if lost_part_index == part_index then
-            return ret, true
-        end
-    end
+    return nil, nil
 end
 
 ---@param fixed_part_type System.Int32
@@ -156,7 +164,7 @@ local function get_part_data(enemy_ctx, enemy_mc_holder, meat_data)
     local param_parts = enemy_ctx.Parts._ParamParts
     local is_weak = ace.enum.em_part_index[dmg_cparts:get_Category()] == "WEAK_POINT"
     ---@diagnostic disable-next-line: no-unknown
-    local break_part, scars, dmg_part, name, hitzones, weak_hitzone, is_lost
+    local break_part, scars, dmg_part, name, hitzones, weak_hitzone, can_lost
 
     if is_weak then
         local weakpoint = param_parts:get_WeakPointList()[part_index] --[[@as app.user_data.EmParamParts.cWeakPoint]]
@@ -166,7 +174,7 @@ local function get_part_data(enemy_ctx, enemy_mc_holder, meat_data)
     else
         local em_cparts = param_parts:get_PartsList()[part_index] --[[@as app.user_data.EmParamParts.cParts]]
         dmg_part = enemy_ctx.Parts:get_DmgParts()[part_index] --[[@as app.cEmModuleParts.cDamageParts]]
-        break_part, is_lost = get_break_parts(part_index, enemy_ctx, enemy_ctx.Parts)
+        break_part, can_lost = get_break_parts(part_index, enemy_ctx, enemy_ctx.Parts)
         name = get_part_name(em_cparts._PartsType:get_Value())
             or config.lang:tr("misc.text_name_missing")
         hitzones = get_hitzones(em_cparts, param_parts)
@@ -180,7 +188,7 @@ local function get_part_data(enemy_ctx, enemy_mc_holder, meat_data)
         can_break = break_part ~= nil,
         is_weak = is_weak,
         is_broken = false,
-        is_lost = is_lost ~= nil and is_lost,
+        can_lost = can_lost ~= nil and can_lost,
         is_scar_gui_open = false,
         scar_boxes = scars,
         ---@diagnostic disable-next-line: need-check-nil

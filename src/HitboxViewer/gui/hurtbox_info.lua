@@ -111,17 +111,18 @@ local function draw_table(monster)
 
                     imgui.spacing()
                 elseif header == "can_break" then
-                    imgui.text(
-                        part.part_data[header]
-                                and (part.part_data.is_broken and (part.part_data.is_lost and config.lang:tr(
-                                    "misc.text_severed"
-                                ) or config.lang:tr(
-                                    "misc.text_broken"
-                                )) or config.lang:tr(
-                                    "misc.text_yes"
-                                ))
-                            or config.lang:tr("misc.text_no")
-                    )
+                    local text = config.lang:tr("misc.text_no")
+                    if part.part_data.can_break then
+                        text = part.part_data.can_lost and config.lang:tr("misc.text_sever")
+                            or config.lang:tr("misc.text_break")
+                    end
+
+                    if part.part_data.is_broken then
+                        text = part.part_data.can_lost and config.lang:tr("misc.text_severed")
+                            or config.lang:tr("misc.text_broken")
+                    end
+
+                    imgui.text(text)
                 elseif header == "is_weak" then
                     imgui.text(
                         part.part_data[header] and config.lang:tr("misc.text_yes")
