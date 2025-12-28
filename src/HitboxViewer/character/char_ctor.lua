@@ -67,7 +67,12 @@ local function get_pet_data(char_base)
     local ret = char_cls:new(
         mod.enum.char.Pet,
         char_base,
-        string.format("%s - %s", get_hunter_name(hunter_extend), config.lang:tr("misc.text_pet"))
+        string.format(
+            "%s - %s",
+            hunter_extend and get_hunter_name(hunter_extend)
+                or config.lang:tr("misc.text_name_missing"),
+            config.lang:tr("misc.text_pet")
+        )
     )
     ---@type Pet
     return ret
