@@ -84,11 +84,7 @@ function this.draw()
         this.window.flags
     )
 
-    local pos = imgui.get_window_pos()
-    local size = imgui.get_window_size()
-
-    gui_main.pos_x, gui_main.pos_y = pos.x, pos.y
-    gui_main.size_x, gui_main.size_y = size.x, size.y
+    util_imgui.set_win_state(gui_main)
 
     if not gui_main.is_opened then
         if config.lang.font then

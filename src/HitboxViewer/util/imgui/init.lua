@@ -281,4 +281,20 @@ function this.draw_child_window(name, draw_fn, size_y, spacing)
     imgui.end_child_window()
 end
 
+---@param win_state {pos_x: number, pos_y: number, size_x: number, size_y: number}
+---@param min_y_size number?
+function this.set_win_state(win_state, min_y_size)
+    min_y_size = min_y_size or 22 --collapsed win size
+    local size = imgui.get_window_size()
+
+    if size.y <= min_y_size then
+        return
+    end
+
+    local pos = imgui.get_window_pos()
+
+    win_state.pos_x, win_state.pos_y = pos.x, pos.y
+    win_state.size_x, win_state.size_y = size.x, size.y
+end
+
 return this

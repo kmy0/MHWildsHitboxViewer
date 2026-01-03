@@ -249,11 +249,7 @@ function this.draw()
         this.window.flags
     )
 
-    local pos = imgui.get_window_pos()
-    local size = imgui.get_window_size()
-
-    gui_hurtbox_info.pos_x, gui_hurtbox_info.pos_y = pos.x, pos.y
-    gui_hurtbox_info.size_x, gui_hurtbox_info.size_y = size.x, size.y
+    util_imgui.set_win_state(gui_hurtbox_info)
 
     if not gui_hurtbox_info.is_opened then
         if config.lang.font then

@@ -1,6 +1,7 @@
 local attack_log = require("HitboxViewer.attack_log")
 local config = require("HitboxViewer.config.init")
 local gui_util = require("HitboxViewer.gui.util")
+local util_imgui = require("HitboxViewer.util.imgui.init")
 local util_table = require("HitboxViewer.util.misc.table")
 
 local this = {
@@ -138,11 +139,7 @@ function this.draw()
         this.window.flags
     )
 
-    local pos = imgui.get_window_pos()
-    local size = imgui.get_window_size()
-
-    gui_attack_log.pos_x, gui_attack_log.pos_y = pos.x, pos.y
-    gui_attack_log.size_x, gui_attack_log.size_y = size.x, size.y
+    util_imgui.set_win_state(gui_attack_log)
 
     if not gui_attack_log.is_opened then
         if config.lang.font then
