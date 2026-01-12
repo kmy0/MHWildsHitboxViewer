@@ -20,7 +20,7 @@ function this:new()
     }
     setmetatable(o, self)
     ---@cast o Cache
-    table.insert(this._instances, self)
+    table.insert(this._instances, o)
     return o
 end
 
