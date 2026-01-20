@@ -23,6 +23,11 @@
 
 ---@class (exact) AttackLogEntry : AttackLogEntryData, AttackLogEntryBase
 
+---@class (exact) Timestamp
+---@field os_clock float
+
+---@class (exact) AttackLogEntryWithTimestamp : AttackLogEntry, Timestamp
+
 ---@class AttackLog
 ---@field entries CircularBuffer<AttackLogEntry>
 ---@field this_tick table<integer, boolean>
@@ -58,13 +63,13 @@ local function fix_data(t)
         if value_t == "boolean" then
             t[k] = tostring(v)
         elseif value_t == "number" and string.find(v, "%.") then
-            local precision = 10 ^ -2
+            local precision = 10 ^ -3
             t[k] = math.floor((v + precision / 2) / precision) * precision
         end
     end
 end
 
----@param entry AttackLogEntry
+---@param entry AttackLogEntryWithTimestamp
 ---@return boolean
 function this:log(entry)
     if frame_counter.frame ~= self.last_tick then
@@ -275,10 +280,10 @@ end
 ---@param userdata via.physics.RequestSetColliderUserData
 ---@param rsc via.physics.RequestSetCollider
 ---@param resource_idx integer
----@return AttackLogEntry?
+---@return AttackLogEntryWithTimestamp?
 function this.get_log_entry(char, userdata, rsc, resource_idx)
     if char.hitbox_userdata_cache[userdata] then
-        return char.hitbox_userdata_cache[userdata]
+        return this.attach_timestamp_to_log_entry(char.hitbox_userdata_cache[userdata])
     end
 
     local p_data = userdata:get_ParentUserData()
@@ -327,10 +332,18 @@ function this.get_log_entry(char, userdata, rsc, resource_idx)
         resource_idx = resource_idx,
         resource_path = resource:get_ResourcePath(),
     }
-    local ret = util_table.merge(entry_base, entry_data) --[[@as AttackLogEntry]]
+
+    local attack_log_entry = util_table.merge(entry_base, entry_data) --[[@as AttackLogEntry]]
     ---@cast userdata app.col_user_data.AttackParam | app.col_user_data.DamageParam
-    char.hitbox_userdata_cache[userdata] = ret
-    return ret
+    char.hitbox_userdata_cache[userdata] = attack_log_entry
+
+    return this.attach_timestamp_to_log_entry(attack_log_entry)
+end
+
+---@param attack_log_entry AttackLogEntry
+---@return AttackLogEntryWithTimestamp
+function this.attach_timestamp_to_log_entry(attack_log_entry)
+    return util_table.merge(attack_log_entry, { os_clock = os.clock() })
 end
 
 return this
