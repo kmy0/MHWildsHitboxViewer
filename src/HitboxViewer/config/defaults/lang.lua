@@ -90,7 +90,7 @@ return {
             header_stun = "Stun",
             header_damage_angle = "Damage Angle",
             header_guard_type = "Guard Type",
-            header_os_clock = "os.clock()",
+            header_os_clock = "Timestamp (seconds)",
             header_more_data = "More Data",
             header_key = "Key",
             header_value = "Value",
