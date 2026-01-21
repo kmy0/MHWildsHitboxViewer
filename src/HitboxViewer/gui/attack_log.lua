@@ -13,7 +13,7 @@ local this = {
         name = "attack_log",
         -- BordersH, BordersInnerH, Sortable, BordersOuterV, SizingStretchProp, ContextMenuInBody, Hideable
         flags = 26021,
-        col_count = 15,
+        col_count = 16,
         headers = {
             "row",
             "char_type",
@@ -29,6 +29,7 @@ local this = {
             "part_break",
             "stun",
             "sharpness",
+            "os_clock",
             "more_data",
         },
     },
