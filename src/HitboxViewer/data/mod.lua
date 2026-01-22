@@ -1,21 +1,40 @@
 ---@class RuntimeData
 ---@field map Map
+---@field enum Enum
 
 ---@class (exact) Map
 ---@field update_order CharType[]
+
+---@class (exact) Enum
+---@field base_char BaseCharType.*
+---@field shape ShapeType.*
+---@field shape_dummy ShapeDummy.*
+---@field char CharType.*
+---@field box BoxType.*
+---@field condition_type ConditionType.*
+---@field element ElementType.*
+---@field condition_result ConditionResult.*
+---@field extract ExtractType.*
+---@field scar ScarType.*
+---@field break_state BreakType.*
+---@field box_state BoxState.*
+---@field default_hurtbox_state DefaultHurtboxState.*
+---@field condition_state ConditionState.*
+---@field hitbox_load_data HitBoxLoadDataType.*
 
 local frame_cache = require("HitboxViewer.util.misc.frame_cache")
 local s = require("HitboxViewer.util.ref.singletons")
 
 ---@class RuntimeData
 local this = {
+    ---@diagnostic disable-next-line: missing-fields
     enum = {},
     ---@diagnostic disable-next-line: missing-fields
     map = {},
 }
 
 ---@enum BaseCharType
-this.enum.base_char = {
+this.enum.base_char = { ---@class BaseCharType.*
     Hunter = 1,
     BigMonster = 2,
     Pet = 3,
@@ -23,7 +42,7 @@ this.enum.base_char = {
     OtherSmallMonster = 5,
 }
 ---@enum ShapeType
-this.enum.shape = {
+this.enum.shape = { ---@class ShapeType.*
     Sphere = 1,
     Capsule = 2,
     Box = 3,
@@ -34,7 +53,7 @@ this.enum.shape = {
     SlicedCylinder = 8,
 }
 ---@enum ShapeDummy
-this.enum.shape_dummy = {
+this.enum.shape_dummy = { ---@class ShapeDummy.*
     [1] = "Sphere",
     [2] = "Capsule",
     [3] = "Box",
@@ -42,7 +61,7 @@ this.enum.shape_dummy = {
     [5] = "Triangle",
 }
 ---@enum CharType
-this.enum.char = {
+this.enum.char = { ---@class CharType.*
     Player = 1,
     MasterPlayer = 2,
     SmallMonster = 3,
@@ -51,7 +70,7 @@ this.enum.char = {
     Npc = 6,
 }
 ---@enum BoxType
-this.enum.box = {
+this.enum.box = { ---@class BoxType.*
     HurtBox = 1,
     HitBox = 2,
     ScarBox = 3,
@@ -59,7 +78,7 @@ this.enum.box = {
     DummyBox = 5,
 }
 ---@enum ConditionType
-this.enum.condition_type = {
+this.enum.condition_type = { ---@class ConditionType.*
     Element = 1,
     Break = 2,
     Scar = 3,
@@ -67,7 +86,7 @@ this.enum.condition_type = {
     Extract = 5,
 }
 ---@enum ElementType
-this.enum.element = {
+this.enum.element = { ---@class ElementType.*
     All = 1,
     Blow = 2,
     Dragon = 3,
@@ -81,20 +100,20 @@ this.enum.element = {
     Water = 11,
 }
 ---@enum ConditionResult
-this.enum.condition_result = {
+this.enum.condition_result = { ---@class ConditionResult.*
     None = 1,
     Highlight = 2,
     Hide = 3,
 }
 ---@enum ExtractType
-this.enum.extract = {
+this.enum.extract = { ---@class ExtractType.*
     RED = 1,
     WHITE = 2,
     ORANGE = 3,
     GREEN = 4,
 }
 ---@enum ScarType
-this.enum.scar = {
+this.enum.scar = { ---@class ScarType.*
     NORMAL = 1,
     RAW = 2,
     TEAR = 3,
@@ -102,29 +121,29 @@ this.enum.scar = {
     HEAL = 5,
 }
 ---@enum BreakType
-this.enum.break_state = {
+this.enum.break_state = { ---@class BreakType.*
     Yes = 1,
     No = 2,
     Broken = 3,
 }
 ---@enum BoxState
-this.enum.box_state = {
+this.enum.box_state = { ---@class BoxState.*
     None = 1,
     Draw = 2,
     Dead = 3,
 }
 ---@enum DefaultHurtboxState
-this.enum.default_hurtbox_state = {
+this.enum.default_hurtbox_state = { ---@class DefaultHurtboxState.*
     Draw = 1,
     Hide = 2,
 }
 ---@enum ConditionState
-this.enum.condition_state = {
+this.enum.condition_state = { ---@class ConditionState.*
     Highlight = 1,
     Hide = 2,
 }
 ---@enum HitBoxLoadDataType
-this.enum.hitbox_load_data = {
+this.enum.hitbox_load_data = { ---@class HitBoxLoadDataType.*
     base = 1,
     rsc = 2,
     shell = 3,
