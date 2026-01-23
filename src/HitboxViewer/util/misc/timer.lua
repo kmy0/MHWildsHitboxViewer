@@ -40,7 +40,7 @@ function this:new(timeout, callback, auto_start, auto_restart, auto_update)
     end
 
     if auto_update then
-        table.insert(this._auto_instances, self)
+        table.insert(this._auto_instances, o)
     end
 
     o.elapsed = o._update_on_call(o, o.elapsed)
