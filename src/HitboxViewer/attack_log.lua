@@ -24,7 +24,7 @@
 ---@class (exact) AttackLogEntry : AttackLogEntryData, AttackLogEntryBase
 
 ---@class (exact) Timestamp
----@field os_clock float
+---@field os_clock number
 
 ---@class (exact) AttackLogEntryWithTimestamp : AttackLogEntry, Timestamp
 
