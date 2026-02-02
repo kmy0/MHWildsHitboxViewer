@@ -52,16 +52,16 @@ local function draw_menu_bar()
     end
 
     local config_gui = config.gui.current.gui
-    imgui.same_line()
+    if imgui.begin_menu(gui_util.tr("menu.tools.name")) then
+        if util_imgui.menu_item(gui_util.tr("mod.button_attack_log"), nil, nil, true) then
+            config_gui.attack_log.is_opened = true
+        end
 
-    if imgui.button(gui_util.tr("mod.button_attack_log")) then
-        config_gui.attack_log.is_opened = true
-    end
+        if util_imgui.menu_item(gui_util.tr("mod.button_hurtbox_info"), nil, nil, true) then
+            config_gui.hurtbox_info.is_opened = true
+        end
 
-    imgui.same_line()
-
-    if imgui.button(gui_util.tr("mod.button_hurtbox_info")) then
-        config_gui.hurtbox_info.is_opened = true
+        imgui.end_menu()
     end
 end
 

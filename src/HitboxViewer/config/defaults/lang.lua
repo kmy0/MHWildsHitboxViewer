@@ -21,6 +21,9 @@ return {
             fallback = "Fallback",
             fallback_tooltip = "Display message in english if key is missing",
         },
+        tools = {
+            name = "Tools",
+        },
     },
     misc = {
         text_disable = "Disable",

@@ -202,9 +202,10 @@ end
 
 ---@param label string
 ---@param selected_obj boolean?
----@param enabled_obj? boolean
----@return boolean, boolean
-function this.menu_item(label, selected_obj, enabled_obj)
+---@param enabled_obj boolean?
+---@param close_on_click boolean?
+---@return boolean, boolean?
+function this.menu_item(label, selected_obj, enabled_obj, close_on_click)
     local pos_screen = imgui.get_cursor_screen_pos()
     local pos = imgui.get_cursor_pos()
     local win_size = imgui.get_window_size()
@@ -246,8 +247,11 @@ function this.menu_item(label, selected_obj, enabled_obj)
         ret = not ret
     end
 
+    if changed and close_on_click then
+        imgui.close_current_popup()
+    end
+
     imgui.end_disabled()
-    ---@diagnostic disable-next-line: return-type-mismatch
     return changed, ret
 end
 
