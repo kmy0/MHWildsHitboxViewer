@@ -34,7 +34,7 @@ local this = {
 }
 
 ---@enum BaseCharType
-this.enum.base_char = { ---@class BaseCharType.*
+this.enum.base_char = { ---@class BaseCharType.* : {[string]: integer}
     Hunter = 1,
     BigMonster = 2,
     Pet = 3,
@@ -42,7 +42,7 @@ this.enum.base_char = { ---@class BaseCharType.*
     OtherSmallMonster = 5,
 }
 ---@enum ShapeType
-this.enum.shape = { ---@class ShapeType.*
+this.enum.shape = { ---@class ShapeType.* : {[string]: integer}
     Sphere = 1,
     Capsule = 2,
     Box = 3,
@@ -53,7 +53,7 @@ this.enum.shape = { ---@class ShapeType.*
     SlicedCylinder = 8,
 }
 ---@enum ShapeDummy
-this.enum.shape_dummy = { ---@class ShapeDummy.*
+this.enum.shape_dummy = { ---@class ShapeDummy.* : {[string]: integer}
     [1] = "Sphere",
     [2] = "Capsule",
     [3] = "Box",
@@ -61,7 +61,7 @@ this.enum.shape_dummy = { ---@class ShapeDummy.*
     [5] = "Triangle",
 }
 ---@enum CharType
-this.enum.char = { ---@class CharType.*
+this.enum.char = { ---@class CharType.* : {[string]: integer}
     Player = 1,
     MasterPlayer = 2,
     SmallMonster = 3,
@@ -70,7 +70,7 @@ this.enum.char = { ---@class CharType.*
     Npc = 6,
 }
 ---@enum BoxType
-this.enum.box = { ---@class BoxType.*
+this.enum.box = { ---@class BoxType.* : {[string]: integer}
     HurtBox = 1,
     HitBox = 2,
     ScarBox = 3,
@@ -78,7 +78,7 @@ this.enum.box = { ---@class BoxType.*
     DummyBox = 5,
 }
 ---@enum ConditionType
-this.enum.condition_type = { ---@class ConditionType.*
+this.enum.condition_type = { ---@class ConditionType.* : {[string]: integer}
     Element = 1,
     Break = 2,
     Scar = 3,
@@ -86,7 +86,7 @@ this.enum.condition_type = { ---@class ConditionType.*
     Extract = 5,
 }
 ---@enum ElementType
-this.enum.element = { ---@class ElementType.*
+this.enum.element = { ---@class ElementType.* : {[string]: integer}
     All = 1,
     Blow = 2,
     Dragon = 3,
@@ -100,20 +100,20 @@ this.enum.element = { ---@class ElementType.*
     Water = 11,
 }
 ---@enum ConditionResult
-this.enum.condition_result = { ---@class ConditionResult.*
+this.enum.condition_result = { ---@class ConditionResult.* : {[string]: integer}
     None = 1,
     Highlight = 2,
     Hide = 3,
 }
 ---@enum ExtractType
-this.enum.extract = { ---@class ExtractType.*
+this.enum.extract = { ---@class ExtractType.* : {[string]: integer}
     RED = 1,
     WHITE = 2,
     ORANGE = 3,
     GREEN = 4,
 }
 ---@enum ScarType
-this.enum.scar = { ---@class ScarType.*
+this.enum.scar = { ---@class ScarType.* : {[string]: integer}
     NORMAL = 1,
     RAW = 2,
     TEAR = 3,
@@ -121,29 +121,29 @@ this.enum.scar = { ---@class ScarType.*
     HEAL = 5,
 }
 ---@enum BreakType
-this.enum.break_state = { ---@class BreakType.*
+this.enum.break_state = { ---@class BreakType.* : {[string]: integer}
     Yes = 1,
     No = 2,
     Broken = 3,
 }
 ---@enum BoxState
-this.enum.box_state = { ---@class BoxState.*
+this.enum.box_state = { ---@class BoxState.* : {[string]: integer}
     None = 1,
     Draw = 2,
     Dead = 3,
 }
 ---@enum DefaultHurtboxState
-this.enum.default_hurtbox_state = { ---@class DefaultHurtboxState.*
+this.enum.default_hurtbox_state = { ---@class DefaultHurtboxState.* : {[string]: integer}
     Draw = 1,
     Hide = 2,
 }
 ---@enum ConditionState
-this.enum.condition_state = { ---@class ConditionState.*
+this.enum.condition_state = { ---@class ConditionState.* : {[string]: integer}
     Highlight = 1,
     Hide = 2,
 }
 ---@enum HitBoxLoadDataType
-this.enum.hitbox_load_data = { ---@class HitBoxLoadDataType.*
+this.enum.hitbox_load_data = { ---@class HitBoxLoadDataType.* : {[string]: integer}
     base = 1,
     rsc = 2,
     shell = 3,
