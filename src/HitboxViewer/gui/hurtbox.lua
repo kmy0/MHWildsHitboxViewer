@@ -1,4 +1,3 @@
-local char = require("HitboxViewer.character.init")
 local conditions = require("HitboxViewer.box.hurt.conditions.init")
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
@@ -6,6 +5,7 @@ local drag_util = require("HitboxViewer.gui.drag")
 local generic = require("HitboxViewer.gui.generic")
 local gui_util = require("HitboxViewer.gui.util")
 local set = require("HitboxViewer.util.imgui.config_set"):new(config)
+local state = require("HitboxViewer.gui.state")
 local util_imgui = require("HitboxViewer.util.imgui.init")
 local util_table = require("HitboxViewer.util.misc.table")
 
@@ -25,9 +25,7 @@ local function draw_condition(cond, config_key)
         set:combo(
             "##combo_cond_type_" .. cond.key,
             item_config_key,
-            util_table.sort(util_table.keys(mod.enum.condition_type), function(a, b)
-                return mod.enum.condition_type[a] < mod.enum.condition_type[b]
-            end)
+            state.combo.condition_type.values
         )
     then
         cond = conditions.swap_condition(cond, config:get(item_config_key))
@@ -40,9 +38,7 @@ local function draw_condition(cond, config_key)
         set:combo(
             "##combo_cond_state_" .. cond.key,
             item_config_key,
-            util_table.sort(util_table.keys(mod.enum.condition_state), function(a, b)
-                return mod.enum.condition_state[a] < mod.enum.condition_state[b]
-            end)
+            state.combo.condition_state.values
         )
     then
         cond.state = config:get(item_config_key)
@@ -62,24 +58,18 @@ local function draw_condition(cond, config_key)
             and set:combo(
                 "##combo_cond_element_" .. cond.key,
                 item_config_key,
-                util_table.sort(util_table.keys(mod.enum.element), function(a, b)
-                    return mod.enum.element[a] < mod.enum.element[b]
-                end)
+                state.combo.element.values
             )
         or cond.type == mod.enum.condition_type.Extract and set:combo(
             "##combo_cond_extract_" .. cond.key,
             item_config_key,
-            util_table.sort(util_table.keys(mod.enum.extract), function(a, b)
-                return mod.enum.extract[a] < mod.enum.extract[b]
-            end)
+            state.combo.extract.values
         )
         or cond.type == mod.enum.condition_type.Break
             and set:combo(
                 "##combo_cond_break_" .. cond.key,
                 item_config_key,
-                util_table.sort(util_table.keys(mod.enum.break_state), function(a, b)
-                    return mod.enum.break_state[a] < mod.enum.break_state[b]
-                end)
+                state.combo.break_state.values
             )
     then
         ---@cast cond ElementCondition | BreakCondition | ExtractCondition
@@ -110,7 +100,7 @@ local function draw_condition(cond, config_key)
             config_key .. ".from",
             0,
             300,
-            "From " .. (cond.from or 0)
+            string.format("%s %s", config.lang:tr("misc.text_from"), (cond.from or 0))
         )
     then
         cond.from = config:get(item_config_key)
@@ -130,7 +120,7 @@ local function draw_condition(cond, config_key)
             config_key .. ".to",
             0,
             300,
-            "To " .. (cond.to or 0)
+            string.format("%s %s", config.lang:tr("misc.text_to"), (cond.to or 0))
         )
     then
         cond.to = config:get(item_config_key)

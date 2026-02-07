@@ -1,10 +1,8 @@
 local config = require("HitboxViewer.config.init")
-local data = require("HitboxViewer.data.init")
 local dummybox = require("HitboxViewer.box.dummy")
 local gui_util = require("HitboxViewer.gui.util")
 local set = require("HitboxViewer.util.imgui.config_set"):new(config)
-
-local mod = data.mod
+local state = require("HitboxViewer.gui.state")
 
 local this = {}
 
@@ -14,12 +12,12 @@ function this.draw()
     imgui.push_item_width(gui_util.get_item_width())
 
     local config_mod = config.current.mod
-    set:combo("##dummy_shape_spawner", "mod.dummyboxes.combo_shape", mod.enum.shape_dummy)
+    set:combo("##dummy_shape_spawner", "mod.dummyboxes.combo_shape", state.combo.shape.values)
 
     imgui.same_line()
 
     if imgui.button(gui_util.tr("menu.draw_settings.button_spawn")) then
-        dummybox.spawn(config_mod.dummyboxes.combo_shape)
+        dummybox.spawn(state.combo.shape:get_key(config_mod.dummyboxes.combo_shape))
     end
 
     imgui.same_line()

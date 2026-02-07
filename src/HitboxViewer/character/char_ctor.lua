@@ -14,7 +14,6 @@ local game_lang = require("HitboxViewer.util.game.lang")
 local m = require("HitboxViewer.util.ref.methods")
 local player = require("HitboxViewer.character.player")
 
-local gui = data.gui
 local mod = data.mod
 
 local this = {}

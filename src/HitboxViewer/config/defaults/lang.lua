@@ -39,6 +39,8 @@ return {
         text_name_missing = "???",
         text_pet = "Pet",
         text_distance = "Distance",
+        text_from = "From",
+        text_to = "To",
     },
     mod = {
         box_disable_small_monsters = "Disable Small Monsters",
@@ -121,5 +123,39 @@ return {
             header_Stun = "Stun",
         },
         tooltip_attack_log_type = "You can find all types in the Attack Log",
+        combo_condition_type = {
+            Element = "Element",
+            Break = "Break",
+            Extract = "Extract",
+            Scar = "Scar",
+        },
+        combo_condition_state = {
+            Highlight = "Highlight",
+            Hide = "Hide",
+        },
+        combo_extract = {
+            RED = "Red",
+            WHITE = "White",
+            ORANGE = "Orange",
+            GREEN = "None",
+        },
+        combo_break_state = {
+            Yes = "Yes",
+            No = "No",
+            Broken = "Broken",
+        },
+        combo_element = {
+            Slash = "Slash",
+            Blow = "Blow",
+            Shot = "Shot",
+            Fire = "Fire",
+            Water = "Water",
+            Ice = "Ice",
+            Thunder = "Thunder",
+            Dragon = "Dragon",
+            LightPlant = "LightPlant",
+            Stun = "Stun",
+            All = "All",
+        },
     },
 }

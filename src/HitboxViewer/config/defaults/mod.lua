@@ -9,7 +9,7 @@
 
 ---@class (exact) HurtboxSettings : BoxSettings
 ---@field conditions table<string, table<string, any>>
----@field default_state DefaultHurtboxState
+---@field default_state integer DefaultHurtboxState
 ---@field guard_type GuardboxType
 
 ---@class (exact) GuardboxType : BoxSettings
