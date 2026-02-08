@@ -118,6 +118,7 @@ function this.init()
         config_mod.hurtboxes.guard_type,
         config.default_highlight_color
     )
+    config.current.mod = util_table.merge_t(config_mod, config.current.mod)
 
     return true
 end
