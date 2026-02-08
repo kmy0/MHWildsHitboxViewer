@@ -5,6 +5,7 @@ local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
 local guard_box = require("HitboxViewer.box.hurt.guard")
 local hurtbox_base = require("HitboxViewer.box.hurt.hurtbox_base")
+local m = require("HitboxViewer.util.ref.methods")
 
 local mod_enum = data.mod.enum
 
@@ -35,6 +36,12 @@ end
 
 ---@return BoxState, HurtBoxBase[]?
 function this:update()
+    if
+        self.set_idx == 3 and not m.isPorterRiding(self.parent.base --[[@as app.HunterCharacter]])
+    then
+        return mod_enum.box_state.None
+    end
+
     local config_mod = config.current.mod
     local box_state = hurtbox_base.update(self)
     ---@type HurtBoxBase[]?

@@ -66,7 +66,6 @@ function this.get()
             end
 
             local data_type = p_data:get_type_definition() --[[@as RETypeDefinition]]
-
             if
                 data_type:is_a("app.col_user_data.DamageParam")
                 or (
@@ -76,7 +75,7 @@ function this.get()
                     )
                     and resource_idx == 0
                     and collidable_idx == 0
-                    and (set_idx == 1 or set_idx == 2)
+                    and (set_idx == 1 or set_idx == 2 or set_idx == 3)
                 )
             then
                 ---@cast p_data app.col_user_data.DamageParam

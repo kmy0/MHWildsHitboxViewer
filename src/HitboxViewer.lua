@@ -27,6 +27,7 @@ m.EmPartsName = m.wrap(m.get("app.EnemyDef.EmPartsName(app.EnemyDef.PARTS_TYPE)"
 m.calcCollidableCenter =
     m.wrap(m.get("app.CollisionUtil.calcCollidableCenter(via.physics.Collidable)")) --[[@as fun(col: via.physics.Collidable): Vector3f]]
 m.isCollidableValid = m.wrap(m.get("ace.AceUtil.isCollidableValid(via.physics.Collidable)")) --[[@as fun(col: via.physics.Collidable): System.Boolean]]
+m.isPorterRiding = m.wrap(m.get("app.NpcUtil.isPorterRiding(app.HunterCharacter)")) --[[@as fun(char: app.HunterCharacter): System.Boolean]]
 
 m.hook(m.get("app.CharacterBase.doStart"), util_ref.capture_this, char.hook.get_base_post)
 m.hook(
