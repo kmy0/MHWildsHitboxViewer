@@ -16,13 +16,11 @@
 
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
-local game_data = require("HitboxViewer.util.game.data")
 local util_misc = require("HitboxViewer.util.misc.init")
 local util_ref = require("HitboxViewer.util.ref.init")
 local util_table = require("HitboxViewer.util.misc.table")
 
-local rl = game_data.reverse_lookup
-local mod = data.mod
+local mod_enum = data.mod.enum
 
 local count = 0
 
@@ -39,7 +37,7 @@ function this:new(type, base, name)
     ---@type Character
     local o = {
         type = type,
-        type_name = rl(mod.enum.char, type),
+        type_name = mod_enum.char[type],
         base = base,
         game_object = base:get_GameObject(),
         name = name,
@@ -129,9 +127,9 @@ function this:_update_boxes(boxes)
     local ret = {}
     for col, box in pairs(boxes) do
         local box_state = box:update()
-        if box_state == mod.enum.box_state.Draw then
+        if box_state == mod_enum.box_state.Draw then
             table.insert(ret, box)
-        elseif box_state == mod.enum.box_state.Dead then
+        elseif box_state == mod_enum.box_state.Dead then
             boxes[col] = nil
         end
     end

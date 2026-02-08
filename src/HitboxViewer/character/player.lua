@@ -17,14 +17,13 @@
 local char_cls = require("HitboxViewer.character.char_base")
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
-local game_data = require("HitboxViewer.util.game.data")
+local e = require("HitboxViewer.util.game.enum")
 local m = require("HitboxViewer.util.ref.methods")
 local s = require("HitboxViewer.util.ref.singletons")
 local util_game = require("HitboxViewer.util.game.init")
 local util_table = require("HitboxViewer.util.misc.table")
 
-local mod = data.mod
-local rl = game_data.reverse_lookup
+local mod_enum = data.mod.enum
 local ace = data.ace
 
 ---@class Player
@@ -74,7 +73,7 @@ function this:update_guard_type()
     self.guard_type = nil
     for i = 1, #ace.map.guard_names do
         local guard_type = ace.map.guard_names[i]
-        local guard_flag = rl(data.ace.enum.hunter_status_flag, guard_type)
+        local guard_flag = e.get("app.HunterDef.STATUS_FLAG")[guard_type]
 
         if self.status_flags:check(guard_flag) then
             self.guard_type = guard_type
@@ -135,9 +134,9 @@ function this:update_hurtboxes()
     local ret = {}
     for col, box in pairs(self.hurtboxes) do
         local box_state, boxes = box:update()
-        if box_state == mod.enum.box_state.Draw and boxes then
+        if box_state == mod_enum.box_state.Draw and boxes then
             table.move(boxes, 1, #boxes, #ret + 1, ret)
-        elseif box_state == mod.enum.box_state.Dead then
+        elseif box_state == mod_enum.box_state.Dead then
             self.hurtboxes[col] = nil
         end
     end

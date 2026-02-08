@@ -15,94 +15,88 @@ local combo = require("HitboxViewer.gui.combo")
 local config = require("HitboxViewer.config.init")
 local config_set = require("HitboxViewer.util.imgui.config_set")
 local data = require("HitboxViewer.data.init")
-local game_data = require("HitboxViewer.util.game.data")
 local util_table = require("HitboxViewer.util.misc.table")
 
-local mod = data.mod
-local rl = game_data.reverse_lookup
+local mod_enum = data.mod.enum
 
 ---@class GuiState
 local this = {
     combo = {
         condition_type = combo:new(
-            util_table.map_table(mod.enum.condition_type, function(o)
-                return mod.enum.condition_type[o]
+            util_table.map_table(mod_enum.condition_type, function(o)
+                return mod_enum.condition_type[o]
             end, function(o)
-                return rl(mod.enum.condition_type, o)
+                return mod_enum.condition_type[o]
             end),
             function(a, b)
                 return a.key < b.key
             end,
             nil,
             function(key)
-                return config.lang:tr(
-                    "mod.combo_condition_type." .. rl(mod.enum.condition_type, key)
-                )
+                return config.lang:tr("mod.combo_condition_type." .. mod_enum.condition_type[key])
             end
         ),
         condition_state = combo:new(
-            util_table.map_table(mod.enum.condition_state, function(o)
-                return mod.enum.condition_state[o]
+            util_table.map_table(mod_enum.condition_state, function(o)
+                return mod_enum.condition_state[o]
             end, function(o)
-                return rl(mod.enum.condition_state, o)
+                return mod_enum.condition_state[o]
             end),
             function(a, b)
                 return a.key < b.key
             end,
             nil,
             function(key)
-                return config.lang:tr(
-                    "mod.combo_condition_state." .. rl(mod.enum.condition_state, key)
-                )
+                return config.lang:tr("mod.combo_condition_state." .. mod_enum.condition_state[key])
             end
         ),
         extract = combo:new(
-            util_table.map_table(mod.enum.extract, function(o)
-                return mod.enum.extract[o]
+            util_table.map_table(mod_enum.extract, function(o)
+                return mod_enum.extract[o]
             end, function(o)
-                return rl(mod.enum.extract, o)
+                return mod_enum.extract[o]
             end),
             function(a, b)
                 return a.key < b.key
             end,
             nil,
             function(key)
-                return config.lang:tr("mod.combo_extract." .. rl(mod.enum.extract, key))
+                return config.lang:tr("mod.combo_extract." .. mod_enum.extract[key])
             end
         ),
         break_state = combo:new(
-            util_table.map_table(mod.enum.break_state, function(o)
-                return mod.enum.break_state[o]
+            util_table.map_table(mod_enum.break_state, function(o)
+                return mod_enum.break_state[o]
             end, function(o)
-                return rl(mod.enum.break_state, o)
+                return mod_enum.break_state[o]
             end),
             function(a, b)
                 return a.key < b.key
             end,
             nil,
             function(key)
-                return config.lang:tr("mod.combo_break_state." .. rl(mod.enum.break_state, key))
+                return config.lang:tr("mod.combo_break_state." .. mod_enum.break_state[key])
             end
         ),
         element = combo:new(
-            util_table.map_table(mod.enum.element, function(o)
-                return mod.enum.element[o]
+            util_table.map_table(mod_enum.element, function(o)
+                return mod_enum.element[o]
             end, function(o)
-                return rl(mod.enum.element, o)
+                return mod_enum.element[o]
             end),
             function(a, b)
                 return a.key < b.key
             end,
             nil,
             function(key)
-                return config.lang:tr("mod.combo_element." .. rl(mod.enum.element, key))
+                return config.lang:tr("mod.combo_element." .. mod_enum.element[key])
             end
         ),
         draw_state = combo:new(
-            util_table.map_table(mod.enum.default_hurtbox_state, function(o)
-                return mod.enum.default_hurtbox_state[o]
+            util_table.map_table(mod_enum.default_hurtbox_state, function(o)
+                return mod_enum.default_hurtbox_state[o]
             end, function(o)
-                return rl(mod.enum.default_hurtbox_state, o)
+                return mod_enum.default_hurtbox_state[o]
             end),
             function(a, b)
                 return a.key < b.key
@@ -110,18 +104,18 @@ local this = {
             nil,
             function(key)
                 return config.lang:tr(
-                    "mod.combo_draw_state." .. rl(mod.enum.default_hurtbox_state, key)
+                    "mod.combo_draw_state." .. mod_enum.default_hurtbox_state[key]
                 )
             end
         ),
         shape = combo:new(
-            mod.enum.shape_dummy,
+            mod_enum.shape_dummy,
             function(a, b)
                 return a.key < b.key
             end,
             nil,
             function(key)
-                return config.lang:tr("mod.combo_shape." .. mod.enum.shape_dummy[key])
+                return config.lang:tr("mod.combo_shape." .. mod_enum.shape_dummy[key])
             end
         ),
     },

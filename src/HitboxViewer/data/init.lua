@@ -1,5 +1,6 @@
 local config = require("HitboxViewer.config.init")
-local game_data = require("HitboxViewer.util.game.data")
+local e = require("HitboxViewer.util.game.enum")
+local util_game = require("HitboxViewer.util.game.init")
 local util_table = require("HitboxViewer.util.misc.table")
 
 local this = {
@@ -10,33 +11,15 @@ local this = {
 }
 
 ---@param type_def_name string
----@param table BoxSettings
+---@param t BoxSettings
+---@param predicate (fun(key: string, value: any): boolean)?
 ---@param color integer?
----@param as_string boolean?
----@param ignore_values string[]?
----@param filter_regex string?
-local function write_fields_to_config(
-    type_def_name,
-    table,
-    color,
-    as_string,
-    ignore_values,
-    filter_regex
-)
-    local co = coroutine.create(game_data.iter_fields)
-    local status = true
-    ---@type integer
-    local data
-    ---@type integer | string
-    local name
-    while status do
-        status, name, data = coroutine.resume(co, type_def_name, as_string, ignore_values)
-        if name and data and (not filter_regex or string.match(name, filter_regex)) then
-            table.disable[name] = false
-            if color then
-                table.color[name] = color
-                table.color_enable[name] = false
-            end
+local function write_fields_to_config(type_def_name, t, predicate, color)
+    for name, _ in pairs(util_game.get_fields(type_def_name, predicate)) do
+        t.disable[name] = false
+        if color then
+            t.color[name] = color
+            t.color_enable[name] = false
         end
     end
 end
@@ -61,37 +44,33 @@ end
 
 ---@return boolean
 function this.init()
-    game_data.get_enum("via.physics.ShapeType", this.ace.enum.shape)
-    game_data.get_enum("app.Hit.ROD_EXTRACT", this.ace.enum.rod)
-    game_data.get_enum("app.user_data.EmParamParts.MEAT_SLOT", this.ace.enum.meat_slot)
-    game_data.get_enum("app.cEmModuleScar.cScarParts.STATE", this.ace.enum.scar)
-    game_data.get_enum("app.HitDef.DAMAGE_TYPE", this.ace.enum.damage_type)
-    game_data.get_enum("app.HitDef.CONDITION", this.ace.enum.attack_condition)
-    game_data.get_enum("app.HitDef.DAMAGE_TYPE_CUSTOM", this.ace.enum.damage_type_custom)
-    game_data.get_enum("app.HitDef.DAMAGE_ANGLE", this.ace.enum.damage_angle)
-    game_data.get_enum("app.Hit.GUARD_TYPE", this.ace.enum.guard_type)
-    game_data.get_enum("app.HitDef.ATTR", this.ace.enum.attack_attr)
-    game_data.get_enum("app.Hit.ATTACK_PARAM_TYPE", this.ace.enum.attack_param)
-    game_data.get_enum("app.HitDef.ACTION_TYPE", this.ace.enum.action_type)
-    game_data.get_enum("app.HitDef.BATTLE_RIDING_ATTACK_TYPE", this.ace.enum.ride_attack_type)
-    game_data.get_enum("app.EnemyDef.Damage.ENEMY_DAMAGE_TYPE", this.ace.enum.enemy_damage_type)
-    game_data.get_enum("app.EnemyDef.ATTACK_FILTER_TYPE", this.ace.enum.attack_filter_type)
-    game_data.get_enum("app.EnemyDef.Damage.FRIEND_HIT_TYPE", this.ace.enum.friend_hit_type)
-    game_data.get_enum("app.OtomoDef.USE_OTOMO_TOOL_TYPE", this.ace.enum.otomo_tool_type)
-    game_data.get_enum("app.user_data.EmParamParts.INDEX_CATEGORY", this.ace.enum.em_part_index)
-    game_data.get_enum("app.HunterDef.STATUS_FLAG", this.ace.enum.hunter_status_flag)
-    game_data.get_enum("app.PressDef.PRESS_LEVEL", this.ace.enum.press_level)
-    game_data.get_enum("app.CollisionFilter.LAYER", this.ace.enum.col_layer)
-    game_data.get_enum("app.EnemyDef.ATTACK_FILTER_TYPE", this.ace.enum.attack_filter_type)
+    e.new("via.physics.ShapeType")
+    e.new("app.Hit.ROD_EXTRACT")
+    e.new("app.user_data.EmParamParts.MEAT_SLOT")
+    e.new("app.cEmModuleScar.cScarParts.STATE")
+    e.new("app.HitDef.DAMAGE_TYPE")
+    e.new("app.HitDef.CONDITION")
+    e.new("app.HitDef.DAMAGE_TYPE_CUSTOM")
+    e.new("app.HitDef.DAMAGE_ANGLE")
+    e.new("app.Hit.GUARD_TYPE")
+    e.new("app.HitDef.ATTR")
+    e.new("app.Hit.ATTACK_PARAM_TYPE")
+    e.new("app.HitDef.ACTION_TYPE")
+    e.new("app.HitDef.BATTLE_RIDING_ATTACK_TYPE")
+    e.new("app.EnemyDef.Damage.ENEMY_DAMAGE_TYPE")
+    e.new("app.EnemyDef.ATTACK_FILTER_TYPE")
+    e.new("app.EnemyDef.Damage.FRIEND_HIT_TYPE")
+    e.new("app.user_data.EmParamParts.INDEX_CATEGORY")
+    e.new("app.HunterDef.STATUS_FLAG", function(key, _)
+        return key ~= "ICON_MAX"
+    end)
+    e.new("app.PressDef.PRESS_LEVEL")
+    e.new("app.CollisionFilter.LAYER")
+    e.new("app.EnemyDef.ATTACK_FILTER_TYPE")
 
-    if
-        util_table.any(
-            this.ace.enum --[[@as table<string, table<integer, string>>]],
-            function(key, value)
-                return util_table.empty(value)
-            end
-        )
-    then
+    if util_table.any(e.enums, function(_, value)
+        return not value.ok
+    end) then
         return false
     end
 
@@ -100,30 +79,34 @@ function this.init()
     write_fields_to_config(
         "app.HitDef.DAMAGE_TYPE",
         config_mod.hitboxes.damage_type,
+        nil,
         config.default_color
     )
     write_fields_to_config(
         "app.HitDef.DAMAGE_ANGLE",
         config_mod.hitboxes.damage_angle,
+        nil,
         config.default_color
     )
     write_fields_to_config(
         "app.Hit.GUARD_TYPE",
         config_mod.hitboxes.guard_type,
+        nil,
         config.default_color
     )
     write_fields_to_config(
         "app.PressDef.PRESS_LEVEL",
         config_mod.pressboxes.press_level,
+        nil,
         config.default_color
     )
     write_fields_to_config(
         "app.CollisionFilter.LAYER",
         config_mod.pressboxes.layer,
-        config.default_color,
-        nil,
-        nil,
-        "PRESS_.-"
+        function(key, _)
+            return key:match("PRESS_.-")
+        end,
+        config.default_color
     )
     write_strings_to_config(
         this.custom_attack_type.sorted,

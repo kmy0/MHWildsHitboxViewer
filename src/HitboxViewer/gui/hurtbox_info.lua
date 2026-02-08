@@ -4,7 +4,7 @@ local data = require("HitboxViewer.data.init")
 local gui_util = require("HitboxViewer.gui.util")
 local util_imgui = require("HitboxViewer.util.imgui.init")
 
-local mod = data.mod
+local mod_enum = data.mod.enum
 local gui = data.gui
 
 local this = {
@@ -166,7 +166,7 @@ local function draw_table(monster)
 end
 
 local function reset_states()
-    local sorted_monsters = char.get_sorted_chars(mod.enum.char.BigMonster)
+    local sorted_monsters = char.get_sorted_chars(mod_enum.char.BigMonster)
     if not sorted_monsters then
         return
     end
@@ -185,7 +185,7 @@ local function reset_states()
 end
 
 local function draw_monsters()
-    local sorted_monsters = char.get_sorted_chars(mod.enum.char.BigMonster)
+    local sorted_monsters = char.get_sorted_chars(mod_enum.char.BigMonster)
     if not sorted_monsters then
         return
     end
@@ -268,7 +268,7 @@ function this.draw()
     if
         not config_mod.enabled_hurtboxes
         or config_mod.hurtboxes.disable.BigMonster
-        or char.cache.is_empty(mod.enum.char.BigMonster)
+        or char.cache.is_empty(mod_enum.char.BigMonster)
     then
         imgui.text_colored(config.lang:tr("misc.text_no_monsters"), gui.colors.bad)
     else

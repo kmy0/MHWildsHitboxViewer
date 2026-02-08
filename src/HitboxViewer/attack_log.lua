@@ -39,13 +39,11 @@
 local circular_buffer = require("HitboxViewer.util.misc.circular_buffer")
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
+local e = require("HitboxViewer.util.game.enum")
 local frame_counter = require("HitboxViewer.util.misc.frame_counter")
-local game_data = require("HitboxViewer.util.game.data")
 local util_table = require("HitboxViewer.util.misc.table")
 
-local ace = data.ace
-local mod = data.mod
-local rl = game_data.reverse_lookup
+local mod_enum = data.mod.enum
 
 ---@class AttackLog
 local this = {
@@ -102,27 +100,27 @@ function this.get_player_data(userdata)
         motion_value = userdata._Attack,
         element = userdata._StatusAttrRate,
         status = userdata._StatusConditionRate,
-        damage_type = ace.enum.damage_type[userdata:get_DamageType()],
-        damage_angle = ace.enum.damage_angle[userdata:get_DamageAngle()],
-        guard_type = ace.enum.guard_type[userdata:get_GuardType()],
+        damage_type = e.get("app.HitDef.DAMAGE_TYPE")[userdata:get_DamageType()],
+        damage_angle = e.get("app.HitDef.DAMAGE_ANGLE")[userdata:get_DamageAngle()],
+        guard_type = e.get("app.Hit.GUARD_TYPE")[userdata:get_GuardType()],
         part_break = userdata._PartsBreakRate,
         mount = userdata._RideDamage,
         stun = userdata._StunDamage,
         sharpness = userdata._CustomKireajiReduce / 10 --[[@as number]],
         attack_id = userdata._RuntimeData._AttackUniqueID,
         more_data = {
-            _DamageTypeCustom = ace.enum.damage_type_custom[userdata:get_DamageTypeCustom()],
-            _AttackAttr = ace.enum.attack_attr[userdata:get_AttackAttr()],
-            _AttackCond = ace.enum.attack_condition[userdata:get_AttackCond()],
-            _Type = ace.enum.attack_param[userdata:get_Type()],
+            _DamageTypeCustom = e.get("app.HitDef.DAMAGE_TYPE_CUSTOM")[userdata:get_DamageTypeCustom()],
+            _AttackAttr = e.get("app.HitDef.ATTR")[userdata:get_AttackAttr()],
+            _AttackCond = e.get("app.HitDef.CONDITION")[userdata:get_AttackCond()],
+            _Type = e.get("app.Hit.ATTACK_PARAM_TYPE")[userdata:get_Type()],
             _AttrRate = userdata:get_AttrRate(),
             _FixAttack = userdata._FixAttack,
             _AttrValue = userdata._AttrValue,
             _AttrLevel = userdata._AttrLevel,
             _TerrainHitOnly = userdata._RuntimeData._TerrainHitOnly,
-            _ActionType = ace.enum.action_type[userdata:get_ActionType()],
-            _BattleRidingAttackType = ace.enum.ride_attack_type[userdata:get_BattleRidingAttackType()],
-            _FriendDamageType = ace.enum.action_type[userdata:get_FriendDamageType()],
+            _ActionType = e.get("app.HitDef.ACTION_TYPE")[userdata:get_ActionType()],
+            _BattleRidingAttackType = e.get("app.HitDef.BATTLE_RIDING_ATTACK_TYPE")[userdata:get_BattleRidingAttackType()],
+            _FriendDamageType = e.get("app.HitDef.ACTION_TYPE")[userdata:get_FriendDamageType()],
             _ParryDamage = userdata._ParryDamage,
             _RidingSuccessDamage = userdata._RidingSuccessDamage,
             _RidingSuccessDamageRawScar = userdata._RidingSuccessDamageRawScar,
@@ -170,25 +168,25 @@ function this.get_enemy_data(userdata)
         mount = data_missing_string,
         stun = userdata._StunDamage,
         sharpness = data_missing_string,
-        damage_type = ace.enum.damage_type[userdata:get_DamageType()],
-        damage_angle = ace.enum.damage_angle[userdata:get_DamageAngle()],
-        guard_type = ace.enum.guard_type[userdata:get_GuardType()],
+        damage_type = e.get("app.HitDef.DAMAGE_TYPE")[userdata:get_DamageType()],
+        damage_angle = e.get("app.HitDef.DAMAGE_ANGLE")[userdata:get_DamageAngle()],
+        guard_type = e.get("app.Hit.GUARD_TYPE")[userdata:get_GuardType()],
         attack_id = userdata._RuntimeData._AttackUniqueID,
         more_data = {
-            _DamageTypeCustom = ace.enum.damage_type_custom[userdata:get_DamageTypeCustom()],
-            _AttackAttr = ace.enum.attack_attr[userdata:get_AttackAttr()],
-            _AttackCond = ace.enum.attack_condition[userdata:get_AttackCond()],
-            _Type = ace.enum.attack_param[userdata:get_Type()],
+            _DamageTypeCustom = e.get("app.HitDef.DAMAGE_TYPE_CUSTOM")[userdata:get_DamageTypeCustom()],
+            _AttackAttr = e.get("app.HitDef.ATTR")[userdata:get_AttackAttr()],
+            _AttackCond = e.get("app.HitDef.CONDITION")[userdata:get_AttackCond()],
+            _Type = e.get("app.Hit.ATTACK_PARAM_TYPE")[userdata:get_Type()],
             _AttrRate = userdata:get_AttrRate(),
             _FixAttack = userdata._FixAttack,
             _AttrValue = userdata._AttrValue,
             _AttrLevel = userdata._AttrLevel,
             _TerrainHitOnly = userdata._RuntimeData._TerrainHitOnly,
-            _EnemyDamageType = ace.enum.enemy_damage_type[userdata:get_EnemyDamageType()],
+            _EnemyDamageType = e.get("app.EnemyDef.Damage.ENEMY_DAMAGE_TYPE")[userdata:get_EnemyDamageType()],
             _DamageLevel = userdata._DamageLevel,
             _ToEmDamageRate = userdata._ToEmDamageRate,
             _FrenzyOutbreakPoint = userdata._FrenzyOutbreakPoint,
-            _AttackFilterType = ace.enum.attack_filter_type[userdata._AttackFilterType],
+            _AttackFilterType = e.get("app.EnemyDef.ATTACK_FILTER_TYPE")[userdata._AttackFilterType],
             _IsParryFix = userdata._IsParryFix,
             _IsParryStockOnly = userdata._IsParryStockOnly,
             _IsParryBreak = userdata._IsParryBreak,
@@ -208,7 +206,7 @@ function this.get_enemy_data(userdata)
             _IsForceStunEm = userdata._IsForceStunEm,
             _EmRateAttack = userdata._EmRateAttack,
             _LaserContinueDamageRate = userdata._LaserContinueDamageRate,
-            _FriendHitType = ace.enum.friend_hit_type[userdata._FriendHitType],
+            _FriendHitType = e.get("app.EnemyDef.Damage.FRIEND_HIT_TYPE")[userdata._FriendHitType],
             _IsEnergyAttack = userdata._IsEnergyAttack,
         },
     }
@@ -226,21 +224,21 @@ function this.get_pet_data(userdata)
         mount = data_missing_string,
         stun = userdata._StunDamage,
         sharpness = data_missing_string,
-        damage_type = ace.enum.damage_type[userdata:get_DamageType()],
-        damage_angle = ace.enum.damage_angle[userdata:get_DamageAngle()],
-        guard_type = ace.enum.guard_type[userdata:get_GuardType()],
+        damage_type = e.get("app.HitDef.DAMAGE_TYPE")[userdata:get_DamageType()],
+        damage_angle = e.get("app.HitDef.DAMAGE_ANGLE")[userdata:get_DamageAngle()],
+        guard_type = e.get("app.Hit.GUARD_TYPE")[userdata:get_GuardType()],
         attack_id = userdata._RuntimeData._AttackUniqueID,
         more_data = {
-            _DamageTypeCustom = ace.enum.damage_type_custom[userdata:get_DamageTypeCustom()],
-            _AttackAttr = ace.enum.attack_attr[userdata:get_AttackAttr()],
-            _AttackCond = ace.enum.attack_condition[userdata:get_AttackCond()],
-            _Type = ace.enum.attack_param[userdata:get_Type()],
+            _DamageTypeCustom = e.get("app.HitDef.DAMAGE_TYPE_CUSTOM")[userdata:get_DamageTypeCustom()],
+            _AttackAttr = e.get("app.HitDef.ATTR")[userdata:get_AttackAttr()],
+            _AttackCond = e.get("app.HitDef.CONDITION")[userdata:get_AttackCond()],
+            _Type = e.get("app.Hit.ATTACK_PARAM_TYPE")[userdata:get_Type()],
             _AttrRate = userdata:get_AttrRate(),
             _FixAttack = userdata._FixAttack,
             _AttrValue = userdata._AttrValue,
             _AttrLevel = userdata._AttrLevel,
             _TerrainHitOnly = userdata._RuntimeData._TerrainHitOnly,
-            _ActionType = ace.enum.action_type[userdata:get_ActionType()],
+            _ActionType = e.get("app.HitDef.ACTION_TYPE")[userdata:get_ActionType()],
             _IsUseFixedActionType = userdata._IsUseFixedActionType,
             _IsUseFixedAttributeType = userdata._IsUseFixedAttributeType,
             _IsUseFixedBadConditionRate = userdata._IsUseFixedBadConditionRate,
@@ -258,6 +256,7 @@ end
 
 ---@param userdata app.col_user_data.DamageParam
 ---@return AttackLogEntryData
+---@diagnostic disable-next-line: unused-local
 function this.get_hurtbox_data(userdata)
     local data_missing_string = config.lang:tr("misc.text_data_missing")
     return {
@@ -324,8 +323,7 @@ function this.get_log_entry(char, userdata, rsc, resource_idx)
 
     ---@type AttackLogEntryBase
     local entry_base = {
-        char_type = mod.enum.char.MasterPlayer == char.type and "Self"
-            or rl(mod.enum.char, char.type),
+        char_type = mod_enum.char.MasterPlayer == char.type and "Self" or mod_enum.char[char.type],
         char_id = char.id,
         char_name = char.name,
         userdata_type = p_data_def,

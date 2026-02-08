@@ -2,6 +2,7 @@
 ---@field types table<string, fun(entry: AttackLogEntry): boolean>
 ---@field sorted string[]
 
+---@diagnostic disable-next-line: unused-local
 local util_table = require("HitboxViewer.util.misc.table")
 
 ---@class CustomAttackType

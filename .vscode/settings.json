@@ -16,4 +16,8 @@
     "[lua]": {
         "editor.defaultFormatter": "JohnnyMorganz.stylua"
     },
+    "Lua.diagnostics.severity": {
+        "unused-local": "Warning",
+        "unused-function": "Hint"
+    },
 }

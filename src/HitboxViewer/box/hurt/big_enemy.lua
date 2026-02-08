@@ -6,7 +6,7 @@ local data = require("HitboxViewer.data.init")
 local enemy_hurtbox = require("HitboxViewer.box.hurt.enemy")
 local part_group = require("HitboxViewer.box.hurt.part_group")
 
-local mod = data.mod
+local mod_enum = data.mod.enum
 
 ---@class BigEnemyHurtBox
 local this = {}
@@ -51,30 +51,30 @@ function this:update_data()
     local config_mod = config.current.mod
 
     if not self.part_group.is_show then
-        return mod.enum.box_state.None
+        return mod_enum.box_state.None
     end
 
     if
         not self.part_group.is_highlight
         and (
             (
-                config_mod.hurtboxes.default_state ~= mod.enum.default_hurtbox_state.Draw
-                and self.part_group.condition ~= mod.enum.condition_result.Highlight
-            ) or self.part_group.condition == mod.enum.condition_result.Hide
+                config_mod.hurtboxes.default_state ~= mod_enum.default_hurtbox_state.Draw
+                and self.part_group.condition ~= mod_enum.condition_result.Highlight
+            ) or self.part_group.condition == mod_enum.condition_result.Hide
         )
     then
-        return mod.enum.box_state.None
+        return mod_enum.box_state.None
     end
 
     if self.part_group.is_highlight then
         self.color = config_mod.hurtboxes.color.highlight
-    elseif self.part_group.condition == mod.enum.condition_result.Highlight then
+    elseif self.part_group.condition == mod_enum.condition_result.Highlight then
         self.color = self.part_group.condition_color
     else
         return enemy_hurtbox.update_data(self)
     end
 
-    return mod.enum.box_state.Draw
+    return mod_enum.box_state.Draw
 end
 
 return this

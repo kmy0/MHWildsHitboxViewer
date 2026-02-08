@@ -9,7 +9,7 @@ local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
 local util_table = require("HitboxViewer.util.misc.table")
 
-local mod = data.mod
+local mod_enum = data.mod.enum
 
 ---@class ConditionBase
 local this = {}
@@ -25,7 +25,7 @@ function this:new(type, state, color, key)
     local o = {
         color = color or config.default.mod.hurtboxes.color.highlight,
         type = type,
-        state = state or mod.enum.condition_state.Highlight,
+        state = state or mod_enum.condition_state.Highlight,
         key = key or self:_get_key(),
     }
     setmetatable(o, self)

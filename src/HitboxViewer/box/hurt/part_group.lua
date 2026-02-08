@@ -26,16 +26,16 @@
 local conditions = require("HitboxViewer.box.hurt.conditions.init")
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
+local e = require("HitboxViewer.util.game.enum")
 local frame_counter = require("HitboxViewer.util.misc.frame_counter")
-local game_data = require("HitboxViewer.util.game.data")
 local game_lang = require("HitboxViewer.util.game.lang")
 local m = require("HitboxViewer.util.ref.methods")
 local scar_box = require("HitboxViewer.box.hurt.scar")
 local util_game = require("HitboxViewer.util.game.init")
 local util_table = require("HitboxViewer.util.misc.table")
 
-local ace = data.ace
-local mod = data.mod
+local ace_map = data.ace.map
+local mod_enum = data.mod.enum
 
 ---@class PartGroup
 local this = {}
@@ -51,7 +51,7 @@ local function get_hitzone(meat_guid, param_parts)
 
     ---@type table<string, integer>
     local meat_data = {}
-    for _, field in ipairs(ace.map.cMeatFields) do
+    for _, field in ipairs(ace_map.cMeatFields) do
         meat_data[field:get_name():sub(2)] = field:get_data(meat_list[meat_index._Value])
     end
     return meat_data
@@ -59,9 +59,8 @@ end
 
 ---@param part_index System.Int32
 ---@param enemy_ctx app.cEnemyContext
----@param module_parts app.cEmModuleParts
 ---@return app.cEmModuleParts.cBreakParts?, boolean?
-local function get_break_parts(part_index, enemy_ctx, module_parts)
+local function get_break_parts(part_index, enemy_ctx)
     ---@type app.cEmModuleParts.cBreakParts?
     local ret
 
@@ -88,7 +87,7 @@ end
 ---@param fixed_part_type System.Int32
 ---@return string?
 local function get_part_name(fixed_part_type)
-    local part_type_enum = game_data.fixed_to_enum("app.EnemyDef.PARTS_TYPE", fixed_part_type)
+    local part_type_enum = e.to_enum("app.EnemyDef.PARTS_TYPE", fixed_part_type)
     local guid = m.EmPartsName(part_type_enum)
     local ret = game_lang.get_message_local(guid, game_lang.get_language(), true)
     if string.len(ret) > 0 then
@@ -104,8 +103,8 @@ local function get_hitzones(cpart, param_parts)
 
     ---@type table<app.user_data.EmParamParts.MEAT_SLOT, table<string, integer>>
     local ret = {}
-    for i, name in pairs(ace.enum.meat_slot) do
-        local field_name = ace.map.meat_type_to_field_name[name]
+    for name, i in e.iter("app.user_data.EmParamParts.MEAT_SLOT") do
+        local field_name = ace_map.meat_type_to_field_name[name]
         if not field_name then
             goto continue
         end
@@ -119,7 +118,7 @@ local function get_hitzones(cpart, param_parts)
 
         ---@type table<string, integer>
         local meat_data = {}
-        for _, field in ipairs(ace.map.cMeatFields) do
+        for _, field in ipairs(ace_map.cMeatFields) do
             meat_data[field:get_name():sub(2)] = field:get_data(meat_list[meat_index._Value])
         end
         ret[i] = meat_data
@@ -162,7 +161,8 @@ local function get_part_data(enemy_ctx, enemy_mc_holder, meat_data)
     local runtime_data = meat_data:get_RuntimeData()
     local part_index = runtime_data._PartsIndex
     local param_parts = enemy_ctx.Parts._ParamParts
-    local is_weak = ace.enum.em_part_index[dmg_cparts:get_Category()] == "WEAK_POINT"
+    local is_weak = e.get("app.user_data.EmParamParts.INDEX_CATEGORY")[dmg_cparts:get_Category()]
+        == "WEAK_POINT"
     ---@diagnostic disable-next-line: no-unknown
     local break_part, scars, dmg_part, name, hitzones, weak_hitzone, can_lost
 
@@ -174,7 +174,7 @@ local function get_part_data(enemy_ctx, enemy_mc_holder, meat_data)
     else
         local em_cparts = param_parts:get_PartsList()[part_index] --[[@as app.user_data.EmParamParts.cParts]]
         dmg_part = enemy_ctx.Parts:get_DmgParts()[part_index] --[[@as app.cEmModuleParts.cDamageParts]]
-        break_part, can_lost = get_break_parts(part_index, enemy_ctx, enemy_ctx.Parts)
+        break_part, can_lost = get_break_parts(part_index, enemy_ctx)
         name = get_part_name(em_cparts._PartsType:get_Value())
             or config.lang:tr("misc.text_name_missing")
         hitzones = get_hitzones(em_cparts, param_parts)
@@ -184,7 +184,7 @@ local function get_part_data(enemy_ctx, enemy_mc_holder, meat_data)
     ---@type PartData
     local ret = {
         is_enabled = false,
-        extract = ace.enum.rod[runtime_data._RodExtract],
+        extract = e.get("app.Hit.ROD_EXTRACT")[runtime_data._RodExtract],
         can_break = break_part ~= nil,
         is_weak = is_weak,
         is_broken = false,
@@ -220,7 +220,7 @@ function this:new(cache, enemy_ctx, enemy_mc_holder, enemy_hurtbox, meat_data)
             is_show = true,
             is_highlight = false,
             hurtboxes = {},
-            condition = mod.enum.condition_result.None,
+            condition = mod_enum.condition_result.None,
             condition_color = 0,
             part_data = part_data,
             name = name,
@@ -252,7 +252,7 @@ function this:update()
     if self.part_data.scar_boxes then
         for _, scar in pairs(self.part_data.scar_boxes) do
             local box_state = scar:update()
-            if box_state == mod.enum.box_state.Draw then
+            if box_state == mod_enum.box_state.Draw then
                 table.insert(ret, scar)
             end
         end

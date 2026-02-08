@@ -31,7 +31,7 @@
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
 
-local mod = data.mod
+local mod_enum = data.mod.enum
 
 ---@class BoxBase
 local this = {}
@@ -45,24 +45,24 @@ function this:new(box_type, shape_type)
     local shape_data = {}
 
     if
-        shape_type == mod.enum.shape.Capsule
-        or shape_type == mod.enum.shape.Cylinder
-        or shape_type == mod.enum.shape.ContinuousCapsule
+        shape_type == mod_enum.shape.Capsule
+        or shape_type == mod_enum.shape.Cylinder
+        or shape_type == mod_enum.shape.ContinuousCapsule
     then
         ---@cast shape_data CylinderShape
         shape_data.pos_a = Vector3f.new(0, 0, 0)
         shape_data.pos_b = Vector3f.new(0, 0, 0)
         shape_data.radius = 0
-    elseif shape_type == mod.enum.shape.Sphere or shape_type == mod.enum.shape.ContinuousSphere then
+    elseif shape_type == mod_enum.shape.Sphere or shape_type == mod_enum.shape.ContinuousSphere then
         ---@cast shape_data SphereShape
         shape_data.pos = Vector3f.new(0, 0, 0)
         shape_data.radius = 0
-    elseif shape_type == mod.enum.shape.Box or shape_type == mod.enum.shape.Triangle then
+    elseif shape_type == mod_enum.shape.Box or shape_type == mod_enum.shape.Triangle then
         ---@cast shape_data BoxShape
         shape_data.pos = Vector3f.new(0, 0, 0)
         shape_data.extent = Vector3f.new(0, 0, 0)
         shape_data.rot = Matrix4x4f.new(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1)
-    elseif shape_type == mod.enum.shape.SlicedCylinder then
+    elseif shape_type == mod_enum.shape.SlicedCylinder then
         ---@cast shape_data SlicedCylinderShape
         shape_data.pos_a = Vector3f.new(0, 0, 0)
         shape_data.pos_b = Vector3f.new(0, 0, 0)
@@ -89,23 +89,23 @@ end
 ---@return BoxState
 function this:update_data()
     self.color = config.default_color
-    return mod.enum.box_state.Draw
+    return mod_enum.box_state.Draw
 end
 
 ---@return BoxState
 function this:update_shape()
-    return mod.enum.box_state.Draw
+    return mod_enum.box_state.Draw
 end
 
 ---@return BoxState
 function this:update()
     if
-        self:update_data() == mod.enum.box_state.Draw
-        and self:update_shape() == mod.enum.box_state.Draw
+        self:update_data() == mod_enum.box_state.Draw
+        and self:update_shape() == mod_enum.box_state.Draw
     then
-        return mod.enum.box_state.Draw
+        return mod_enum.box_state.Draw
     end
-    return mod.enum.box_state.None
+    return mod_enum.box_state.None
 end
 
 return this

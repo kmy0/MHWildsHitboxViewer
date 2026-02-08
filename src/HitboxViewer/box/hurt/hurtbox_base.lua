@@ -3,10 +3,8 @@
 local colldable_base = require("HitboxViewer.box.collidable_base")
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
-local game_data = require("HitboxViewer.util.game.data")
 
-local mod = data.mod
-local rl = game_data.reverse_lookup
+local mod_enum = data.mod.enum
 
 ---@class HurtBoxBase
 local this = {}
@@ -25,7 +23,7 @@ function this:new(collidable, parent, resource_idx, set_idx, collidable_idx)
         self,
         collidable,
         parent,
-        mod.enum.box.HurtBox,
+        mod_enum.box.HurtBox,
         resource_idx,
         set_idx,
         collidable_idx
@@ -44,12 +42,12 @@ end
 function this:update_data()
     local config_mod = config.current.mod
 
-    if config_mod.hurtboxes.color_enable[rl(mod.enum.char, self.parent.type)] then
-        self.color = config_mod.hurtboxes.color[rl(mod.enum.char, self.parent.type)]
+    if config_mod.hurtboxes.color_enable[mod_enum.char[self.parent.type]] then
+        self.color = config_mod.hurtboxes.color[mod_enum.char[self.parent.type]]
     else
         self.color = config_mod.hurtboxes.color.one_color
     end
-    return mod.enum.box_state.Draw
+    return mod_enum.box_state.Draw
 end
 
 return this

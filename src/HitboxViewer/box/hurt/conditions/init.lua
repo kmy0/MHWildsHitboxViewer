@@ -6,7 +6,7 @@ local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
 local util_table = require("HitboxViewer.util.misc.table")
 
-local mod = data.mod
+local mod_enum = data.mod.enum
 ---@type table<ConditionType, ConditionBase>
 local condition_ctor = {
     [1] = require("HitboxViewer.box.hurt.conditions.element_condition"),
@@ -84,29 +84,29 @@ end
 function this.check_part_group(part_group)
     for i = 1, #this.sorted do
         local cond = this.sorted[i]
-        if cond.type ~= mod.enum.condition_type.Scar then
+        if cond.type ~= mod_enum.condition_type.Scar then
             local state, color = cond:check(part_group)
-            if state ~= mod.enum.condition_result.None then
+            if state ~= mod_enum.condition_result.None then
                 return state, color
             end
         end
     end
-    return mod.enum.condition_result.None, 0
+    return mod_enum.condition_result.None, 0
 end
 
 ---@param scar_state string
 ---@return ConditionResult, integer
 function this.check_scar(scar_state)
-    local t = this.by_type[mod.enum.condition_type.Scar] or {}
+    local t = this.by_type[mod_enum.condition_type.Scar] or {}
     for i = 1, #t do
         local cond = t[i]
         ---@cast cond ScarCondition
         local state, color = cond:check(scar_state)
-        if state ~= mod.enum.condition_result.None then
+        if state ~= mod_enum.condition_result.None then
             return state, color
         end
     end
-    return mod.enum.condition_result.None, 0
+    return mod_enum.condition_result.None, 0
 end
 
 ---@param old_cond ConditionBase

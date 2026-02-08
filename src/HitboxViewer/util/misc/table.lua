@@ -1,6 +1,24 @@
 ---@diagnostic disable: no-unknown
 
 local this = {}
+local rl = {}
+
+---@generic K, V
+---@param table table<K, V>
+---@param value V
+---@param clear boolean?
+---@return K
+function this.reverse_lookup(table, value, clear)
+    if not rl[table] or clear then
+        rl[table] = {}
+
+        for k, v in pairs(table) do
+            rl[table][v] = k
+        end
+    end
+
+    return rl[table][value]
+end
 
 ---@generic T: table
 ---@param t T

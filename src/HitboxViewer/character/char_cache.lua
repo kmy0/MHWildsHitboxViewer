@@ -12,7 +12,7 @@ local util_game = require("HitboxViewer.util.game.init")
 local util_ref = require("HitboxViewer.util.ref.init")
 local util_table = require("HitboxViewer.util.misc.table")
 
-local mod = data.mod
+local mod_enum = data.mod.enum
 local ace = data.ace
 
 ---@class Characters
@@ -61,7 +61,7 @@ function this.get_char(game_object, char_base)
         return
     end
 
-    local base_char_type = mod.enum.base_char[ace.map.char_type_to_name[util_ref.whoami(char_base)]]
+    local base_char_type = mod_enum.base_char[ace.map.char_type_to_name[util_ref.whoami(char_base)]]
     if base_char_type then
         local o = char_ctor.get_character(base_char_type, char_base)
         if o then

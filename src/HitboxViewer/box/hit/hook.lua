@@ -1,17 +1,15 @@
 local char_cache = require("HitboxViewer.character.char_cache")
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
-local game_data = require("HitboxViewer.util.game.data")
 local load_queue = require("HitboxViewer.box.hit.load_queue")
 local util_game = require("HitboxViewer.util.game.init")
 local util_ref = require("HitboxViewer.util.ref.init")
 
-local mod = data.mod
-local rl = game_data.reverse_lookup
+local mod_enum = data.mod.enum
 
 local this = {}
 
-function this.get_shell_post(retval)
+function this.get_shell_post(_)
     local config_mod = config.current.mod
     if not config_mod.enabled_hitboxes then
         return
@@ -44,7 +42,7 @@ function this.get_shell_post(retval)
     if
         not char
         or char.distance > config_mod.draw.distance
-        or config_mod.hitboxes.disable[rl(mod.enum.char, char.type)]
+        or config_mod.hitboxes.disable[mod_enum.char[char.type]]
     then
         return
     end
@@ -56,7 +54,7 @@ function this.get_shell_post(retval)
     end
 
     load_queue:push_back({
-        type = mod.enum.hitbox_load_data.shell,
+        type = mod_enum.hitbox_load_data.shell,
         char = char,
         colliders = cols,
         rsc = shellcolhit._ReqSetCol,
@@ -80,13 +78,13 @@ function this.get_attack_pre(args)
     if
         not char
         or char.distance > config_mod.draw.distance
-        or config_mod.hitboxes.disable[rl(mod.enum.char, char.type)]
+        or config_mod.hitboxes.disable[mod_enum.char[char.type]]
     then
         return
     end
 
     load_queue:push_back({
-        type = mod.enum.hitbox_load_data.rsc,
+        type = mod_enum.hitbox_load_data.rsc,
         char = char,
         rsc = collider_switcher._RequestSetCollider,
         res_idx = util_ref.to_int(args[4]),
@@ -94,7 +92,7 @@ function this.get_attack_pre(args)
     })
 end
 
-function this.get_kinsect_attack_post(retval)
+function this.get_kinsect_attack_post(_)
     local config_mod = config.current.mod
 
     if not config_mod.enabled_hitboxes then
@@ -113,7 +111,7 @@ function this.get_kinsect_attack_post(retval)
     if
         not char
         or char.distance > config_mod.draw.distance
-        or config_mod.hitboxes.disable[rl(mod.enum.char, char.type)]
+        or config_mod.hitboxes.disable[mod_enum.char[char.type]]
     then
         return
     end
@@ -121,7 +119,7 @@ function this.get_kinsect_attack_post(retval)
     local components = insect._Components
 
     load_queue:push_back({
-        type = mod.enum.hitbox_load_data.base,
+        type = mod_enum.hitbox_load_data.base,
         char = char,
         rsc = components._RequestSetCol,
     })

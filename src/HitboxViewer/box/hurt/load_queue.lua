@@ -9,7 +9,7 @@ local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
 local queue = require("HitboxViewer.util.misc.queue")
 
-local mod = data.mod
+local mod_enum = data.mod.enum
 local enemy = {
     big_enemy = require("HitboxViewer.box.hurt.big_enemy"),
     small_enemy = require("HitboxViewer.box.hurt.enemy"),
@@ -34,7 +34,7 @@ function this.get()
 
         -- stylua: ignore start
         if
-            char.type == mod.enum.char.Npc
+            char.type == mod_enum.char.Npc
             and (
                 data_type:is_a("app.col_user_data.DamageParamNpc")
                 ---@cast userdata app.col_user_data.DamageParamNpc
@@ -44,13 +44,13 @@ function this.get()
         then
             ---@cast char Npc
             box = friend.npc:new(load_data.col, char, load_data.resource_idx, load_data.set_idx, load_data.collidable_idx)
-        elseif char.type == mod.enum.char.Player or char.type == mod.enum.char.MasterPlayer then
+        elseif char.type == mod_enum.char.Player or char.type == mod_enum.char.MasterPlayer then
             ---@cast char Player
             box = friend.player:new(load_data.col, char, load_data.resource_idx, load_data.set_idx, load_data.collidable_idx)
-        elseif char.type == mod.enum.char.Pet and data_type:is_a("app.col_user_data.DamageParamOt") then
+        elseif char.type == mod_enum.char.Pet and data_type:is_a("app.col_user_data.DamageParamOt") then
             ---@cast char Pet
             box = friend.pet:new(load_data.col, char, load_data.resource_idx, load_data.set_idx, load_data.collidable_idx)
-        elseif char.type == mod.enum.char.BigMonster and data_type:is_a("app.col_user_data.DamageParamEm") then
+        elseif char.type == mod_enum.char.BigMonster and data_type:is_a("app.col_user_data.DamageParamEm") then
             ---@cast char BigEnemy
             box = enemy.big_enemy:new(
                 load_data.col,
@@ -60,7 +60,7 @@ function this.get()
                 load_data.collidable_idx,
                 userdata --[[@as app.col_user_data.DamageParamEm]]
             )
-        elseif char.type == mod.enum.char.SmallMonster and data_type:is_a("app.col_user_data.DamageParamEm") then
+        elseif char.type == mod_enum.char.SmallMonster and data_type:is_a("app.col_user_data.DamageParamEm") then
             ---@cast char SmallEnemy
             box = enemy.small_enemy:new(load_data.col, char, load_data.resource_idx, load_data.set_idx, load_data.collidable_idx, userdata --[[@as app.col_user_data.DamageParamEm]])
         end

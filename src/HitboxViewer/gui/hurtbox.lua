@@ -9,8 +9,8 @@ local state = require("HitboxViewer.gui.state")
 local util_imgui = require("HitboxViewer.util.imgui.init")
 local util_table = require("HitboxViewer.util.misc.table")
 
-local ace = data.ace
-local mod = data.mod
+local ace_map = data.ace.map
+local mod_enum = data.mod.enum
 
 local this = {}
 local drag = drag_util:new()
@@ -46,26 +46,26 @@ local function draw_condition(cond, config_key)
 
     imgui.same_line()
 
-    local disabled = cond.type ~= mod.enum.condition_type.Element
-        and cond.type ~= mod.enum.condition_type.Extract
-        and cond.type ~= mod.enum.condition_type.Break
+    local disabled = cond.type ~= mod_enum.condition_type.Element
+        and cond.type ~= mod_enum.condition_type.Extract
+        and cond.type ~= mod_enum.condition_type.Break
 
     imgui.begin_disabled(disabled)
 
     item_config_key = config_key .. ".sub_type"
     if
-        cond.type == mod.enum.condition_type.Element
+        cond.type == mod_enum.condition_type.Element
             and set:combo(
                 "##combo_cond_element_" .. cond.key,
                 item_config_key,
                 state.combo.element.values
             )
-        or cond.type == mod.enum.condition_type.Extract and set:combo(
+        or cond.type == mod_enum.condition_type.Extract and set:combo(
             "##combo_cond_extract_" .. cond.key,
             item_config_key,
             state.combo.extract.values
         )
-        or cond.type == mod.enum.condition_type.Break
+        or cond.type == mod_enum.condition_type.Break
             and set:combo(
                 "##combo_cond_break_" .. cond.key,
                 item_config_key,
@@ -81,7 +81,7 @@ local function draw_condition(cond, config_key)
     end
 
     imgui.end_disabled()
-    imgui.begin_disabled(cond.state ~= mod.enum.condition_state.Highlight)
+    imgui.begin_disabled(cond.state ~= mod_enum.condition_state.Highlight)
 
     item_config_key = config_key .. ".color"
     if set:color_edit("##color_cond_" .. cond.key, config_key .. ".color") then
@@ -90,7 +90,7 @@ local function draw_condition(cond, config_key)
 
     imgui.end_disabled()
 
-    imgui.begin_disabled(cond.type ~= mod.enum.condition_type.Element)
+    imgui.begin_disabled(cond.type ~= mod_enum.condition_type.Element)
     imgui.same_line()
 
     item_config_key = config_key .. ".from"
@@ -131,9 +131,9 @@ local function draw_condition(cond, config_key)
         end
     end
 
-    if cond.type == mod.enum.condition_type.Scar then
+    if cond.type == mod_enum.condition_type.Scar then
         ---@cast cond ScarCondition
-        cond.sub_type = mod.enum.scar.RAW
+        cond.sub_type = mod_enum.scar.RAW
     end
 
     imgui.end_disabled()
@@ -163,8 +163,8 @@ local function options()
         generic.draw_box_type_options(
             util_table.keys(config_mod.hurtboxes.guard_type.disable),
             "mod.hurtboxes.guard_type",
-            function(t, i, j)
-                return util_table.contains(ace.map.guard_names, t[i])
+            function(t, i, _)
+                return util_table.contains(ace_map.guard_names, t[i])
             end
         )
 
@@ -176,7 +176,7 @@ local function options()
         util_imgui.tooltip_text(config.lang:tr("mod.tooltip_evaluate_order"))
 
         if imgui.button(gui_util.tr("mod.button_create_condition")) then
-            conditions.new_condition(mod.enum.condition_type.Element)
+            conditions.new_condition(mod_enum.condition_type.Element)
         end
         imgui.same_line()
         imgui.push_item_width(gui_util.get_item_width())
@@ -184,8 +184,8 @@ local function options()
         set:combo(
             gui_util.tr("mod.combo_hurtbox_state"),
             "mod.hurtboxes.default_state",
-            util_table.sort(util_table.keys(mod.enum.default_hurtbox_state), function(a, b)
-                return mod.enum.default_hurtbox_state[a] < mod.enum.default_hurtbox_state[b]
+            util_table.sort(util_table.keys(mod_enum.default_hurtbox_state), function(a, b)
+                return mod_enum.default_hurtbox_state[a] < mod_enum.default_hurtbox_state[b]
             end)
         )
 

@@ -10,7 +10,7 @@ local this = {
 function this.create_all_chars()
     local chars = util_game.get_all_components("app.CharacterBase")
 
-    util_game.do_something(chars, function(system_array, index, value)
+    util_game.do_something(chars, function(_, _, value)
         this.queue:push_back({
             tick = frame_counter.frame,
             game_object = value:get_GameObject(),

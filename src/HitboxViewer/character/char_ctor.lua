@@ -14,7 +14,7 @@ local game_lang = require("HitboxViewer.util.game.lang")
 local m = require("HitboxViewer.util.ref.methods")
 local player = require("HitboxViewer.character.player")
 
-local mod = data.mod
+local mod_enum = data.mod.enum
 
 local this = {}
 
@@ -42,10 +42,10 @@ end
 ---@return Player | Npc
 local function get_hunter_data(char_base)
     local hunter_extend = char_base:get_HunterExtend()
-    local type = hunter_extend:get_IsNpc() and mod.enum.char.Npc
-        or (char_base:get_IsMaster() and mod.enum.char.MasterPlayer or mod.enum.char.Player)
+    local type = hunter_extend:get_IsNpc() and mod_enum.char.Npc
+        or (char_base:get_IsMaster() and mod_enum.char.MasterPlayer or mod_enum.char.Player)
 
-    if type == mod.enum.char.Npc then
+    if type == mod_enum.char.Npc then
         ---@type Npc
         return char_cls:new(type, char_base, get_hunter_name(hunter_extend))
     end
@@ -64,7 +64,7 @@ local function get_pet_data(char_base)
     local hunter_extend = owner:get_HunterExtend()
 
     local ret = char_cls:new(
-        mod.enum.char.Pet,
+        mod_enum.char.Pet,
         char_base,
         string.format(
             "%s - %s",
@@ -88,31 +88,31 @@ local function get_enemy_data(base_char_type, char_base)
         game_lang.get_language(),
         true
     ) or config.lang:tr("misc.text_name_missing")
-    if base_char_type == mod.enum.base_char.BigMonster then
+    if base_char_type == mod_enum.base_char.BigMonster then
         ---@cast char_base app.EnemyBossCharacter
         return bigenemy:new(char_base, name, ctx)
     end
     ---@type SmallEnemy
-    return char_cls:new(mod.enum.char.SmallMonster, char_base, name)
+    return char_cls:new(mod_enum.char.SmallMonster, char_base, name)
 end
 
 ---@param base_char_type BaseCharType
 ---@param char_base app.CharacterBase
 ---@return Character?
 function this.get_character(base_char_type, char_base)
-    if base_char_type == mod.enum.base_char.Hunter then
+    if base_char_type == mod_enum.base_char.Hunter then
         ---@cast char_base app.HunterCharacter
         return get_hunter_data(char_base)
     end
 
-    if base_char_type == mod.enum.base_char.Pet then
+    if base_char_type == mod_enum.base_char.Pet then
         ---@cast char_base app.OtomoCharacter
         return get_pet_data(char_base)
     end
 
     if
-        base_char_type == mod.enum.base_char.BigMonster
-        or base_char_type == mod.enum.base_char.SmallMonster
+        base_char_type == mod_enum.base_char.BigMonster
+        or base_char_type == mod_enum.base_char.SmallMonster
     then
         ---@cast char_base app.EnemyBossCharacter|app.EnemyZakoCharacter
         return get_enemy_data(base_char_type, char_base)

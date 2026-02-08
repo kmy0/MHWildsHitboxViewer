@@ -1,11 +1,10 @@
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
+local e = require("HitboxViewer.util.game.enum")
 local generic = require("HitboxViewer.gui.generic")
 local gui_util = require("HitboxViewer.gui.util")
 local util_imgui = require("HitboxViewer.util.imgui.init")
 local util_table = require("HitboxViewer.util.misc.table")
-
-local ace = data.ace
 
 local this = {}
 
@@ -19,8 +18,8 @@ local function options()
         generic.draw_box_type_options(
             util_table.keys(config_mod.hitboxes.damage_type.disable),
             "mod.hitboxes.damage_type",
-            function(t, i, j)
-                return util_table.contains(util_table.values(ace.enum.damage_type), t[i])
+            function(t, i, _)
+                return e.new("app.HitDef.DAMAGE_TYPE")[t[i]] ~= nil
             end
         )
         imgui.tree_pop()
@@ -30,8 +29,8 @@ local function options()
         generic.draw_box_type_options(
             util_table.keys(config_mod.hitboxes.damage_angle.disable),
             "mod.hitboxes.damage_angle",
-            function(t, i, j)
-                return util_table.contains(util_table.values(ace.enum.damage_angle), t[i])
+            function(t, i, _)
+                return e.new("app.HitDef.DAMAGE_ANGLE")[t[i]] ~= nil
             end
         )
 
@@ -42,8 +41,8 @@ local function options()
         generic.draw_box_type_options(
             util_table.keys(config_mod.hitboxes.guard_type.disable),
             "mod.hitboxes.guard_type",
-            function(t, i, j)
-                return util_table.contains(util_table.values(ace.enum.guard_type), t[i])
+            function(t, i, _)
+                return e.new("app.Hit.GUARD_TYPE")[t[i]] ~= nil
             end
         )
 
@@ -57,7 +56,7 @@ local function options()
         generic.draw_box_type_options(
             util_table.keys(config_mod.hitboxes.misc_type.disable),
             "mod.hitboxes.misc_type",
-            function(t, i, j)
+            function(t, i, _)
                 return util_table.contains(data.custom_attack_type.sorted, t[i])
             end,
             function(a, b)

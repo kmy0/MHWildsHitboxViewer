@@ -9,7 +9,7 @@ local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
 local queue = require("HitboxViewer.util.misc.queue")
 
-local mod = data.mod
+local mod_enum = data.mod.enum
 local enemy = {
     big_enemy = require("HitboxViewer.box.press.pressbox_base"),
     small_enemy = require("HitboxViewer.box.press.pressbox_base"),
@@ -29,7 +29,7 @@ function this.get()
         local box
         local char = load_data.char
 
-        if char.type == mod.enum.char.Npc then
+        if char.type == mod_enum.char.Npc then
             ---@cast char Npc
             box = friend.npc:new(
                 load_data.col,
@@ -39,7 +39,7 @@ function this.get()
                 load_data.collidable_idx,
                 load_data.userdata
             )
-        elseif char.type == mod.enum.char.Player or char.type == mod.enum.char.MasterPlayer then
+        elseif char.type == mod_enum.char.Player or char.type == mod_enum.char.MasterPlayer then
             ---@cast char Player
             box = friend.player:new(
                 load_data.col,
@@ -49,7 +49,7 @@ function this.get()
                 load_data.collidable_idx,
                 load_data.userdata
             )
-        elseif char.type == mod.enum.char.Pet then
+        elseif char.type == mod_enum.char.Pet then
             ---@cast char Pet
             box = friend.pet:new(
                 load_data.col,
@@ -59,7 +59,7 @@ function this.get()
                 load_data.collidable_idx,
                 load_data.userdata
             )
-        elseif char.type == mod.enum.char.BigMonster then
+        elseif char.type == mod_enum.char.BigMonster then
             ---@cast char BigEnemy
             box = enemy.big_enemy:new(
                 load_data.col,
@@ -69,7 +69,7 @@ function this.get()
                 load_data.collidable_idx,
                 load_data.userdata
             )
-        elseif char.type == mod.enum.char.SmallMonster then
+        elseif char.type == mod_enum.char.SmallMonster then
             ---@cast char SmallEnemy
             box = enemy.small_enemy:new(
                 load_data.col,

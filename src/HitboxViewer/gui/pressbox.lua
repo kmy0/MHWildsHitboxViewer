@@ -1,10 +1,8 @@
 local config = require("HitboxViewer.config.init")
-local data = require("HitboxViewer.data.init")
+local e = require("HitboxViewer.util.game.enum")
 local generic = require("HitboxViewer.gui.generic")
 local gui_util = require("HitboxViewer.gui.util")
 local util_table = require("HitboxViewer.util.misc.table")
-
-local ace = data.ace
 
 local this = {}
 
@@ -15,8 +13,8 @@ local function options()
         generic.draw_box_type_options(
             util_table.keys(config_mod.pressboxes.press_level.disable),
             "mod.pressboxes.press_level",
-            function(t, i, j)
-                return util_table.contains(util_table.values(ace.enum.press_level), t[i])
+            function(t, i, _)
+                return e.get("app.PressDef.PRESS_LEVEL")[t[i]] ~= nil
             end
         )
 
@@ -27,8 +25,8 @@ local function options()
         generic.draw_box_type_options(
             util_table.keys(config_mod.pressboxes.layer.disable),
             "mod.pressboxes.layer",
-            function(t, i, j)
-                return util_table.contains(util_table.values(ace.enum.col_layer), t[i])
+            function(t, i, _)
+                return e.get("app.CollisionFilter.LAYER")[t[i]] ~= nil
             end
         )
 

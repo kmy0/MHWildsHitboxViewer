@@ -13,11 +13,11 @@
 
 local box_base = require("HitboxViewer.box.box_base")
 local data = require("HitboxViewer.data.init")
+local e = require("HitboxViewer.util.game.enum")
 local util_game = require("HitboxViewer.util.game.init")
 local util_misc = require("HitboxViewer.util.misc.init")
 
-local mod = data.mod
-local ace = data.ace
+local mod_enum = data.mod.enum
 
 ---@class CollidableBase
 local this = {}
@@ -43,8 +43,8 @@ function this:new(collidable, parent, box_type, resource_idx, set_idx, collidabl
         return
     end
 
-    local shape_name = ace.enum.shape[shape:get_ShapeType()]
-    local shape_type = mod.enum.shape[shape_name]
+    local shape_name = e.get("via.physics.ShapeType")[shape:get_ShapeType()]
+    local shape_type = mod_enum.shape[shape_name]
 
     if not shape_type then
         return
@@ -70,9 +70,9 @@ function this:update_shape()
     self.is_enabled = hb_draw.read_byte(self.ptr_collidable + 0x10) ~= 0
     if self.is_enabled then
         if
-            self.shape_type == mod.enum.shape.Capsule
-            or self.shape_type == mod.enum.shape.Cylinder
-            or self.shape_type == mod.enum.shape.ContinuousCapsule
+            self.shape_type == mod_enum.shape.Capsule
+            or self.shape_type == mod_enum.shape.Cylinder
+            or self.shape_type == mod_enum.shape.ContinuousCapsule
         then
             self.shape_data.pos_a.x = hb_draw.read_float(self.ptr_shape + 0x60)
             self.shape_data.pos_a.y = hb_draw.read_float(self.ptr_shape + 0x64)
@@ -84,8 +84,8 @@ function this:update_shape()
 
             self.pos = (self.shape_data.pos_a + self.shape_data.pos_b) * 0.5
         elseif
-            self.shape_type == mod.enum.shape.Sphere
-            or self.shape_type == mod.enum.shape.ContinuousSphere
+            self.shape_type == mod_enum.shape.Sphere
+            or self.shape_type == mod_enum.shape.ContinuousSphere
         then
             self.shape_data.pos.x = hb_draw.read_float(self.ptr_shape + 0x60)
             self.shape_data.pos.y = hb_draw.read_float(self.ptr_shape + 0x64)
@@ -94,7 +94,7 @@ function this:update_shape()
 
             self.pos = self.shape_data.pos
         elseif
-            self.shape_type == mod.enum.shape.Box or self.shape_type == mod.enum.shape.Triangle
+            self.shape_type == mod_enum.shape.Box or self.shape_type == mod_enum.shape.Triangle
         then
             self.shape_data.pos.x = hb_draw.read_float(self.ptr_shape + 0x90)
             self.shape_data.pos.y = hb_draw.read_float(self.ptr_shape + 0x94)
@@ -116,15 +116,15 @@ function this:update_shape()
         end
 
         self.distance = (util_game.get_camera_origin() - self.pos):length()
-        return mod.enum.box_state.Draw
+        return mod_enum.box_state.Draw
     end
-    return mod.enum.box_state.None
+    return mod_enum.box_state.None
 end
 
 ---@return BoxState
 function this:update()
     if self.collidable:get_reference_count() <= 1 then
-        return mod.enum.box_state.Dead
+        return mod_enum.box_state.Dead
     end
     return box_base.update(self)
 end

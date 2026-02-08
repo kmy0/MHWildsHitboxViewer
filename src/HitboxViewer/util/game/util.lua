@@ -194,6 +194,35 @@ function this.get_camera_origin()
     return this.get_camera():get_Position()
 end
 
+---@param type_def_name string
+---@param predicate (fun(key: string, value: any): boolean)?
+---@return table<string, any>
+function this.get_fields(type_def_name, predicate)
+    ---@type table<string, any>
+    local ret = {}
+    local type_def = util_ref.types.get(type_def_name)
+    if not type_def then
+        return ret
+    end
+
+    local bad_keys = { max = 1, value__ = 1, invalid = 1 }
+    local fields = type_def:get_fields()
+    for _, field in pairs(fields) do
+        local name = field:get_name()
+        local name_lower = string.lower(name)
+        local data = field:get_data()
+
+        if bad_keys[name_lower] or (predicate and not predicate(name, data)) then
+            goto continue
+        end
+
+        ret[name] = data
+        ::continue::
+    end
+
+    return ret
+end
+
 this.get_component_any_cached = cache.memoize(this.get_component_any_cached)
 this.get_camera = cache.memoize(this.get_camera)
 this.get_camera_origin = frame_cache.memoize(this.get_camera_origin)

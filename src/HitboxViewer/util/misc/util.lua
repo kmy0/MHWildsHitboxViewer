@@ -211,4 +211,25 @@ function this.integer_to_hex(num)
     return string.format("0x%x", num)
 end
 
+---@generic T: {[string]: integer} | {[integer]: string}
+---@param enum T
+---@return T
+function this.make_lookup(enum)
+    ---@type table<any, any>
+    local reverse = {}
+    ---@diagnostic disable-next-line: no-unknown
+    for k, v in pairs(enum) do
+        reverse[v] = k
+    end
+
+    return setmetatable({}, {
+        __index = function(_, key)
+            return enum[key] or reverse[key]
+        end,
+        __pairs = function(_)
+            return pairs(enum)
+        end,
+    })
+end
+
 return this

@@ -18,7 +18,7 @@ local queue = require("HitboxViewer.util.misc.queue")
 local util_misc = require("HitboxViewer.util.misc.init")
 local util_table = require("HitboxViewer.util.misc.table")
 
-local mod = data.mod
+local mod_enum = data.mod.enum
 
 ---@class BigEnemy
 local this = {}
@@ -31,7 +31,7 @@ setmetatable(this, { __index = char_cls })
 ---@param ctx app.cEnemyContext
 ---@return BigEnemy
 function this:new(base, name, ctx)
-    local o = char_cls.new(self, mod.enum.char.BigMonster, base, name)
+    local o = char_cls.new(self, mod_enum.char.BigMonster, base, name)
     ---@cast o BigEnemy
     setmetatable(o, self)
     o.mc_holder = base._MiniComponentHolder

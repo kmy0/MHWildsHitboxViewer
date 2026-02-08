@@ -7,7 +7,7 @@ local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
 local util_game = require("HitboxViewer.util.game.init")
 
-local mod = data.mod
+local mod_enum = data.mod.enum
 local ace = data.ace
 
 ---@class GuardBox
@@ -20,7 +20,7 @@ setmetatable(this, { __index = box_base })
 ---@param parent_hurtbox PlayerHurtBox
 ---@return GuardBox
 function this:new(parent, parent_hurtbox)
-    local o = box_base.new(self, mod.enum.box.GuardBox, mod.enum.shape.SlicedCylinder)
+    local o = box_base.new(self, mod_enum.box.GuardBox, mod_enum.shape.SlicedCylinder)
     setmetatable(o, self)
     ---@cast o GuardBox
     o.parent = parent
@@ -31,7 +31,7 @@ end
 ---@return BoxState
 function this:update_shape()
     if not self.parent.guard_type then
-        return mod.enum.box_state.None
+        return mod_enum.box_state.None
     end
 
     local userdata = self.parent.weapon.userdata
@@ -60,7 +60,7 @@ function this:update_shape()
     self.shape_data.pos_a = self.shape_data.pos_a + dir * self.parent_hurtbox.shape_data.radius
     self.shape_data.pos_b = self.shape_data.pos_b - dir * self.parent_hurtbox.shape_data.radius
 
-    return mod.enum.box_state.Draw
+    return mod_enum.box_state.Draw
 end
 
 ---@return BoxState
@@ -68,11 +68,11 @@ function this:update_data()
     local config_mod = config.current.mod
 
     if not self.parent.guard_type then
-        return mod.enum.box_state.None
+        return mod_enum.box_state.None
     end
 
     if config_mod.hurtboxes.guard_type.disable[self.parent.guard_type] then
-        return mod.enum.box_state.None
+        return mod_enum.box_state.None
     end
 
     if config_mod.hurtboxes.guard_type.color_enable[self.parent.guard_type] then
@@ -81,7 +81,7 @@ function this:update_data()
     else
         self.color = config_mod.hurtboxes.guard_type.color.one_color
     end
-    return mod.enum.box_state.Draw
+    return mod_enum.box_state.Draw
 end
 
 return this

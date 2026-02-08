@@ -6,7 +6,7 @@ local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
 local queue = require("HitboxViewer.util.misc.queue")
 
-local mod = data.mod
+local mod_enum = data.mod.enum
 
 ---@class DrawQueue
 local this = {
@@ -32,8 +32,8 @@ local function draw_shape(box)
     local config_draw = config.current.mod.draw
 
     if
-        box.shape_type == mod.enum.shape.Capsule
-        or box.shape_type == mod.enum.shape.ContinuousCapsule
+        box.shape_type == mod_enum.shape.Capsule
+        or box.shape_type == mod_enum.shape.ContinuousCapsule
     then
         hb_draw.capsule(
             box.shape_data.pos_a,
@@ -44,8 +44,8 @@ local function draw_shape(box)
             config_draw.outline_color
         )
     elseif
-        box.shape_type == mod.enum.shape.Sphere
-        or box.shape_type == mod.enum.shape.ContinuousSphere
+        box.shape_type == mod_enum.shape.Sphere
+        or box.shape_type == mod_enum.shape.ContinuousSphere
     then
         hb_draw.sphere(
             box.shape_data.pos,
@@ -54,7 +54,7 @@ local function draw_shape(box)
             config_draw.outline,
             config_draw.outline_color
         )
-    elseif box.shape_type == mod.enum.shape.Box then
+    elseif box.shape_type == mod_enum.shape.Box then
         hb_draw.box(
             box.shape_data.pos,
             box.shape_data.extent,
@@ -63,7 +63,7 @@ local function draw_shape(box)
             config_draw.outline,
             config_draw.outline_color
         )
-    elseif box.shape_type == mod.enum.shape.Cylinder then
+    elseif box.shape_type == mod_enum.shape.Cylinder then
         hb_draw.cylinder(
             box.shape_data.pos_a,
             box.shape_data.pos_b,
@@ -72,7 +72,7 @@ local function draw_shape(box)
             config_draw.outline,
             config_draw.outline_color
         )
-    elseif box.shape_type == mod.enum.shape.Triangle then
+    elseif box.shape_type == mod_enum.shape.Triangle then
         hb_draw.triangle(
             box.shape_data.pos,
             box.shape_data.extent,
@@ -81,7 +81,7 @@ local function draw_shape(box)
             config_draw.outline,
             config_draw.outline_color
         )
-    elseif box.shape_type == mod.enum.shape.SlicedCylinder then
+    elseif box.shape_type == mod_enum.shape.SlicedCylinder then
         hb_draw.sliced_cylinder(
             box.shape_data.pos_a,
             box.shape_data.pos_b,
