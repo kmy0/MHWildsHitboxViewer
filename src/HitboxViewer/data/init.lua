@@ -44,33 +44,33 @@ end
 
 ---@return boolean
 function this.init()
-    e.new("via.physics.ShapeType")
-    e.new("app.Hit.ROD_EXTRACT")
-    e.new("app.user_data.EmParamParts.MEAT_SLOT")
-    e.new("app.cEmModuleScar.cScarParts.STATE")
-    e.new("app.HitDef.DAMAGE_TYPE")
-    e.new("app.HitDef.CONDITION")
-    e.new("app.HitDef.DAMAGE_TYPE_CUSTOM")
-    e.new("app.HitDef.DAMAGE_ANGLE")
-    e.new("app.Hit.GUARD_TYPE")
-    e.new("app.HitDef.ATTR")
-    e.new("app.Hit.ATTACK_PARAM_TYPE")
-    e.new("app.HitDef.ACTION_TYPE")
-    e.new("app.HitDef.BATTLE_RIDING_ATTACK_TYPE")
-    e.new("app.EnemyDef.Damage.ENEMY_DAMAGE_TYPE")
-    e.new("app.EnemyDef.ATTACK_FILTER_TYPE")
-    e.new("app.EnemyDef.Damage.FRIEND_HIT_TYPE")
-    e.new("app.user_data.EmParamParts.INDEX_CATEGORY")
-    e.new("app.HunterDef.STATUS_FLAG", function(key, _)
-        return key ~= "ICON_MAX"
-    end)
-    e.new("app.PressDef.PRESS_LEVEL")
-    e.new("app.CollisionFilter.LAYER")
-    e.new("app.EnemyDef.ATTACK_FILTER_TYPE")
-
-    if util_table.any(e.enums, function(_, value)
-        return not value.ok
-    end) then
+    if
+        not e.wrap_init(function()
+            e.new("via.physics.ShapeType")
+            e.new("app.Hit.ROD_EXTRACT")
+            e.new("app.user_data.EmParamParts.MEAT_SLOT")
+            e.new("app.cEmModuleScar.cScarParts.STATE")
+            e.new("app.HitDef.DAMAGE_TYPE")
+            e.new("app.HitDef.CONDITION")
+            e.new("app.HitDef.DAMAGE_TYPE_CUSTOM")
+            e.new("app.HitDef.DAMAGE_ANGLE")
+            e.new("app.Hit.GUARD_TYPE")
+            e.new("app.HitDef.ATTR")
+            e.new("app.Hit.ATTACK_PARAM_TYPE")
+            e.new("app.HitDef.ACTION_TYPE")
+            e.new("app.HitDef.BATTLE_RIDING_ATTACK_TYPE")
+            e.new("app.EnemyDef.Damage.ENEMY_DAMAGE_TYPE")
+            e.new("app.EnemyDef.ATTACK_FILTER_TYPE")
+            e.new("app.EnemyDef.Damage.FRIEND_HIT_TYPE")
+            e.new("app.user_data.EmParamParts.INDEX_CATEGORY")
+            e.new("app.HunterDef.STATUS_FLAG", function(key, _)
+                return key ~= "ICON_MAX"
+            end)
+            e.new("app.PressDef.PRESS_LEVEL")
+            e.new("app.CollisionFilter.LAYER")
+            e.new("app.EnemyDef.ATTACK_FILTER_TYPE")
+        end)
+    then
         return false
     end
 
