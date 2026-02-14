@@ -80,6 +80,8 @@ function this.characters()
                 draw_queue:extend(character:update_pressboxes())
             end
 
+            draw_queue:extend(character:update_dummyboxes())
+
             ::continue::
         end
 

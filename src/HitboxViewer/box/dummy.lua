@@ -1,16 +1,13 @@
+---@class DummyBox : BoxBase
+---@field owner Character
+
 local box_base = require("HitboxViewer.box.box_base")
-local character = require("HitboxViewer.character.init")
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
-local draw_queue = require("HitboxViewer.draw_queue")
 local util_table = require("HitboxViewer.util.misc.table")
 
 local mod_enum = data.mod.enum
 
-local this = {}
-
----@type table<ShapeType, DummyBox>
-local active_dummies = {}
 local dummy_shapes = {
     ---@type SphereShape
     [mod_enum.shape.Sphere] = {
@@ -41,24 +38,38 @@ local dummy_shapes = {
         extent = Vector3f.new(3, 1, 2),
         rot = Matrix4x4f.new(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1),
     },
+    ---@type SlicedCylinderShape
+    [mod_enum.shape.SlicedCylinder] = {
+        pos_a = Vector3f.new(2.1, 2.5, 0),
+        pos_b = Vector3f.new(2, 1, 0),
+        radius = 2,
+        degrees = 90,
+        direction = Vector3f.new(0, 1, 0),
+    },
 }
 
----@class DummyBox : BoxBase
-local DummyBox = {}
-DummyBox.__index = DummyBox
-setmetatable(DummyBox, { __index = box_base })
+---@class DummyBox
+local this = {}
+this.__index = this
+setmetatable(this, { __index = box_base })
 
----@param box_type BoxType
 ---@param shape_type ShapeType
+---@param owner Character
 ---@return DummyBox
-function DummyBox:new(box_type, shape_type)
-    local o = box_base.new(self, box_type, shape_type)
+function this:new(shape_type, owner)
+    local o = box_base.new(self, mod_enum.box.DummyBox, shape_type)
     ---@cast o DummyBox
     setmetatable(o, self)
-    local pos = character.get_master_player():get_pos()
+    o.owner = owner
+    local pos = owner:get_pos()
 
     o.shape_data = util_table.deep_copy(dummy_shapes[shape_type]) --[[@as ShapeData]]
-    if o.shape_type == mod_enum.shape.Cylinder or o.shape_type == mod_enum.shape.Capsule then
+    if
+        o.shape_type == mod_enum.shape.Cylinder
+        or o.shape_type == mod_enum.shape.Capsule
+        or o.shape_type == mod_enum.shape.Donuts
+        or o.shape_type == mod_enum.shape.SlicedCylinder
+    then
         o.shape_data.pos_a = o.shape_data.pos_a + pos
         o.shape_data.pos_b = o.shape_data.pos_b + pos
         o.pos = (o.shape_data.pos_a + o.shape_data.pos_b) * 0.5
@@ -66,46 +77,21 @@ function DummyBox:new(box_type, shape_type)
         o.shape_data.pos = o.shape_data.pos + pos
         o.pos = o.shape_data.pos
     end
+
     return o
 end
 
-function DummyBox:update_data()
-    self.color = config.current.mod.hurtboxes.color.one_color
+function this:update_data()
+    self.color = config.current.mod.dummyboxes.color
     return mod_enum.box_state.Draw
 end
 
-function DummyBox:update_shape()
-    local master_player = character.get_master_player()
-    if not master_player then
-        return mod_enum.box_state.None
-    end
-
-    local pos = master_player:get_pos()
+function this:update_shape()
+    local pos = self.owner:get_pos()
     if (self.pos - pos):length() > config.current.mod.draw.distance then
         return mod_enum.box_state.None
     end
     return mod_enum.box_state.Draw
-end
-
-function this.get()
-    for _, dummy_box in pairs(active_dummies) do
-        local box_state = dummy_box:update()
-        if box_state == mod_enum.box_state.Draw then
-            draw_queue:extend({ dummy_box })
-        end
-    end
-end
-
-function this.clear()
-    active_dummies = {}
-end
-
----@param shape_enum ShapeType
-function this.spawn(shape_enum)
-    if not character.get_master_player() then
-        return
-    end
-    active_dummies[shape_enum] = DummyBox:new(mod_enum.box.DummyBox, shape_enum)
 end
 
 return this

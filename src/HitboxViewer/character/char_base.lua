@@ -10,6 +10,7 @@
 ---@field hurtboxes table<via.physics.Collidable, HurtBoxBase>
 ---@field hitboxes table<via.physics.Collidable, HitBoxBase>
 ---@field pressboxes table<via.physics.Collidable, PressBoxBase>
+---@field dummyboxes table<ShapeType, DummyBox>
 ---@field hitbox_userdata_cache table<app.col_user_data.AttackParam | app.col_user_data.DamageParam, AttackLogEntry>
 ---@field order integer
 ---@field last_update_tick integer
@@ -48,6 +49,7 @@ function this:new(type, base, name)
         hurtboxes = {},
         hitboxes = {},
         pressboxes = {},
+        dummyboxes = {},
         hitbox_userdata_cache = {},
         last_update_tick = 0,
     }
@@ -82,6 +84,21 @@ function this:add_pressbox(box)
     self.pressboxes[box.collidable] = box
 end
 
+---@param box DummyBox
+function this:add_dummybox(box)
+    self.dummyboxes[box.shape_type] = box
+end
+
+function this:clear_dummyboxes()
+    self.dummyboxes = {}
+end
+
+---@param box_shape ShapeType
+---@return DummyBox?
+function this:get_dummy(box_shape)
+    return self.dummyboxes[box_shape]
+end
+
 ---@param col via.physics.Collidable
 ---@return boolean
 function this:has_hitbox(col)
@@ -102,7 +119,10 @@ end
 
 ---@return boolean
 function this:is_disabled()
-    return self:is_hurtbox_disabled() and self:is_hitbox_disabled() and self:is_pressbox_disabled()
+    return self:is_hurtbox_disabled()
+        and self:is_hitbox_disabled()
+        and self:is_pressbox_disabled()
+        and self:is_dummybox_disabled()
 end
 
 ---@return boolean
@@ -118,6 +138,10 @@ end
 ---@return boolean
 function this:is_pressbox_disabled()
     return config.current.mod.pressboxes.disable[self.type_name]
+end
+
+function this:is_dummybox_disabled()
+    return true
 end
 
 ---@protected
@@ -163,6 +187,16 @@ function this:update_pressboxes()
     end
 
     return self:_update_boxes(self.pressboxes)
+end
+
+---@return DummyBox[]?
+function this:update_dummyboxes()
+    if self:is_dummybox_disabled() then
+        return
+    end
+
+    ---@diagnostic disable-next-line: param-type-mismatch
+    return self:_update_boxes(self.dummyboxes)
 end
 
 ---@param char app.CharacterBase?

@@ -29,6 +29,7 @@
 
 ---@class (exact) DummyboxSettings
 ---@field combo_shape integer
+---@field color integer
 
 ---@class (exact) DrawSettings
 ---@field distance integer
@@ -192,6 +193,7 @@ return function(default_color, default_highlight_color)
             },
             dummyboxes = {
                 combo_shape = 1,
+                color = default_color,
             },
             draw = {
                 distance = 50,

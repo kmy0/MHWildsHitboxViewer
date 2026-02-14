@@ -117,6 +117,13 @@ function this:get_guard_direction()
     return self.direction
 end
 
+function this:is_dummybox_disabled()
+    if self.type == mod_enum.char.MasterPlayer then
+        return util_table.empty(self.dummyboxes)
+    end
+    return char_cls.is_dummybox_disabled(self)
+end
+
 ---@return HurtBoxBase[]?
 function this:update_hurtboxes()
     if self:is_hurtbox_disabled() then
