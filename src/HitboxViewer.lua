@@ -15,7 +15,14 @@ local logger = util_misc.logger.g
 local mod = data.mod
 ---@class MethodUtil
 local m = require("HitboxViewer.util.ref.methods")
-local init = util_misc.init_chain:new("MAIN", data.init, config.init, box.hurtbox.conditions.init)
+local init = util_misc.init_chain:new(
+    "MAIN",
+    data.init,
+    config.init,
+    box.hurtbox.conditions.init,
+    config_menu.init,
+    data.mod.init
+)
 
 hb_draw.register(function()
     draw_queue:draw()
@@ -119,4 +126,8 @@ re.on_frame(function()
     config.run_save()
 end)
 
-re.on_config_save(config.save_no_timer_global)
+re.on_config_save(function()
+    if data.mod.initialized then
+        config.save_no_timer_global()
+    end
+end)

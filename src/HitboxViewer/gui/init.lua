@@ -5,6 +5,7 @@ local hitbox = require("HitboxViewer.gui.hitbox")
 local hurtbox = require("HitboxViewer.gui.hurtbox")
 local pressbox = require("HitboxViewer.gui.pressbox")
 local set = require("HitboxViewer.util.imgui.config_set"):new(config)
+local state = require("HitboxViewer.gui.state")
 local util_imgui = require("HitboxViewer.util.imgui.init")
 
 local this = {
@@ -115,6 +116,12 @@ function this.draw()
     imgui.unindent(3)
     imgui.spacing()
     imgui.end_window()
+end
+
+---@return boolean
+function this.init()
+    state.init()
+    return true
 end
 
 return this

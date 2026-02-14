@@ -1,6 +1,7 @@
 ---@class ModData
 ---@field map ModMap
 ---@field enum ModEnum
+---@field initialized boolean
 
 ---@class (exact) ModMap
 ---@field update_order CharType[]
@@ -60,6 +61,7 @@ this.enum.shape_dummy = { ---@class ShapeDummy.* : {[integer]: string}, {[string
     [3] = "Box",
     [4] = "Cylinder",
     [5] = "Triangle",
+    [8] = "SlicedCylinder",
 }
 ---@enum CharType
 this.enum.char = { ---@class CharType.* : {[string]: integer}, {[integer]: string}
@@ -182,6 +184,12 @@ function this.in_transition()
         return true
     end
     return flowman:get_NextGameStateType() ~= nil
+end
+
+---@return boolean
+function this.init()
+    this.initialized = true
+    return true
 end
 
 this.is_ok = frame_cache.memoize(this.is_ok)

@@ -157,5 +157,17 @@ return {
             Stun = "Stun",
             All = "All",
         },
+        combo_shape = {
+            Sphere = "Sphere",
+            Capsule = "Capsule",
+            Box = "Box",
+            Cylinder = "Cylinder",
+            Triangle = "Triangle",
+            SlicedCylinder = "Sliced Cylinder",
+        },
+        combo_draw_state = {
+            Draw = "Draw",
+            Hide = "Hide",
+        },
     },
 }
