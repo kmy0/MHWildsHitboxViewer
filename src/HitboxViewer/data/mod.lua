@@ -41,7 +41,6 @@ this.enum.base_char = { ---@class BaseCharType.* : {[string]: integer}, {[intege
     BigMonster = 2,
     Pet = 3,
     SmallMonster = 4,
-    OtherSmallMonster = 5,
 }
 ---@enum ShapeType
 this.enum.shape = { ---@class ShapeType.* : {[string]: integer}, {[integer]: string}
@@ -71,6 +70,7 @@ this.enum.char = { ---@class CharType.* : {[string]: integer}, {[integer]: strin
     BigMonster = 4,
     Pet = 5,
     Npc = 6,
+    Dummy = 7,
 }
 ---@enum BoxType
 this.enum.box = { ---@class BoxType.* : {[string]: integer}, {[integer]: string}
@@ -79,6 +79,8 @@ this.enum.box = { ---@class BoxType.* : {[string]: integer}, {[integer]: string}
     ScarBox = 3,
     GuardBox = 4,
     DummyBox = 5,
+    CollisionBox = 6,
+    CollisionContactBox = 7,
 }
 ---@enum ConditionType
 this.enum.condition_type = { ---@class ConditionType.* : {[string]: integer}, {[integer]: string}
@@ -161,6 +163,7 @@ this.map.update_order = {
     this.enum.char.Pet,
     this.enum.char.Npc,
     this.enum.char.SmallMonster,
+    this.enum.char.Dummy,
 }
 
 ---@return boolean

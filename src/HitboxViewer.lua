@@ -1,6 +1,7 @@
 local attack_log = require("HitboxViewer.gui.attack_log")
 local box = require("HitboxViewer.box.init")
 local char = require("HitboxViewer.character.init")
+local collision_log = require("HitboxViewer.gui.collision_log")
 local config = require("HitboxViewer.config.init")
 local config_menu = require("HitboxViewer.gui.init")
 local data = require("HitboxViewer.data.init")
@@ -21,6 +22,7 @@ local init = util_misc.init_chain:new(
     config.init,
     box.hurtbox.conditions.init,
     config_menu.init,
+    box.collision.init,
     data.mod.init
 )
 
@@ -55,10 +57,7 @@ m.hook(
     box.hitbox.hook.get_kinsect_attack_post
 )
 
-if
-    config.current.mod.enabled_hurtboxes
-    or config.current.mod.enabled_pressboxes and mod.in_game()
-then
+if mod.in_game() then
     char.create_all_chars()
 end
 
@@ -121,6 +120,10 @@ re.on_frame(function()
 
     if config_gui.hurtbox_info.is_opened then
         hurtbox_info.draw()
+    end
+
+    if config_gui.collision_log.is_opened then
+        collision_log.draw()
     end
 
     config.run_save()

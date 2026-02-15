@@ -8,6 +8,8 @@
 ---@field front_col via.physics.Collidable
 ---@field center_col via.physics.Collidable
 ---@field hurtboxes table<via.physics.Collidable, PlayerHurtBox>
+---@field press_list System.Array<app.cPressedResult.cColInfo>
+---@field press_controller app.PressController
 
 ---@class (exact) Weapon
 ---@field userdata app.user_data.WpActionParamBase
@@ -43,11 +45,15 @@ function this:new(type, base, name)
 
     local status = base:get_HunterStatus()
     local rsc = util_game.get_component(o.game_object, "via.physics.RequestSetCollider") --[[@as via.physics.RequestSetCollider]]
+    local press_controller = util_game.get_component(o.game_object, "app.PressController") --[[@as app.PressController]]
+    local press_result = press_controller:get_PressedResult()
 
     o.status_flags = status._HunterStatusFlag
     o.direction = Vector3f.new(0, 0, 0)
     o.front_col = rsc:getCollidableFromIndex(2, 0, 0)
     o.center_col = rsc:getCollidableFromIndex(2, 2, 0)
+    o.press_list = press_result:get_ColInfoList()
+    o.press_controller = press_controller
 
     this.update_weapon(o)
     return o

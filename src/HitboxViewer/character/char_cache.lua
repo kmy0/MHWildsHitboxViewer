@@ -41,15 +41,40 @@ function this.remove(char)
 end
 
 ---@param game_object via.GameObject
----@param char_base app.CharacterBase?
 ---@return Character?
-function this.get_char(game_object, char_base)
+function this.get_char_dummy(game_object)
+    if this.by_gameobject[game_object] then
+        return this.by_gameobject[game_object]
+    end
+
+    local rsc = util_game.get_component(game_object, "via.physics.RequestSetCollider")
+    if not rsc then
+        return
+    end
+
+    local o = char_ctor.get_dummy_character(game_object)
+    if o then
+        this.by_gameobject[game_object] = o
+        util_table.set_nested_value(this.by_type_by_gameobject, { o.type, game_object }, o)
+        return o
+    end
+end
+
+---@param game_object via.GameObject
+---@param char_base app.CharacterBase?
+---@param dummy_ok boolean?
+---@return Character?
+function this.get_char(game_object, char_base, dummy_ok)
     if this.by_gameobject[game_object] then
         return this.by_gameobject[game_object]
     end
 
     if not char_base then
         char_base = util_game.get_component(game_object, "app.CharacterBase") --[[@as app.CharacterBase?]]
+    end
+
+    if not char_base and dummy_ok then
+        return this.get_char_dummy(game_object)
     end
 
     if not char_base or not char_base:get_Started() or not char_cls:is_valid(char_base) then

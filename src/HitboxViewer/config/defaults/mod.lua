@@ -31,6 +31,24 @@
 ---@field combo_shape integer
 ---@field color integer
 
+---@class (exact) CollisionboxSettings
+---@field color_col_a integer
+---@field color_col_b integer
+---@field draw_dur integer
+---@field update_once boolean
+---@field replace_existing boolean
+---@field color_col_point integer
+---@field draw_contact_point boolean
+---@field disable_damage boolean
+---@field disable_press boolean
+---@field disable_sensor boolean
+---@field disable_undefined boolean
+---@field pause_collision_log boolean
+---@field disable_damage_enemy boolean
+---@field disable_damage_player boolean
+---@field ignore_new boolean
+---@field ignore_failed boolean
+
 ---@class (exact) DrawSettings
 ---@field distance integer
 ---@field outline boolean
@@ -45,10 +63,12 @@
 ---@field enabled_hurtboxes boolean
 ---@field enabled_hitboxes boolean
 ---@field enabled_pressboxes boolean
+---@field enabled_collisionboxes boolean
 ---@field hurtboxes HurtboxSettings
 ---@field hitboxes HitboxSettings
 ---@field pressboxes PressboxSettings
 ---@field dummyboxes DummyboxSettings
+---@field collisionboxes CollisionboxSettings
 ---@field draw DrawSettings
 
 local version = require("HitboxViewer.config.version")
@@ -56,7 +76,7 @@ local version = require("HitboxViewer.config.version")
 ---@param default_color integer
 ---@param default_highlight_color integer
 ---@return  MainSettings
-return function(default_color, default_highlight_color)
+return function(default_color, default_highlight_color, default_collision_color)
     return {
         version = version.version,
         mod = {
@@ -67,6 +87,7 @@ return function(default_color, default_highlight_color)
             enabled_hitboxes = true,
             enabled_hurtboxes = true,
             enabled_pressboxes = false,
+            enabled_collisionboxes = false,
             pressboxes = {
                 disable = {
                     SmallMonster = false,
@@ -190,6 +211,24 @@ return function(default_color, default_highlight_color)
                     color_enable = {},
                 },
                 pause_attack_log = false,
+            },
+            collisionboxes = {
+                color_col_a = default_color,
+                color_col_b = default_highlight_color,
+                draw_dur = 3,
+                update_once = false,
+                replace_existing = false,
+                color_col_point = default_collision_color,
+                draw_contact_point = true,
+                disable_damage = false,
+                disable_sensor = false,
+                disable_press = false,
+                disable_undefined = false,
+                pause_collision_log = false,
+                disable_damage_enemy = false,
+                disable_damage_player = false,
+                ignore_new = false,
+                ignore_failed = false,
             },
             dummyboxes = {
                 combo_shape = 1,

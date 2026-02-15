@@ -16,3 +16,11 @@
 
 ---@class ace.ShellBase : via.Behavior
 ---@field get_ShellOwner fun(self: ace.ShellBase): via.GameObject
+
+---@class ace.UNIVERSAL_COLLISION_INFO : System.ValueType
+---@field CollidableA via.physics.Collidable
+---@field CollidableB via.physics.Collidable
+---@field ContactPoint ace.UNIVERSAL_CONTACT_POINT
+
+---@class ace.UNIVERSAL_CONTACT_POINT : System.ValueType
+---@field UniversalPosition via.Position

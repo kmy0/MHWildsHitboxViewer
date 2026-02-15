@@ -194,6 +194,11 @@
 ---@field get_AttackCollidable fun(self: app.HitInfo): via.physics.Collidable
 ---@field get_AttackData fun(self: app.HitInfo): app.cAttackParamBase
 ---@field get_HitID fun(self: app.HitInfo): System.Int32
+---@field getActualAttackOwner fun(self: app.HitInfo): via.GameObject
+---@field getActualDamageOwner fun(self: app.HitInfo): via.GameObject
+---@field get_AttackCollidable fun(self: app.HitInfo): via.physics.Collidable
+---@field get_DamageCollidable fun(self: app.HitInfo): via.physics.Collidable
+---@field get_Position fun(self: app.HitInfo): Vector3f
 
 ---@class app.HitController : app.AppBehavior
 ---@field _GroupHitIDs System.Array<System.Int32>
@@ -333,3 +338,21 @@
 
 ---@class app.col_user_data.PressParam : via.physics.RequestSetColliderUserData
 ---@field get_PressLevel fun(self: app.col_user_data.PressParam): app.PressDef.PRESS_LEVEL
+
+---@class app.PressController : app.AppBehavior
+---@field get_PressedResult fun(self: app.PressController): app.cPressedResult
+
+---@class app.cPressedResult : via.clr.ManagedObject
+---@field get_ColInfoList fun(self: app.cPressedResult): System.Array<app.cPressedResult.cColInfo>
+
+---@class app.cPressedResult.cColInfo : via.clr.ManagedObject
+---@field get_WorldContactPosition fun(self: app.cPressedResult.cColInfo): Vector3f
+---@field get_ColliderA fun(self: app.cPressedResult.cColInfo): via.physics.Collider
+---@field get_ColliderB  fun(self: app.cPressedResult.cColInfo): via.physics.Collider
+
+---@class app.SensorHitInfo : via.clr.ManagedObject
+---@field get_Position fun(self: app.SensorHitInfo): Vector3f
+---@field get_PutObj fun(self: app.SensorHitInfo): via.GameObject
+---@field get_GetObj fun(self: app.SensorHitInfo): via.GameObject
+---@field get_PutCollidable fun(self: app.SensorHitInfo): via.physics.Collidable
+---@field get_GetCollidable fun(self: app.SensorHitInfo): via.physics.Collidable

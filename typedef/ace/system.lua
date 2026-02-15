@@ -10,6 +10,7 @@
 ---@class System.Int32 : integer, System.ValueType
 ---@class System.UInt16 : integer, System.ValueType
 ---@class System.Byte : integer, System.ValueType
+---@class System.Double : integer, System.ValueType
 
 ---@class System.Guid : System.ValueType
 ---@field mData1 System.UInt32

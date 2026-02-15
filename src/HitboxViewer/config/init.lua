@@ -31,11 +31,16 @@ local version = require("HitboxViewer.config.version")
 local mod_name = "HitboxViewer"
 local default_color = 1020343074
 local default_highlight_color = 1021633775
+local default_collision_color = 1010172671
 local config_path = util_misc.join_paths(mod_name, "config.json")
 
 ---@class MainConfig
 local this = config_base:new(
-    require("HitboxViewer.config.defaults.mod")(default_color, default_highlight_color),
+    require("HitboxViewer.config.defaults.mod")(
+        default_color,
+        default_highlight_color,
+        default_collision_color
+    ),
     config_path
 )
 

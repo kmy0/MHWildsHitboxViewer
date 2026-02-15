@@ -134,6 +134,19 @@ function this.get_this()
     return sdk.to_managed_object(userdata)
 end
 
+---@param value any
+---@return table
+function this.thread_store(value)
+    local ret = thread.get_hook_storage() --[[@as table]]
+    ret["__value"] = value
+    return ret
+end
+
+---@return any?
+function this.thread_get()
+    return thread.get_hook_storage()["__value"]
+end
+
 ---@param name string
 ---@return string, string
 function this.split_type_def(name)
@@ -184,6 +197,12 @@ end
 ---@return integer
 function this.to_int(ptr)
     return sdk.to_int64(ptr) & 0xfffffff
+end
+
+---@param ptr userdata
+---@return integer
+function this.get_raw_address(ptr)
+    return sdk.to_int64(ptr) & 0x7FFFFFFFFFFFFFFF
 end
 
 return this

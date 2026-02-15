@@ -7,6 +7,7 @@
 ---@class via.physics.CollidableBase : via.Component
 ---@class via.physics.UserData : via.clr.ManagedObject
 ---@class via.Camera : via.Component
+---@class via.physics.Collider : via.physics.Collidable
 
 ---@class via.Component : via.clr.ManagedObject
 ---@field get_GameObject fun(self: via.Component): via.GameObject
@@ -53,6 +54,7 @@
 ---@field get_UserData fun(self: via.physics.Collidable): via.physics.UserData
 ---@field get_Enabled fun(self: via.physics.Collidable): System.Boolean
 ---@field get_FilterInfo fun(self: via.physics.Collidable): via.physics.FilterInfo
+---@field get_GameObject fun(self: via.physics.Collidable): via.GameObject
 
 ---@class via.physics.FilterInfo : via.clr.ManagedObject
 ---@field get_Layer fun(self: via.physics.FilterInfo): app.CollisionFilter.LAYER
@@ -71,3 +73,8 @@
 
 ---@class via.Application : NativeSingleton
 ---@field get_DeltaTime fun(self: via.Application): System.Single
+
+---@class via.Position : System.ValueType
+---@field x System.Double
+---@field y System.Double
+---@field z System.Double

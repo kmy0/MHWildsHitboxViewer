@@ -10,6 +10,7 @@
 ---@field collidable_idx integer
 ---@field ptr_shape integer
 ---@field ptr_collidable integer
+---@field disabled_ok boolean
 
 local box_base = require("HitboxViewer.box.box_base")
 local data = require("HitboxViewer.data.init")
@@ -62,13 +63,14 @@ function this:new(collidable, parent, box_type, resource_idx, set_idx, collidabl
     o.collidable_idx = collidable_idx
     o.ptr_shape = shape:get_address()
     o.ptr_collidable = collidable:get_address()
+    o.disabled_ok = false
     return o
 end
 
 ---@return BoxState
 function this:update_shape()
     self.is_enabled = hb_draw.read_byte(self.ptr_collidable + 0x10) ~= 0
-    if self.is_enabled then
+    if self.is_enabled or self.disabled_ok then
         if
             self.shape_type == mod_enum.shape.Capsule
             or self.shape_type == mod_enum.shape.Cylinder
