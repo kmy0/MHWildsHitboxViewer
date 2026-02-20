@@ -2,6 +2,7 @@
 ---@field draw_timer FrameTimer
 ---@field updated boolean
 ---@field contact_point ContactPoint?
+---@field on_remove_callback fun(key: via.physics.Collidable | CollisionBox | ContactPoint, _: CollisionBox | ContactPoint)
 
 local colldable_base = require("HitboxViewer.box.collidable_base")
 local config = require("HitboxViewer.config.init")
@@ -66,6 +67,15 @@ function this:update()
     end
 
     return mod_enum.box_state.Draw
+end
+
+---@param key via.physics.Collidable | CollisionBox | ContactPoint
+---@param _ CollisionBox | ContactPoint
+function this.on_remove_callback(key, _)
+    if type(key) == "table" and key.type == mod_enum.box.CollisionBox then
+        ---@cast key CollisionBox
+        key:remove_contact_point()
+    end
 end
 
 return this

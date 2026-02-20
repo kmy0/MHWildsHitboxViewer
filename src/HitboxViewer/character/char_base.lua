@@ -21,6 +21,7 @@
 ---@field order integer
 ---@field last_update_tick integer
 
+local collisionbox = require("HitboxViewer.box.collision.collisionbox")
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
 local util_misc = require("HitboxViewer.util.misc.init")
@@ -35,18 +36,6 @@ local count = 0
 local this = {}
 ---@diagnostic disable-next-line: inject-field
 this.__index = this
-
----@param key via.physics.Collidable | CollisionBox | ContactPoint
----@param _ CollisionBox | ContactPoint
-local function collision_on_remove_callback(key, _)
-    if type(key) == "table" and key.type == mod_enum.box.CollisionBox then
-        if not key.remove_contact_point then
-            util_table.print(key)
-        end
-        ---@cast key CollisionBox
-        key:remove_contact_point()
-    end
-end
 
 ---@param type CharType
 ---@param base app.CharacterBase
@@ -255,7 +244,7 @@ function this:update_collisionboxes()
     end
 
     ---@diagnostic disable-next-line: param-type-mismatch
-    return self:_update_boxes(self.collisionboxes, collision_on_remove_callback)
+    return self:_update_boxes(self.collisionboxes, collisionbox.on_remove_callback)
 end
 
 ---@return DummyBox[]?
