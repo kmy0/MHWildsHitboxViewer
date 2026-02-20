@@ -25,18 +25,6 @@ local function options()
         imgui.tree_pop()
     end
 
-    if imgui.tree_node(gui_util.tr("mod.tree_damage_angle")) then
-        generic.draw_box_type_options(
-            util_table.keys(config_mod.hitboxes.damage_angle.disable),
-            "mod.hitboxes.damage_angle",
-            function(t, i, _)
-                return e.new("app.HitDef.DAMAGE_ANGLE")[t[i]] ~= nil
-            end
-        )
-
-        imgui.tree_pop()
-    end
-
     if imgui.tree_node(gui_util.tr("mod.tree_guard_type")) then
         generic.draw_box_type_options(
             util_table.keys(config_mod.hitboxes.guard_type.disable),

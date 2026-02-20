@@ -19,7 +19,6 @@
 
 ---@class (exact) HitboxSettings : BoxSettings
 ---@field damage_type BoxSettings
----@field damage_angle BoxSettings
 ---@field guard_type BoxSettings
 ---@field misc_type BoxSettings
 ---@field pause_attack_log boolean
@@ -218,12 +217,6 @@ return function(default_color, default_highlight_color, default_collision_color)
                     Npc = false,
                 },
                 damage_type = {
-                    disable = {},
-                    color = {},
-                    color_enable = {},
-                    trail_enable = {},
-                },
-                damage_angle = {
                     disable = {},
                     color = {},
                     color_enable = {},

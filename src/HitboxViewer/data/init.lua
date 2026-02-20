@@ -53,7 +53,6 @@ function this.init()
             e.new("app.HitDef.DAMAGE_TYPE")
             e.new("app.HitDef.CONDITION")
             e.new("app.HitDef.DAMAGE_TYPE_CUSTOM")
-            e.new("app.HitDef.DAMAGE_ANGLE")
             e.new("app.Hit.GUARD_TYPE")
             e.new("app.HitDef.ATTR")
             e.new("app.Hit.ATTACK_PARAM_TYPE")
@@ -79,12 +78,6 @@ function this.init()
     write_fields_to_config(
         "app.HitDef.DAMAGE_TYPE",
         config_mod.hitboxes.damage_type,
-        nil,
-        config.default_color
-    )
-    write_fields_to_config(
-        "app.HitDef.DAMAGE_ANGLE",
-        config_mod.hitboxes.damage_angle,
         nil,
         config.default_color
     )

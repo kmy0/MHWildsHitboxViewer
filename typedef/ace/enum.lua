@@ -12,7 +12,7 @@
 ---@class app.cFieldSceneParam.SCENE_TYPE : System.Enum
 ---@class app.cEmModuleScar.cScarParts.STATE : System.Enum
 ---@class app.HitDef.DAMAGE_TYPE_CUSTOM : System.Enum
----@class app.HitDef.DAMAGE_ANGLE : System.Enum
+
 ---@class app.HitDef.ATTR : System.Enum
 ---@class app.Hit.GUARD_TYPE : System.Enum
 ---@class app.HitDef.CONDITION : System.Enum

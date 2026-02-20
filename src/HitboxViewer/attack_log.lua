@@ -13,12 +13,10 @@
 ---@field part_break number | string
 ---@field mount number | string
 ---@field damage_type string
----@field damage_angle string
 ---@field guard_type string
 ---@field misc_type string?
 ---@field stun number | string
 ---@field sharpness integer | string
----@field attack_id integer
 ---@field more_data table<string, any>
 
 ---@class (exact) AttackLogEntry : AttackLogEntryData, AttackLogEntryBase
@@ -30,7 +28,7 @@
 
 ---@class AttackLog
 ---@field entries CircularBuffer<AttackLogEntry>
----@field this_tick table<integer, boolean>
+---@field this_tick table<string, boolean>
 ---@field open_entries table<integer, boolean>
 ---@field last_tick integer
 ---@field entries_start integer
@@ -75,12 +73,12 @@ function this:log(entry)
         self.this_tick = {}
     end
 
-    if not self.this_tick[entry.attack_id] then
+    if not self.this_tick[entry.resource_path] then
         if not config.current.mod.hitboxes.pause_attack_log then
             self.entries:push_back(entry)
         end
 
-        self.this_tick[entry.attack_id] = true
+        self.this_tick[entry.resource_path] = true
         return true
     end
     return false
@@ -101,13 +99,11 @@ function this.get_player_data(userdata)
         element = userdata._StatusAttrRate,
         status = userdata._StatusConditionRate,
         damage_type = e.get("app.HitDef.DAMAGE_TYPE")[userdata:get_DamageType()],
-        damage_angle = e.get("app.HitDef.DAMAGE_ANGLE")[userdata:get_DamageAngle()],
         guard_type = e.get("app.Hit.GUARD_TYPE")[userdata:get_GuardType()],
         part_break = userdata._PartsBreakRate,
         mount = userdata._RideDamage,
         stun = userdata._StunDamage,
         sharpness = userdata._CustomKireajiReduce / 10 --[[@as number]],
-        attack_id = userdata._RuntimeData._AttackUniqueID,
         more_data = {
             _DamageTypeCustom = e.get("app.HitDef.DAMAGE_TYPE_CUSTOM")[userdata:get_DamageTypeCustom()],
             _AttackAttr = e.get("app.HitDef.ATTR")[userdata:get_AttackAttr()],
@@ -117,7 +113,6 @@ function this.get_player_data(userdata)
             _FixAttack = userdata._FixAttack,
             _AttrValue = userdata._AttrValue,
             _AttrLevel = userdata._AttrLevel,
-            _TerrainHitOnly = userdata._RuntimeData._TerrainHitOnly,
             _ActionType = e.get("app.HitDef.ACTION_TYPE")[userdata:get_ActionType()],
             _BattleRidingAttackType = e.get("app.HitDef.BATTLE_RIDING_ATTACK_TYPE")[userdata:get_BattleRidingAttackType()],
             _FriendDamageType = e.get("app.HitDef.ACTION_TYPE")[userdata:get_FriendDamageType()],
@@ -169,9 +164,7 @@ function this.get_enemy_data(userdata)
         stun = userdata._StunDamage,
         sharpness = data_missing_string,
         damage_type = e.get("app.HitDef.DAMAGE_TYPE")[userdata:get_DamageType()],
-        damage_angle = e.get("app.HitDef.DAMAGE_ANGLE")[userdata:get_DamageAngle()],
         guard_type = e.get("app.Hit.GUARD_TYPE")[userdata:get_GuardType()],
-        attack_id = userdata._RuntimeData._AttackUniqueID,
         more_data = {
             _DamageTypeCustom = e.get("app.HitDef.DAMAGE_TYPE_CUSTOM")[userdata:get_DamageTypeCustom()],
             _AttackAttr = e.get("app.HitDef.ATTR")[userdata:get_AttackAttr()],
@@ -181,7 +174,6 @@ function this.get_enemy_data(userdata)
             _FixAttack = userdata._FixAttack,
             _AttrValue = userdata._AttrValue,
             _AttrLevel = userdata._AttrLevel,
-            _TerrainHitOnly = userdata._RuntimeData._TerrainHitOnly,
             _EnemyDamageType = e.get("app.EnemyDef.Damage.ENEMY_DAMAGE_TYPE")[userdata:get_EnemyDamageType()],
             _DamageLevel = userdata._DamageLevel,
             _ToEmDamageRate = userdata._ToEmDamageRate,
@@ -225,9 +217,7 @@ function this.get_pet_data(userdata)
         stun = userdata._StunDamage,
         sharpness = data_missing_string,
         damage_type = e.get("app.HitDef.DAMAGE_TYPE")[userdata:get_DamageType()],
-        damage_angle = e.get("app.HitDef.DAMAGE_ANGLE")[userdata:get_DamageAngle()],
         guard_type = e.get("app.Hit.GUARD_TYPE")[userdata:get_GuardType()],
-        attack_id = userdata._RuntimeData._AttackUniqueID,
         more_data = {
             _DamageTypeCustom = e.get("app.HitDef.DAMAGE_TYPE_CUSTOM")[userdata:get_DamageTypeCustom()],
             _AttackAttr = e.get("app.HitDef.ATTR")[userdata:get_AttackAttr()],
@@ -237,7 +227,6 @@ function this.get_pet_data(userdata)
             _FixAttack = userdata._FixAttack,
             _AttrValue = userdata._AttrValue,
             _AttrLevel = userdata._AttrLevel,
-            _TerrainHitOnly = userdata._RuntimeData._TerrainHitOnly,
             _ActionType = e.get("app.HitDef.ACTION_TYPE")[userdata:get_ActionType()],
             _IsUseFixedActionType = userdata._IsUseFixedActionType,
             _IsUseFixedAttributeType = userdata._IsUseFixedAttributeType,
@@ -268,9 +257,7 @@ function this.get_hurtbox_data(userdata)
         stun = data_missing_string,
         sharpness = data_missing_string,
         damage_type = data_missing_string,
-        damage_angle = data_missing_string,
         guard_type = data_missing_string,
-        attack_id = 0,
         more_data = {},
     }
 end

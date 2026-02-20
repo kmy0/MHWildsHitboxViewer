@@ -221,7 +221,6 @@
 ---@class app.col_user_data.AttackParam : via.physics.RequestSetColliderUserData
 ---@field get_DamageType fun(self: app.col_user_data.AttackParam): app.HitDef.DAMAGE_TYPE
 ---@field get_DamageTypeCustom fun(self: app.col_user_data.AttackParam): app.HitDef.DAMAGE_TYPE_CUSTOM
----@field get_DamageAngle fun(self: app.col_user_data.AttackParam): app.HitDef.DAMAGE_ANGLE
 ---@field get_GuardType fun(self: app.col_user_data.AttackParam): app.Hit.GUARD_TYPE
 ---@field get_AttackAttr fun(self: app.col_user_data.AttackParam): app.HitDef.ATTR
 ---@field get_AttackCond fun(self: app.col_user_data.AttackParam): app.HitDef.CONDITION
@@ -232,7 +231,6 @@
 ---@field _AttrValue System.Single
 ---@field _AttrLevel System.UInt32
 ---@field _StunDamage System.Single
----@field _RuntimeData app.col_user_data.AttackParam.cRuntimeData
 
 ---@class app.col_user_data.AttackParamPlBase : app.col_user_data.AttackParam
 ---@field get_ActionType fun(self: app.col_user_data.AttackParamPlBase): app.HitDef.ACTION_TYPE

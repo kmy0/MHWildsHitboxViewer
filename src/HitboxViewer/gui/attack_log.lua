@@ -13,14 +13,13 @@ local this = {
         name = "attack_log",
         -- BordersH, BordersInnerH, Sortable, BordersOuterV, SizingStretchProp, ContextMenuInBody, Hideable
         flags = 26021,
-        col_count = 16,
+        col_count = 15,
         headers = {
             "row",
             "char_type",
             "char_name",
-            "attack_id",
+            "resource_path",
             "damage_type",
-            "damage_angle",
             "guard_type",
             "motion_value",
             "element",
@@ -102,7 +101,7 @@ local function draw_table()
                                 "%s, %s - %s",
                                 entry.char_name,
                                 entry.char_id,
-                                entry.attack_id
+                                entry.resource_path
                             ),
                             i
                         )

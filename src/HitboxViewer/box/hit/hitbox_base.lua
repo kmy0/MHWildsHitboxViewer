@@ -57,7 +57,6 @@ function this:is_trail_disabled()
     local order = {
         config_hitboxes.misc_type.trail_enable[self.log_entry.misc_type],
         config_hitboxes.guard_type.trail_enable[self.log_entry.guard_type],
-        config_hitboxes.damage_angle.trail_enable[self.log_entry.damage_angle],
         config_hitboxes.damage_type.trail_enable[self.log_entry.damage_type],
         config_hitboxes.trail_enable[mod_enum.char[self.parent.type]],
     }
@@ -80,8 +79,6 @@ function this:update_data()
         self.color = config_mod.hitboxes.misc_type.color[self.log_entry.misc_type]
     elseif config_mod.hitboxes.guard_type.color_enable[self.log_entry.guard_type] then
         self.color = config_mod.hitboxes.guard_type.color[self.log_entry.guard_type]
-    elseif config_mod.hitboxes.damage_angle.color_enable[self.log_entry.damage_angle] then
-        self.color = config_mod.hitboxes.damage_angle.color[self.log_entry.damage_angle]
     elseif config_mod.hitboxes.damage_type.color_enable[self.log_entry.damage_type] then
         self.color = config_mod.hitboxes.damage_type.color[self.log_entry.damage_type]
     elseif config_mod.hitboxes.color_enable[mod_enum.char[self.parent.type]] then
