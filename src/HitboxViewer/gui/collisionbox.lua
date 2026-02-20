@@ -8,6 +8,7 @@ local this = {}
 function this.draw()
     if imgui.collapsing_header(gui_util.tr("mod.header_collisionboxes")) then
         local config_col = config.current.mod.collisionboxes
+        imgui.push_item_width(gui_util.get_item_width())
 
         set:checkbox(gui_util.tr("mod.box_disable_damage"), "mod.collisionboxes.disable_damage")
         imgui.begin_disabled(config_col.disable_damage)
@@ -54,6 +55,8 @@ function this.draw()
             30,
             gui_util.seconds_to_minutes_string(config.current.mod.collisionboxes.draw_dur, "%.3f")
         )
+
+        imgui.pop_item_width()
     end
 end
 

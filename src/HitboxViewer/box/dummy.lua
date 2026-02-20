@@ -81,6 +81,11 @@ function this:new(shape_type, owner)
     return o
 end
 
+---@return boolean
+function this:is_trail_disabled()
+    return true
+end
+
 function this:update_data()
     self.color = config.current.mod.dummyboxes.color
     return mod_enum.box_state.Draw

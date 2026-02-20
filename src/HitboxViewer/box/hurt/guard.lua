@@ -6,6 +6,7 @@ local box_base = require("HitboxViewer.box.box_base")
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
 local util_game = require("HitboxViewer.util.game.init")
+local util_imgui = require("HitboxViewer.util.imgui.init")
 
 local mod_enum = data.mod.enum
 local ace = data.ace
@@ -26,6 +27,18 @@ function this:new(parent, parent_hurtbox)
     o.parent = parent
     o.parent_hurtbox = parent_hurtbox
     return o
+end
+
+---@return boolean
+function this:is_trail_disabled()
+    local tri = util_imgui.get_checkbox_tri_value(
+        config.current.mod.hurtboxes.guard_type.trail_enable[self.parent.guard_type]
+    )
+
+    if tri ~= nil then
+        return not tri
+    end
+    return true
 end
 
 ---@return BoxState

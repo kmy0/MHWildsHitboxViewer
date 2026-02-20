@@ -16,9 +16,10 @@ setmetatable(this, { __index = condition_base })
 ---@param state ConditionState?
 ---@param key integer?
 ---@param sub_type BreakType?
+---@param trail CheckboxTri
 ---@return BreakCondition
-function this:new(state, color, key, sub_type)
-    local o = condition_base.new(self, mod_enum.condition_type.Break, state, color, key)
+function this:new(state, color, key, sub_type, trail)
+    local o = condition_base.new(self, mod_enum.condition_type.Break, state, color, key, trail)
     setmetatable(o, self)
     ---@cast o BreakCondition
     o.sub_type = sub_type or mod_enum.break_state.Yes
@@ -28,7 +29,7 @@ end
 ---@param args table<string, any>
 ---@return BreakCondition
 function this:new_from_serial(args)
-    return this.new(self, args.state, args.color, args.key, args.sub_type)
+    return this.new(self, args.state, args.color, args.key, args.sub_type, args.trail)
 end
 
 ---@param part_group PartGroup

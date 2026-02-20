@@ -45,6 +45,33 @@ function this.get_sorted_chars(char_enum)
     return ret
 end
 
+function this.iter_all_boxes()
+    local char_key = nil
+    ---@type (fun(): BoxBase)?
+    local box_iter = nil
+    return function()
+        while true do
+            if box_iter ~= nil then
+                local box = box_iter()
+                if box ~= nil then
+                    return box
+                end
+                box_iter = nil
+            end
+
+            local char_obj
+            char_key, char_obj = next(this.cache.by_gameobject, char_key)
+            if char_key == nil then
+                return nil
+            end
+
+            if char_obj then
+                box_iter = char_obj:iter_all_boxes()
+            end
+        end
+    end
+end
+
 function this.get_master_player()
     return this.cache:get_master_player()
 end

@@ -1,4 +1,5 @@
 local box = require("HitboxViewer.box.init")
+local call_queue = require("HitboxViewer.util.misc.call_queue")
 local char = require("HitboxViewer.character.init")
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
@@ -102,6 +103,7 @@ function this.queues()
 
     char.get()
     box.get()
+    call_queue:execute()
 end
 
 function this.clear()

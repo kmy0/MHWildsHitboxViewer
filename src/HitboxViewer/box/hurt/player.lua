@@ -65,6 +65,15 @@ function this:update()
             table.insert(ret, self.guard_box)
         end
     end
+
+    local trail = self.guard_box:update_trail()
+    if trail then
+        if not ret then
+            ret = {}
+        end
+        table.move(trail, 1, #trail, #ret + 1, ret)
+    end
+
     return box_state, ret
 end
 

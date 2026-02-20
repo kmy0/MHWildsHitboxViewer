@@ -73,8 +73,18 @@ end
 ---@param name string
 ---@param config_key string
 ---@param enabled_obj boolean?
+---@return boolean
 function this:menu_item(name, config_key, enabled_obj)
     return self:generic_config(name, config_key, util_imgui.menu_item, enabled_obj)
+end
+
+---@param name string
+---@param config_key string
+---@param size integer?
+---@param disabled boolean?
+---@return boolean
+function this:checkbox_tri(name, config_key, size, disabled)
+    return self:generic_config(name, config_key, util_imgui.checkbox_tri, size, disabled)
 end
 
 return this

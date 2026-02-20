@@ -14,9 +14,10 @@ setmetatable(this, { __index = condition_base })
 ---@param color integer?
 ---@param state ConditionState?
 ---@param key integer?
+---@param trail CheckboxTri
 ---@return WeakCondition
-function this:new(state, color, key)
-    local o = condition_base.new(self, mod_enum.condition_type.Weak, state, color, key)
+function this:new(state, color, key, trail)
+    local o = condition_base.new(self, mod_enum.condition_type.Weak, state, color, key, trail)
     setmetatable(o, self)
     ---@cast o WeakCondition
     return o
@@ -25,7 +26,7 @@ end
 ---@param args table<string, any>
 ---@return WeakCondition
 function this:new_from_serial(args)
-    return this.new(self, args.state, args.color, args.key)
+    return this.new(self, args.state, args.color, args.key, args.trail)
 end
 
 ---@param part_group PartGroup

@@ -147,9 +147,15 @@ function this:update_hurtboxes()
     local ret = {}
     for col, box in pairs(self.hurtboxes) do
         local box_state, boxes = box:update()
-        if box_state == mod_enum.box_state.Draw and boxes then
+        local trail = box:update_trail()
+
+        if trail then
+            table.move(trail, 1, #trail, #ret + 1, ret)
+        end
+
+        if (box_state == mod_enum.box_state.Draw and boxes) or boxes then
             table.move(boxes, 1, #boxes, #ret + 1, ret)
-        elseif box_state == mod_enum.box_state.Dead then
+        elseif box_state == mod_enum.box_state.Dead and (not trail or util_table.empty(trail)) then
             self.hurtboxes[col] = nil
         end
     end

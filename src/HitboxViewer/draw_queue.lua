@@ -30,6 +30,8 @@ end
 ---@param box BoxBase
 local function draw_shape(box)
     local config_draw = config.current.mod.draw
+    local outline = box.draw_outline == nil and config_draw.outline or box.draw_outline --[[@as boolean]]
+    local outline_color = box.outline_color or config_draw.outline_color
 
     if
         box.shape_type == mod_enum.shape.Capsule
@@ -40,28 +42,22 @@ local function draw_shape(box)
             box.shape_data.pos_b,
             box.shape_data.radius,
             box.color,
-            config_draw.outline,
-            config_draw.outline_color
+            outline,
+            outline_color
         )
     elseif
         box.shape_type == mod_enum.shape.Sphere
         or box.shape_type == mod_enum.shape.ContinuousSphere
     then
-        hb_draw.sphere(
-            box.shape_data.pos,
-            box.shape_data.radius,
-            box.color,
-            config_draw.outline,
-            config_draw.outline_color
-        )
+        hb_draw.sphere(box.shape_data.pos, box.shape_data.radius, box.color, outline, outline_color)
     elseif box.shape_type == mod_enum.shape.Box then
         hb_draw.box(
             box.shape_data.pos,
             box.shape_data.extent,
             box.shape_data.rot,
             box.color,
-            config_draw.outline,
-            config_draw.outline_color
+            outline,
+            outline_color
         )
     elseif box.shape_type == mod_enum.shape.Cylinder then
         hb_draw.cylinder(
@@ -69,8 +65,8 @@ local function draw_shape(box)
             box.shape_data.pos_b,
             box.shape_data.radius,
             box.color,
-            config_draw.outline,
-            config_draw.outline_color
+            outline,
+            outline_color
         )
     elseif box.shape_type == mod_enum.shape.Triangle then
         hb_draw.triangle(
@@ -78,8 +74,8 @@ local function draw_shape(box)
             box.shape_data.extent,
             box.shape_data.rot,
             box.color,
-            config_draw.outline,
-            config_draw.outline_color
+            outline,
+            outline_color
         )
     elseif box.shape_type == mod_enum.shape.SlicedCylinder then
         hb_draw.sliced_cylinder(
@@ -89,8 +85,8 @@ local function draw_shape(box)
             box.shape_data.direction,
             box.shape_data.degrees,
             box.color,
-            config_draw.outline,
-            config_draw.outline_color
+            outline,
+            outline_color
         )
     end
 end

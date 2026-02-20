@@ -22,6 +22,7 @@
 ---@field max_char_interval integer
 ---@field max_char_creates integer
 ---@field max_part_group_updates integer
+---@field max_trail_dur number
 
 local config_base = require("HitboxViewer.util.misc.config_base")
 local lang = require("HitboxViewer.config.lang")
@@ -61,6 +62,7 @@ this.max_char_updates = 3
 this.max_char_creates = 3
 this.min_char_interval = 10
 this.max_char_interval = 60
+this.max_trail_dur = 30
 
 this.gui = config_base:new(
     require("HitboxViewer.config.defaults.gui"),

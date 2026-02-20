@@ -146,7 +146,9 @@ local function options()
 
     if imgui.tree_node(gui_util.tr("mod.tree_guard")) then
         util_imgui.tooltip_text(config.lang:tr("mod.tooltip_player_only"))
+        imgui.push_item_width(gui_util.get_item_width())
         set:color_edit(gui_util.tr("mod.color_guard"), "mod.hurtboxes.guard_type.color.one_color")
+        imgui.pop_item_width()
 
         imgui.separator()
 
@@ -198,23 +200,36 @@ local function options()
         drag:clear()
         for i = 1, #conditions.sorted do
             local cond = conditions.sorted[i]
+            local config_key = "mod.hurtboxes.conditions.int:" .. i
+            local row_height = gui_util.get_row_height(2)
 
-            drag:draw_drag_button(cond.key, cond, gui_util.get_row_height(2))
+            drag:draw_drag_button(cond.key, cond, row_height)
             imgui.same_line()
 
-            if
-                imgui.button(
-                    gui_util.tr("mod.button_remove", cond.key),
-                    { 0, gui_util.get_row_height(2) }
-                )
-            then
+            if imgui.button(gui_util.tr("mod.button_remove", cond.key), { 0, row_height }) then
                 table.insert(remove, cond)
             end
 
             imgui.same_line()
+            imgui.begin_disabled(cond.state == mod_enum.condition_state.Hide)
+            local item_config_key = string.format("%s.trail", config_key)
+            if
+                set:checkbox_tri(
+                    "##trail." .. cond.key,
+                    item_config_key,
+                    row_height,
+                    cond.state == mod_enum.condition_state.Hide
+                )
+            then
+                cond.trail = config:get(item_config_key)
+            end
+            util_imgui.tooltip(config.lang:tr("mod.tooltip_box_draw_trail"))
+            imgui.end_disabled()
+
+            imgui.same_line()
 
             imgui.begin_group()
-            draw_condition(cond, "mod.hurtboxes.conditions.int:" .. i)
+            draw_condition(cond, config_key)
             imgui.end_group()
 
             drag:check_drag_pos(cond)

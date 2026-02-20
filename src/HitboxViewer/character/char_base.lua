@@ -21,6 +21,7 @@
 ---@field order integer
 ---@field last_update_tick integer
 
+local box_base = require("HitboxViewer.box.box_base")
 local collisionbox = require("HitboxViewer.box.collision.collisionbox")
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
@@ -196,6 +197,12 @@ function this:_update_boxes(boxes, on_remove_callback)
     local ret = {}
     for col, box in pairs(boxes) do
         local box_state = box:update()
+        local trail = box:update_trail()
+
+        if trail then
+            table.move(trail, 1, #trail, #ret + 1, ret)
+        end
+
         if box_state == mod_enum.box_state.Draw then
             table.insert(ret, box)
         elseif box_state == mod_enum.box_state.Dead then
@@ -216,7 +223,7 @@ function this:update_hurtboxes()
     if self:is_hurtbox_disabled() then
         return
     end
-    return self:_update_boxes(self.hurtboxes)
+    return self:_update_boxes(self.hurtboxes, box_base.queue_dead_box_trail_update)
 end
 
 ---@return HitBoxBase[]?
@@ -225,7 +232,7 @@ function this:update_hitboxes()
         return
     end
 
-    return self:_update_boxes(self.hitboxes)
+    return self:_update_boxes(self.hitboxes, box_base.queue_dead_box_trail_update)
 end
 
 ---@return PressBoxBase[]?
@@ -234,7 +241,7 @@ function this:update_pressboxes()
         return
     end
 
-    return self:_update_boxes(self.pressboxes)
+    return self:_update_boxes(self.pressboxes, box_base.queue_dead_box_trail_update)
 end
 
 ---@return CollisionBox | ContactPoint[]?
@@ -269,6 +276,28 @@ function this:is_valid(char)
         ret = char:get_Valid() and not util_ref.is_only_my_ref(char)
     end)
     return ret
+end
+
+function this:iter_all_boxes()
+    local boxes = {
+        self.hitboxes,
+        self.hurtboxes,
+        self.pressboxes,
+        self.collisionboxes,
+        self.dummyboxes,
+    }
+    local box_index = 1
+    local key = nil
+    return function()
+        while box_index <= #boxes do
+            key = next(boxes[box_index], key)
+            if key ~= nil then
+                return boxes[box_index][key]
+            end
+            box_index = box_index + 1
+            key = nil
+        end
+    end
 end
 
 return this

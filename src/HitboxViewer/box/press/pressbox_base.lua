@@ -6,6 +6,7 @@ local colldable_base = require("HitboxViewer.box.collidable_base")
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
 local e = require("HitboxViewer.util.game.enum")
+local util_imgui = require("HitboxViewer.util.imgui.init")
 
 local mod_enum = data.mod.enum
 
@@ -45,6 +46,26 @@ function this:new(collidable, parent, resource_idx, set_idx, collidable_idx, pre
     o.layer = e.get("app.CollisionFilter.LAYER")[filter_info:get_Layer()]
 
     return o
+end
+
+---@return boolean
+function this:is_trail_disabled()
+    local config_pressboxes = config.current.mod.pressboxes
+
+    local order = {
+        config_pressboxes.press_level.trail_enable[self.press_level],
+        config_pressboxes.layer.trail_enable[self.layer],
+        config_pressboxes.trail_enable[mod_enum.char[self.parent.type]],
+    }
+
+    for i = 1, #order do
+        local tri = util_imgui.get_checkbox_tri_value(order[i])
+        if tri ~= nil then
+            return not tri
+        end
+    end
+
+    return true
 end
 
 ---@return BoxState

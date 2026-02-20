@@ -1,3 +1,4 @@
+local config = require("HitboxViewer.config.init")
 local util_game = require("HitboxViewer.util.game.init")
 local util_misc = require("HitboxViewer.util.misc.init")
 local uuid = require("HitboxViewer.util.misc.uuid")
@@ -5,6 +6,12 @@ local uuid = require("HitboxViewer.util.misc.uuid")
 local this = {}
 ---@type table<string, number>
 local child_window_sizes = {}
+---@enum CheckboxTri
+local checkbox_tri_enum = {
+    NONE = 0,
+    TRUE = 1,
+    FALSE = 2,
+}
 
 ---@param x number
 ---@param y number?
@@ -123,9 +130,24 @@ function this.dummy_button2(label, size_object)
     return ret
 end
 
+---@param label string
+---@param size_object Vector2f|Vector3f|Vector4f|number[]?
+---@return boolean
+function this.dummy_button3(label, size_object)
+    imgui.push_style_color(21, 0x00000000)
+    imgui.push_style_color(22, 0x00000000)
+    imgui.push_style_color(23, 0xff4f4e4d)
+    imgui.push_style_var(11, Vector2f.new(0, 3))
+    local ret = imgui.button(label, size_object)
+    imgui.pop_style_color(3)
+    imgui.pop_style_var(1)
+    return ret
+end
+
 ---@param str_id string
 ---@param draw_func fun()
 function this.center_h(str_id, draw_func)
+    imgui.push_style_var(17, Vector2f.new(0, 0))
     if imgui.begin_table(str_id .. "_center_h_table", 3, 3 << 13) then
         imgui.table_setup_column(
             string.format("##%s_%s_%s", str_id, "center_h_table_header", 1),
@@ -149,6 +171,7 @@ function this.center_h(str_id, draw_func)
         imgui.table_set_column_index(2)
         imgui.end_table()
     end
+    imgui.pop_style_var(1)
 end
 
 ---@param str_id string
@@ -299,6 +322,72 @@ function this.set_win_state(win_state, min_y_size)
 
     win_state.pos_x, win_state.pos_y = pos.x, pos.y
     win_state.size_x, win_state.size_y = size.x, size.y
+end
+
+---@param label string
+---@param state CheckboxTri | boolean?
+---@param size integer?
+---@param disabled boolean?
+---@return boolean, CheckboxTri
+function this.checkbox_tri(label, state, size, disabled)
+    local changed = false
+    if state == true then
+        state = checkbox_tri_enum.TRUE
+        changed = true
+    elseif not state then
+        state = checkbox_tri_enum.NONE
+        changed = true
+    end
+    ---@cast state CheckboxTri
+
+    local new_state = state
+    size = size or config.lang:get_font_size() + 6
+    local pos = imgui.get_cursor_screen_pos()
+
+    imgui.push_style_color(21, 0xFF403636)
+    if imgui.button(label, Vector2f.new(size, size)) then
+        new_state = (state + 1) % 3 --[[@as CheckboxTri]]
+        changed = true
+    end
+    imgui.pop_style_color(1)
+
+    local color = disabled and 0xff686464 or 0xff8d8c8c
+    local x, y = pos.x, pos.y
+    if new_state == checkbox_tri_enum.TRUE then
+        local pad = math.max(1.0, math.floor(size / 6.0))
+        local sz = size - pad * 2.0
+        local thickness = math.max(sz / 5.0, 1.0)
+        sz = sz - thickness * 0.5
+        local ox = x + pad + thickness * 0.25
+        local oy = y + pad + thickness * 0.25
+        local third = sz / 3.0
+        local bx = ox + third
+        local by = oy + sz - third * 0.5
+
+        imgui.draw_list_path_line_to(Vector2f.new(bx - third, by - third))
+        imgui.draw_list_path_line_to(Vector2f.new(bx, by))
+        imgui.draw_list_path_line_to(Vector2f.new(bx + third * 2.0, by - third * 2.0))
+        imgui.draw_list_path_stroke(color, false, thickness)
+    elseif new_state == checkbox_tri_enum.FALSE then
+        local pad = math.floor(size / 3.6)
+        local mid = y + size * 0.5
+        local thickness = math.max(math.floor(size / 3.6), 1.0)
+        imgui.draw_list_path_line_to(Vector2f.new(x + pad, mid))
+        imgui.draw_list_path_line_to(Vector2f.new(x + size - pad, mid))
+        imgui.draw_list_path_stroke(color, false, thickness)
+    end
+
+    return changed, new_state
+end
+
+---@param value CheckboxTri
+---@return boolean?
+function this.get_checkbox_tri_value(value)
+    if value == checkbox_tri_enum.TRUE then
+        return true
+    elseif value == checkbox_tri_enum.FALSE then
+        return false
+    end
 end
 
 return this

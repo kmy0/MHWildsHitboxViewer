@@ -16,9 +16,10 @@ setmetatable(this, { __index = condition_base })
 ---@param state ConditionState?
 ---@param key integer?
 ---@param sub_type ExtractType?
+---@param trail CheckboxTri
 ---@return ExtractCondition
-function this:new(state, color, key, sub_type)
-    local o = condition_base.new(self, mod_enum.condition_type.Extract, state, color, key)
+function this:new(state, color, key, sub_type, trail)
+    local o = condition_base.new(self, mod_enum.condition_type.Extract, state, color, key, trail)
     setmetatable(o, self)
     ---@cast o ExtractCondition
     o.sub_type = sub_type or mod_enum.extract.RED
@@ -28,7 +29,7 @@ end
 ---@param args table<string, any>
 ---@return ExtractCondition
 function this:new_from_serial(args)
-    return this.new(self, args.state, args.color, args.key, args.sub_type)
+    return this.new(self, args.state, args.color, args.key, args.sub_type, args.trail)
 end
 
 ---@param part_group PartGroup

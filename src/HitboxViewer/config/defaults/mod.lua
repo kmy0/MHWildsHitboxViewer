@@ -6,9 +6,10 @@
 ---@field disable table<string, boolean>
 ---@field color table<string, integer>
 ---@field color_enable table<string, boolean>
+---@field trail_enable table<string, CheckboxTri>
 
 ---@class (exact) HurtboxSettings : BoxSettings
----@field conditions table<string, table<string, any>>
+---@field conditions table<string, any>[]
 ---@field default_state integer DefaultHurtboxState
 ---@field guard_type GuardboxType
 
@@ -30,6 +31,12 @@
 ---@class (exact) DummyboxSettings
 ---@field combo_shape integer
 ---@field color integer
+
+---@class (exact) TrailboxSettings
+---@field draw_dur integer
+---@field step integer
+---@field fade boolean
+---@field outline boolean
 
 ---@class (exact) CollisionboxSettings
 ---@field color_col_a integer
@@ -69,6 +76,7 @@
 ---@field pressboxes PressboxSettings
 ---@field dummyboxes DummyboxSettings
 ---@field collisionboxes CollisionboxSettings
+---@field trailboxes TrailboxSettings
 ---@field draw DrawSettings
 
 local version = require("HitboxViewer.config.version")
@@ -118,11 +126,21 @@ return function(default_color, default_highlight_color, default_collision_color)
                     disable = {},
                     color = {},
                     color_enable = {},
+                    trail_enable = {},
                 },
                 layer = {
                     disable = {},
                     color = {},
                     color_enable = {},
+                    trail_enable = {},
+                },
+                trail_enable = {
+                    SmallMonster = false,
+                    BigMonster = false,
+                    Pet = false,
+                    Player = false,
+                    MasterPlayer = false,
+                    Npc = false,
                 },
             },
             hurtboxes = {
@@ -160,6 +178,15 @@ return function(default_color, default_highlight_color, default_collision_color)
                     color_enable = {},
                     disable_top = false,
                     disable_bottom = false,
+                    trail_enable = {},
+                },
+                trail_enable = {
+                    SmallMonster = false,
+                    BigMonster = false,
+                    Pet = false,
+                    Player = false,
+                    MasterPlayer = false,
+                    Npc = false,
                 },
                 conditions = {},
                 default_state = 1,
@@ -194,21 +221,33 @@ return function(default_color, default_highlight_color, default_collision_color)
                     disable = {},
                     color = {},
                     color_enable = {},
+                    trail_enable = {},
                 },
                 damage_angle = {
                     disable = {},
                     color = {},
                     color_enable = {},
+                    trail_enable = {},
                 },
                 guard_type = {
                     disable = {},
                     color = {},
                     color_enable = {},
+                    trail_enable = {},
                 },
                 misc_type = {
                     disable = {},
                     color = {},
                     color_enable = {},
+                    trail_enable = {},
+                },
+                trail_enable = {
+                    SmallMonster = false,
+                    BigMonster = false,
+                    Pet = false,
+                    Player = false,
+                    MasterPlayer = false,
+                    Npc = false,
                 },
                 pause_attack_log = false,
             },
@@ -238,6 +277,12 @@ return function(default_color, default_highlight_color, default_collision_color)
                 distance = 50,
                 outline = true,
                 outline_color = 4278190079,
+            },
+            trailboxes = {
+                draw_dur = 30,
+                step = 2,
+                fade = true,
+                outline = true,
             },
         },
     }

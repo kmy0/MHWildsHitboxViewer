@@ -80,18 +80,16 @@ function this.save()
 end
 
 ---@param part_group PartGroup
----@return ConditionResult, integer
+---@return ConditionResult, integer, CheckboxTri
 function this.check_part_group(part_group)
     for i = 1, #this.sorted do
         local cond = this.sorted[i]
-        if cond.type ~= mod_enum.condition_type.Scar then
-            local state, color = cond:check(part_group)
-            if state ~= mod_enum.condition_result.None then
-                return state, color
-            end
+        local state, color = cond:check(part_group)
+        if state ~= mod_enum.condition_result.None then
+            return state, color, cond.trail
         end
     end
-    return mod_enum.condition_result.None, 0
+    return mod_enum.condition_result.None, 0, 0
 end
 
 ---@param scar_state string
@@ -138,10 +136,10 @@ end
 
 ---@param cond ConditionBase
 function this.remove(cond)
-    util_table.remove(this.sorted, function(t, i, j)
+    util_table.remove(this.sorted, function(t, i, _)
         return t[i] ~= cond
     end)
-    util_table.remove(this.by_type[cond.type], function(t, i, j)
+    util_table.remove(this.by_type[cond.type], function(t, i, _)
         return t[i] ~= cond
     end)
     this.save()

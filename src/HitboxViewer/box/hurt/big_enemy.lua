@@ -5,6 +5,7 @@ local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
 local enemy_hurtbox = require("HitboxViewer.box.hurt.enemy")
 local part_group = require("HitboxViewer.box.hurt.part_group")
+local util_imgui = require("HitboxViewer.util.imgui.init")
 
 local mod_enum = data.mod.enum
 
@@ -44,6 +45,20 @@ function this:new(collidable, parent, resource_idx, set_idx, collidable_idx, mea
         return
     end
     return o
+end
+
+---@return boolean
+function this:is_trail_disabled()
+    if self.part_group.condition == mod_enum.condition_result.Hide then
+        return true
+    end
+
+    local tri = util_imgui.get_checkbox_tri_value(self.part_group.condition_trail)
+    if tri ~= nil then
+        return not tri
+    end
+
+    return enemy_hurtbox.is_trail_disabled(self)
 end
 
 ---@return BoxState

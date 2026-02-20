@@ -8,12 +8,23 @@ return {
             draw_pressboxes = "Draw Pressboxes",
             draw_collisionboxes = "Draw Collisions",
         },
-        draw_settings = {
+        settings = {
             name = "Settings",
-            box_outline = "Draw Outline",
-            color_outline = "Outline Color",
-            slider_draw_distance = "Draw Distance",
-            color_highlight = "Hurtbox Highlight Color",
+            draw = {
+                name = "Draw",
+                box_outline = "Draw Outline",
+                color_outline = "Outline Color",
+                slider_draw_distance = "Draw Distance",
+                color_highlight = "Hurtbox Highlight Color",
+            },
+            trail = {
+                name = "Trail",
+                box_fade = "Fade",
+                tooltip_box_fade = "Boxes become increasingly transparent the older they get.",
+                slider_step = "Draw Trail Every",
+                slider_draw_dur = "Draw Duration",
+                box_outline = "Draw Outline",
+            },
         },
         language = {
             name = "Language",
@@ -48,12 +59,6 @@ return {
         text_minute_plural = "Minutes",
     },
     mod = {
-        box_disable_small_monsters = "Disable Small Monsters",
-        box_disable_big_monsters = "Disable Big Monsters",
-        box_disable_pet = "Disable Pets",
-        box_disable_self = "Disable Self",
-        box_disable_players = "Disable Players",
-        box_disable_npc = "Disable Npc",
         header_hurtboxes = "Hurtboxes",
         tree_guard = "Guard",
         box_disable_top_guard = "Disable Top Indicator",
@@ -222,5 +227,21 @@ return {
         button_collision_log = "Collision Log",
         box_ignore_failed = "Ignore Failed",
         tooltip_box_ignore_failed = "Ignore collisions that failed the hit check.",
+        char_type = {
+            Player = "Player",
+            MasterPlayer = "Self",
+            SmallMonster = "Small Monster",
+            BigMonster = "Big Monster",
+            Pet = "Pet",
+            Npc = "NPC",
+        },
+        table_generic_settings = {
+            header_type = "Type",
+            header_disable = "Disable",
+            header_trail = "Draw Trail",
+            header_color_enable = "Enable Color",
+            header_color = "Color",
+        },
+        tooltip_box_draw_trail = "Draw Trail",
     },
 }

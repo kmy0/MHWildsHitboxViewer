@@ -157,6 +157,17 @@ function this:pop_front()
     return ret
 end
 
+---@return any?
+function this:front()
+    return self._buffer[self._start]
+end
+
+---@return any?
+function this:back()
+    local idx = wrap_index(self._start + self._count - 1, self._size)
+    return self._buffer[idx]
+end
+
 ---@return boolean
 function this:is_full()
     return self._count >= self._size

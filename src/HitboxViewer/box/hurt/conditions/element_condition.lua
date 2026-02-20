@@ -20,9 +20,10 @@ setmetatable(this, { __index = condition_base })
 ---@param from integer?
 ---@param to integer?
 ---@param sub_type ElementType?
+---@param trail CheckboxTri
 ---@return ElementCondition
-function this:new(state, color, key, sub_type, from, to)
-    local o = condition_base.new(self, mod_enum.condition_type.Element, state, color, key)
+function this:new(state, color, key, sub_type, from, to, trail)
+    local o = condition_base.new(self, mod_enum.condition_type.Element, state, color, key, trail)
     setmetatable(o, self)
     ---@cast o ElementCondition
     o.from = from or 0
@@ -34,7 +35,16 @@ end
 ---@param args table<string, any>
 ---@return ElementCondition
 function this:new_from_serial(args)
-    return this.new(self, args.state, args.color, args.key, args.sub_type, args.from, args.to)
+    return this.new(
+        self,
+        args.state,
+        args.color,
+        args.key,
+        args.sub_type,
+        args.from,
+        args.to,
+        args.trail
+    )
 end
 
 ---@param part_group PartGroup

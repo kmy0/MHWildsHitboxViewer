@@ -3,6 +3,7 @@
 ---@field state ConditionState
 ---@field type ConditionType
 ---@field key integer
+---@field trail CheckboxTri
 ---@field check fun(self: ConditionBase, part_data: PartGroup): ConditionResult, integer
 
 local config = require("HitboxViewer.config.init")
@@ -20,13 +21,15 @@ this.__index = this
 ---@param state ConditionState?
 ---@param type ConditionType
 ---@param key integer?
+---@param trail CheckboxTri
 ---@return ConditionBase
-function this:new(type, state, color, key)
+function this:new(type, state, color, key, trail)
     local o = {
         color = color or config.default.mod.hurtboxes.color.highlight,
         type = type,
         state = state or mod_enum.condition_state.Highlight,
         key = key or self:_get_key(),
+        trail = trail,
     }
     setmetatable(o, self)
     ---@cast o ConditionBase
@@ -36,7 +39,7 @@ end
 ---@param args table<string, any>
 ---@return ConditionBase
 function this:new_from_serial(args)
-    return this.new(self, args.type, args.state, args.color, args.key)
+    return this.new(self, args.type, args.state, args.color, args.key, args.trail)
 end
 
 ---@protected
