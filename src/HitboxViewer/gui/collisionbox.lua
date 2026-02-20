@@ -47,18 +47,12 @@ function this.draw()
         set:color_edit(gui_util.tr("mod.color_col_a"), "mod.collisionboxes.color_col_a")
         set:color_edit(gui_util.tr("mod.color_col_b"), "mod.collisionboxes.color_col_b")
         set:color_edit(gui_util.tr("mod.color_col_point"), "mod.collisionboxes.color_col_point")
-        set:slider_int(
+        set:slider_float(
             gui_util.tr("mod.slider_draw_dur"),
             "mod.collisionboxes.draw_dur",
-            1,
-            240,
-            string.format(
-                "%s %s",
-                config.current.mod.collisionboxes.draw_dur,
-                config.current.mod.collisionboxes.draw_dur == 1
-                        and config.lang:tr("misc.text_frame")
-                    or config.lang:tr("misc.text_frame_plural")
-            )
+            0.001,
+            30,
+            gui_util.seconds_to_minutes_string(config.current.mod.collisionboxes.draw_dur, "%.3f")
         )
     end
 end

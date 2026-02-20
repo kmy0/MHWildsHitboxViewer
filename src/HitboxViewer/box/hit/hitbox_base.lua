@@ -2,12 +2,12 @@
 ---@field log_entry AttackLogEntry
 ---@field shellcolhit app.mcShellColHit?
 ---@field is_shown boolean
----@field tick integer
+---@field timer Timer
 
 local colldable_base = require("HitboxViewer.box.collidable_base")
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
-local frame_counter = require("HitboxViewer.util.misc.frame_counter")
+local timer = require("HitboxViewer.util.misc.timer")
 
 local mod_enum = data.mod.enum
 
@@ -45,7 +45,7 @@ function this:new(collidable, parent, resource_idx, set_idx, collidable_idx, log
     o.log_entry = log_entry
     o.shellcolhit = shellcolhit
     o.is_shown = false
-    o.tick = frame_counter.frame
+    o.timer = timer:new(20, nil, true, false, true, "time_delta")
     return o
 end
 
@@ -74,7 +74,7 @@ end
 function this:update()
     if
         self.shellcolhit and self.shellcolhit:get_reference_count() <= 1
-        or frame_counter.frame - self.tick > 1200
+        or self.timer:finished()
     then
         return mod_enum.box_state.Dead
     end

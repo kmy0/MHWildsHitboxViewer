@@ -1,28 +1,33 @@
 ---@class Timer
----@field timeout integer
+---@field timeout number
 ---@field auto_restart boolean
 ---@field callback fun()?
----@field protected _started_at integer
----@field protected _now integer
+---@field protected _started_at number
+---@field protected _now number
 ---@field protected _finished boolean
 ---@field protected _started boolean
 ---@field protected _auto_instances Timer[]
 ---@field protected _updated_frame integer
 ---@field protected _auto_update boolean
+---@field protected _timer_type TimerType
+
+---@alias TimerType "os_clock" | "time_delta"
 
 local frame_counter = require("HitboxViewer.util.misc.frame_counter")
+local time_counter = require("HitboxViewer.util.misc.time_counter")
 
 ---@class Timer
 local this = {}
 this.__index = this
 this._auto_instances = setmetatable({}, { __mode = "v" })
 
----@param timeout integer
+---@param timeout number
 ---@param callback fun()?
 ---@param auto_start boolean? by default, false
 ---@param auto_restart boolean? by default, false
 ---@param auto_update boolean? by default, false
-function this:new(timeout, callback, auto_start, auto_restart, auto_update)
+---@param timer_type TimerType? by default, os_clock
+function this:new(timeout, callback, auto_start, auto_restart, auto_update, timer_type)
     local o = {
         auto_restart = auto_restart and true or false,
         timeout = timeout,
@@ -31,6 +36,7 @@ function this:new(timeout, callback, auto_start, auto_restart, auto_update)
         _started = false,
         _update_frame = 0,
         _auto_update = auto_update,
+        _timer_type = timer_type or "os_clock",
     }
     setmetatable(o, self)
     ---@cast o Timer
@@ -65,14 +71,19 @@ function this:_update_on_call(fn)
     end
 end
 
+---@return number
+function this:_get_time()
+    return self._timer_type == "os_clock" and os.clock() or time_counter.time
+end
+
 ---@protected
 ---@return number
 function this:_update()
-    self._now = os.clock()
+    self._now = self:_get_time()
     return self._now
 end
 
----@param timeout integer?
+---@param timeout number?
 ---@param callback fun()?
 ---@param auto_restart boolean?
 function this:update_args(timeout, callback, auto_restart)
@@ -84,13 +95,13 @@ function this:update_args(timeout, callback, auto_restart)
     end
 end
 
----@param timeout integer?
+---@param timeout number?
 ---@param callback fun()?
 ---@param auto_restart boolean?
 function this:start(timeout, callback, auto_restart)
     self:update_args(timeout, callback, auto_restart)
     if not self._started then
-        local now = os.clock()
+        local now = self:_get_time()
         self._now = now
         self._started_at = now
         self._started = true
@@ -115,7 +126,7 @@ function this:remaining()
     return math.max(0, self.timeout - self:elapsed())
 end
 
----@param timeout integer?
+---@param timeout number?
 ---@param callback fun()?
 ---@param auto_restart boolean?
 function this:restart(timeout, callback, auto_restart)

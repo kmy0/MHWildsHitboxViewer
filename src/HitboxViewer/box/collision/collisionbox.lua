@@ -1,5 +1,5 @@
 ---@class (exact) CollisionBox : CollidableBase
----@field draw_timer FrameTimer
+---@field timer Timer
 ---@field updated boolean
 ---@field contact_point ContactPoint?
 ---@field on_remove_callback fun(key: via.physics.Collidable | CollisionBox | ContactPoint, _: CollisionBox | ContactPoint)
@@ -7,7 +7,7 @@
 local colldable_base = require("HitboxViewer.box.collidable_base")
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
-local frame_timer = require("HitboxViewer.util.misc.frame_timer")
+local timer = require("HitboxViewer.util.misc.timer")
 
 local mod_enum = data.mod.enum
 
@@ -34,13 +34,18 @@ function this:new(collidable, color, draw_duration, contact_point)
     setmetatable(o, self)
 
     o.color = color
-    o.draw_timer = frame_timer:new(draw_duration)
-    o.draw_timer:start()
+    o.timer = timer:new(draw_duration, nil, true, false, false, "time_delta")
     o.updated = false
     o.contact_point = contact_point
     o.disabled_ok = true
-    o:update()
+    o:update_data()
+    o:update_shape()
     return o
+end
+
+---@return boolean
+function this:is_trail_disabled()
+    return true
 end
 
 function this:remove_contact_point()
@@ -56,14 +61,14 @@ end
 
 ---@return BoxState
 function this:update()
+    if self.updated and self.timer:finished() then
+        return mod_enum.box_state.Dead
+    end
+
     if not self.updated or not config.current.mod.collisionboxes.update_once then
         self:update_data()
         self:update_shape()
         self.updated = true
-    end
-
-    if self.draw_timer:finished() then
-        return mod_enum.box_state.Dead
     end
 
     return mod_enum.box_state.Draw

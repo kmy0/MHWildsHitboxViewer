@@ -42,6 +42,10 @@ return {
         text_to = "To",
         text_frame = "Frame",
         text_frame_plural = "Frames",
+        text_second = "Second",
+        text_second_plural = "Seconds",
+        text_minute = "Minute",
+        text_minute_plural = "Minutes",
     },
     mod = {
         box_disable_small_monsters = "Disable Small Monsters",
