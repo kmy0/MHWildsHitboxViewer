@@ -1,3 +1,4 @@
+local char = require("HitboxViewer.character.init")
 local conditions = require("HitboxViewer.box.hurt.conditions.init")
 local config = require("HitboxViewer.config.init")
 local data = require("HitboxViewer.data.init")
@@ -236,6 +237,11 @@ local function options()
         if not util_table.empty(remove) then
             for _, cond in pairs(remove) do
                 conditions.remove(cond)
+            end
+
+            for _, em in pairs(char.get_sorted_chars(mod_enum.char.BigMonster) or {}) do
+                ---@cast em BigEnemy
+                em:reset_conditions()
             end
 
             config:save()

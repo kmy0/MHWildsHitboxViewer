@@ -75,6 +75,13 @@ function this:get_sorted_part_groups()
     return ret
 end
 
+function this:reset_conditions()
+    for _, part in pairs(self.parts) do
+        part.condition = mod_enum.condition_result.None
+        part.condition_color = 0
+    end
+end
+
 ---@return HurtBoxBase[]?
 function this:update_hurtboxes()
     if self:is_hurtbox_disabled() then
