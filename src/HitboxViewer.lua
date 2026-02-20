@@ -108,6 +108,7 @@ re.on_frame(function()
         config_gui.main.is_opened = false
         config_gui.attack_log.is_opened = false
         config_gui.hurtbox_info.is_opened = false
+        config_gui.collision_log.is_opened = false
     end
 
     if config_gui.main.is_opened then
