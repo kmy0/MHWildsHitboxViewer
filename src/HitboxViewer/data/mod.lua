@@ -81,6 +81,7 @@ this.enum.box = { ---@class BoxType.* : {[string]: integer}, {[integer]: string}
     DummyBox = 5,
     CollisionBox = 6,
     CollisionContactBox = 7,
+    PressBox = 8,
 }
 ---@enum ConditionType
 this.enum.condition_type = { ---@class ConditionType.* : {[string]: integer}, {[integer]: string}

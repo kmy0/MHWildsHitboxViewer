@@ -27,7 +27,7 @@ function this:new(collidable, parent, resource_idx, set_idx, collidable_idx, pre
         self,
         collidable,
         parent,
-        mod_enum.box.HurtBox,
+        mod_enum.box.PressBox,
         resource_idx,
         set_idx,
         collidable_idx
