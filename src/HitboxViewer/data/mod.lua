@@ -5,6 +5,7 @@
 
 ---@class (exact) ModMap
 ---@field update_order CharType[]
+---@field actions table<string, string>
 
 ---@class (exact) ModEnum
 ---@field base_char BaseCharType.*
@@ -32,7 +33,18 @@ local this = {
     ---@diagnostic disable-next-line: missing-fields
     enum = {},
     ---@diagnostic disable-next-line: missing-fields
-    map = {},
+    map = {
+        actions = {
+            timescale_freeze = "mod.actions.timescale_freeze",
+            timescale_step = "mod.actions.timescale_step",
+            timescale_increment = "mod.actions.timescale_increment",
+            timescale_decrement = "mod.actions.timescale_decrement",
+            timescale_toggle = "mod.actions.timescale_toggle",
+            timescale_enable = "mod.actions.timescale_enable",
+            timescale_disable = "mod.actions.timescale_disable",
+            timescale_hold = "mod.actions.timescale_hold",
+        },
+    },
 }
 
 ---@enum BaseCharType

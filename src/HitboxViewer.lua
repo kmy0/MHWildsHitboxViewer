@@ -12,6 +12,8 @@ local util_imgui = require("HitboxViewer.util.imgui.init")
 local util_misc = require("HitboxViewer.util.misc.init")
 local util_ref = require("HitboxViewer.util.ref.init")
 local logger = util_misc.logger.g
+local bind = require("HitboxViewer.bind.init")
+local timescale = require("HitboxViewer.util.game.timescale")
 
 local mod = data.mod
 ---@class MethodUtil
@@ -23,7 +25,12 @@ local init = util_misc.init_chain:new(
     box.hurtbox.conditions.init,
     config_menu.init,
     box.collision.init,
-    data.mod.init
+    bind.init,
+    data.mod.init,
+    function()
+        timescale.set(config.current.mod.timescale.timescale)
+        return true
+    end
 )
 
 hb_draw.register(function()
@@ -92,6 +99,7 @@ re.on_application_entry("EndPhysics", function()
     if mod.in_game() then
         update.characters()
         update.queues()
+        bind.monitor:monitor()
     else
         update.clear()
     end
@@ -133,5 +141,6 @@ end)
 re.on_config_save(function()
     if data.mod.initialized then
         config.save_no_timer_global()
+        timescale.reset()
     end
 end)

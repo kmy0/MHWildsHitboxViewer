@@ -60,6 +60,10 @@
 ---@field outline boolean
 ---@field outline_color integer
 
+---@class (exact) TimescaleSettings
+---@field step number
+---@field timescale number
+
 ---@class (exact) ModLanguage
 ---@field file string
 ---@field fallback boolean
@@ -77,6 +81,12 @@
 ---@field collisionboxes CollisionboxSettings
 ---@field trailboxes TrailboxSettings
 ---@field draw DrawSettings
+---@field timescale TimescaleSettings
+---@field bind {
+---     action: BindBase[],
+---     buffer: integer,
+---     combo_action: integer,
+--- }
 
 local version = require("HitboxViewer.config.version")
 
@@ -272,10 +282,19 @@ return function(default_color, default_highlight_color, default_collision_color)
                 outline_color = 4278190079,
             },
             trailboxes = {
-                draw_dur = 30,
-                step = 2,
+                draw_dur = 2,
+                step = 0.001,
                 fade = true,
                 outline = true,
+            },
+            timescale = {
+                step = 1.0,
+                timescale = 1.0,
+            },
+            bind = {
+                action = {},
+                buffer = 2,
+                combo_action = 1,
             },
         },
     }

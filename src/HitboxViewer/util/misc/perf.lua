@@ -17,9 +17,9 @@ local this = {}
 ---@return integer
 local function get_time()
     ---@diagnostic disable-next-line: no-unknown
-    if hudcontroller_util then
+    if HitboxViewer_util then
         ---@diagnostic disable-next-line: no-unknown
-        return hudcontroller_util.now_us()
+        return HitboxViewer_util.now_us()
     end
 
     return os.clock() * 1000000

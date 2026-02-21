@@ -73,6 +73,7 @@
 
 ---@class via.Application : NativeSingleton
 ---@field get_DeltaTime fun(self: via.Application): System.Single
+---@field set_GlobalSpeed fun(self: via.Application, value: System.Single)
 
 ---@class via.Position : System.ValueType
 ---@field x System.Double

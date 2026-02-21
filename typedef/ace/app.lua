@@ -16,6 +16,7 @@
 ---@class app.user_data.WpActionParamBase : via.UserData
 ---@class app.col_user_data.AttackParamPlShell : app.col_user_data.AttackParamPlBase
 ---@class app.cGameContext : via.clr.ManagedObject
+---@class app.GUIManager : ace.GUIManagerBase
 
 ---@class app.GUIManager : ace.GUIManagerBase
 ---@field getSystemLanguageToApp fun(self: app.GUIManager) : via.Language

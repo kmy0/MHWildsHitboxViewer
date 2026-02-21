@@ -25,6 +25,17 @@ return {
                 slider_draw_dur = "Draw Duration",
                 box_outline = "Draw Outline",
             },
+            timescale = {
+                name = "Timescale",
+                button_step = "Step 1 Frame",
+                tooltip_button_step = "Set timescale to 1.0 for 1 frame.",
+                slider_increment = "+- Step",
+                button_plus = "+",
+                button_minus = "-",
+                box_enabled = "Enabled",
+                slider_timescale = "Timescale",
+                tooltip_box_enabled = "This option is not saved.",
+            },
         },
         language = {
             name = "Language",
@@ -33,6 +44,18 @@ return {
         },
         tools = {
             name = "Tools",
+        },
+        bind = {
+            name = "Bind",
+            tooltip_bound = "Already bound to",
+            slider_buffer = "Buffer",
+            tooltip_buffer = "Time window to detect multi-key combination (e.g. A+B) before triggering single keys",
+            text_default = "Press any key...",
+            button_add = "Add",
+            button_save = "Save",
+            button_remove = "Remove",
+            button_cancel = "Cancel",
+            button_clear = "Clear",
         },
     },
     misc = {
@@ -241,5 +264,15 @@ return {
             header_color = "Color",
         },
         tooltip_box_draw_trail = "Draw Trail",
+        actions = {
+            timescale_freeze = "Timescale Freeze",
+            timescale_step = "Timescale Step",
+            timescale_increment = "Timescale Increment",
+            timescale_decrement = "Timescale Decrement",
+            timescale_toggle = "Timescale Toggle",
+            timescale_enable = "Timescale Enable",
+            timescale_disable = "Timescale Disable",
+            timescale_hold = "Timescale Hold",
+        },
     },
 }

@@ -26,21 +26,28 @@ function this.get_row_height(n)
 end
 
 ---@param n string | number
----@param width integer?
-function this.pad_zero(n, width)
+---@param int_width integer?
+---@param dec_width integer?
+function this.pad_zero(n, int_width, dec_width)
     if type(n) == "number" then
         n = tostring(n)
     end
 
-    width = width or 2
+    int_width = int_width or 2
+    dec_width = dec_width or 2
 
     local int_part, dec_part = n:match("([^%.]+)%.?(.*)")
+    local padded_int = string.format("%0" .. int_width .. "d", tonumber(int_part))
+
+    if dec_width == 0 then
+        return padded_int
+    end
 
     if #dec_part > 0 then
-        local padded_int = string.format("%0" .. width .. "d", tonumber(int_part))
-        return padded_int .. "." .. dec_part
+        local padded_dec = (dec_part .. string.rep("0", dec_width)):sub(1, dec_width) --[[@as string]]
+        return padded_int .. "." .. padded_dec
     end
-    return string.format("%0" .. width .. "d", tonumber(int_part))
+    return padded_int .. "." .. string.rep("0", dec_width)
 end
 
 ---@param n number

@@ -12,7 +12,6 @@
 ---@class app.cFieldSceneParam.SCENE_TYPE : System.Enum
 ---@class app.cEmModuleScar.cScarParts.STATE : System.Enum
 ---@class app.HitDef.DAMAGE_TYPE_CUSTOM : System.Enum
-
 ---@class app.HitDef.ATTR : System.Enum
 ---@class app.Hit.GUARD_TYPE : System.Enum
 ---@class app.HitDef.CONDITION : System.Enum
@@ -30,3 +29,6 @@
 ---@class app.EnemyDef.PARTS_TYPE_Fixed : System.Enum
 ---@class app.WeaponDef.TYPE : System.Enum
 ---@class app.CollisionFilter.LAYER
+---@class ace.GUIDef.INPUT_DEVICE : System.Enum
+---@class ace.ACE_MKB_KEY.INDEX : System.Enum
+---@class ace.ACE_PAD_KEY.BITS : System.Enum
