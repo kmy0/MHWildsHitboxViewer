@@ -6,6 +6,7 @@
 ---@class (exact) CollisionLogEntryBase
 ---@field char_id number
 ---@field char_name string
+---@field is_shell string
 ---@field col {
 --- resource_idx: integer,
 --- set_idx: integer,
@@ -107,11 +108,15 @@ function this.get_log_entry(load_data)
             char_id = a.char.id,
             char_name = char_a_name,
             col = col_a,
+            is_shell = a.is_shell and config.lang:tr("misc.text_yes")
+                or config.lang:tr("misc.text_no"),
         },
         char_b = {
             char_id = b.char.id,
             char_name = char_b_name,
             col = col_b,
+            is_shell = b.is_shell and config.lang:tr("misc.text_yes")
+                or config.lang:tr("misc.text_no"),
         },
     }
 

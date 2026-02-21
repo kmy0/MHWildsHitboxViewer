@@ -6,6 +6,7 @@
 ---@field char Character
 ---@field parent_char Character?
 ---@field col via.physics.Collidable
+---@field is_shell boolean
 
 ---@class CollisionBoxLoadData
 ---@field caller REManagedObject

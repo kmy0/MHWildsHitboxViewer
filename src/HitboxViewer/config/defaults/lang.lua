@@ -236,6 +236,8 @@ return {
             header_col_b_set = "Collidable B Set Index",
             header_col_b_idx = "Collidable B Index",
             header_os_clock = "Timestamp (seconds)",
+            header_is_shell_a = "Shell A",
+            header_is_shell_b = "Shell B",
         },
         box_disable_damage = "Disable Damage",
         box_disable_damage_enemy = "Disable Damage Enemy",

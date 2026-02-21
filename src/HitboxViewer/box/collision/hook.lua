@@ -41,10 +41,12 @@ local function parse_collison_info(info, caller)
         col_a = {
             char = char_a,
             col = info.CollidableA,
+            is_shell = util_game.get_component(char_a.game_object, "ace.ShellBase") ~= nil,
         },
         col_b = {
             char = char_b,
             col = info.CollidableB,
+            is_shell = util_game.get_component(char_b.game_object, "ace.ShellBase") ~= nil,
         },
     }
 end
@@ -118,11 +120,13 @@ local function parse_hit_info(info)
             char = char_a,
             parent_char = parent_a,
             col = col_a,
+            is_shell = util_game.get_component(char_a.game_object, "ace.ShellBase") ~= nil,
         },
         col_b = {
             char = char_b,
             parent_char = parent_b,
             col = col_b,
+            is_shell = util_game.get_component(char_b.game_object, "ace.ShellBase") ~= nil,
         },
     }
 end
@@ -237,11 +241,13 @@ function this.sensorhitinfo_post(_)
                     char = char_a,
                     parent_char = parent_a,
                     col = col_a,
+                    is_shell = util_game.get_component(char_a.game_object, "ace.ShellBase") ~= nil,
                 },
                 col_b = {
                     char = char_b,
                     parent_char = parent_b,
                     col = col_b,
+                    is_shell = util_game.get_component(char_b.game_object, "ace.ShellBase") ~= nil,
                 },
             }
             load_queue:push_back(o)
@@ -287,10 +293,12 @@ function this.press_post(_)
                 col_a = {
                     char = char_a,
                     col = col_a,
+                    is_shell = util_game.get_component(char_a.game_object, "ace.ShellBase") ~= nil,
                 },
                 col_b = {
                     char = char_b,
                     col = col_b,
+                    is_shell = util_game.get_component(char_b.game_object, "ace.ShellBase") ~= nil,
                 },
             })
         end)

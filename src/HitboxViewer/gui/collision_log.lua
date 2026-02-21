@@ -13,15 +13,17 @@ local this = {
         name = "collision_log",
         -- BordersH, BordersInnerH, Sortable, BordersOuterV, SizingStretchProp, ContextMenuInBody, Hideable
         flags = 26021,
-        col_count = 11,
+        col_count = 13,
         headers = {
             "row",
             "caller",
             "char_a",
+            "is_shell_a",
             "col_a_res",
             "col_a_set",
             "col_a_idx",
             "char_b",
+            "is_shell_b",
             "col_b_res",
             "col_b_set",
             "col_b_idx",
@@ -38,6 +40,8 @@ local this = {
             col_b_set = "char_b.col.set_idx",
             col_b_idx = "char_b.col.collidable_idx",
             os_clock = "os_clock",
+            is_shell_a = "char_a.is_shell",
+            is_shell_b = "char_b.is_shell",
         },
     },
 }
