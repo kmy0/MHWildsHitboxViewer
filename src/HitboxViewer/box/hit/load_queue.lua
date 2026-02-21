@@ -93,7 +93,14 @@ function this.get()
         local char = load_data.char
 
         for col, userdata, resource_idx, set_idx, collidable_idx in get_collidable(load_data) do
-            local log_entry = attack_log.get_log_entry(char, userdata, load_data.rsc, resource_idx)
+            local log_entry = attack_log.get_log_entry(
+                char,
+                userdata,
+                load_data.rsc,
+                resource_idx,
+                set_idx,
+                collidable_idx
+            )
             ---@type HitBoxBase?
             local box
 
@@ -102,7 +109,6 @@ function this.get()
                 or not log_entry
                 or config_mod.hitboxes.misc_type.disable[data.custom_attack_type.check(log_entry)]
                 or config_mod.hitboxes.guard_type.disable[log_entry.guard_type]
-                or config_mod.hitboxes.damage_angle.disable[log_entry.damage_angle]
                 or config_mod.hitboxes.damage_type.disable[log_entry.damage_type]
             then
                 goto continue
