@@ -60,6 +60,7 @@ return {
     },
     misc = {
         text_disable = "Disable",
+        text_disabled = "Disabled",
         text_yes = "Yes",
         text_no = "No",
         text_drag = " ",
