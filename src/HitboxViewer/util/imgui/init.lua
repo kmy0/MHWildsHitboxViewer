@@ -28,11 +28,14 @@ end
 ---@param text string
 ---@param seperate boolean?
 ---@param seperate_text string? by_default (?)
-function this.tooltip(text, seperate, seperate_text)
+---@param color integer?
+function this.tooltip(text, seperate, seperate_text, color)
+    color = color or 0xff918f8f
+
     if seperate then
         seperate_text = seperate_text or "(?)"
         imgui.same_line()
-        imgui.text(seperate_text)
+        imgui.text_colored(seperate_text, color)
     end
     if imgui.is_item_hovered() then
         imgui.set_tooltip(text)
