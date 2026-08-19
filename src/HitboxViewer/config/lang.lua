@@ -2,6 +2,7 @@
 ---@field ref MainConfig
 
 local lang_base = require("HitboxViewer.util.misc.lang_base")
+local util_misc = require("HitboxViewer.util.misc.util")
 local util_table = require("HitboxViewer.util.misc.table")
 
 ---@class Language
@@ -35,7 +36,7 @@ function this:change(lang_file, font_size)
         local config_lang = self.ref.current.mod.lang
         lang_file = self.files[config_lang.file]
         if not lang_file then
-            config_lang.file = self.default_file_name
+            config_lang.file = util_misc.get_file_name(self.default_file_name, false)
             lang_file = self.files[config_lang.file]
         end
     end
