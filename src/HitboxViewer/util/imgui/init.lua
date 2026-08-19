@@ -341,7 +341,7 @@ function this.checkbox_tri(label, state, size, disabled)
     ---@cast state CheckboxTri
 
     local new_state = state
-    size = size or config.lang:get_font_size() + 6
+    size = size or config.lang.font_size + 6
     local pos = imgui.get_cursor_screen_pos()
 
     imgui.push_style_color(21, 0xFF403636)

@@ -29,7 +29,8 @@ function this:load()
 end
 
 ---@param lang_file LangFile?
-function this:change(lang_file)
+---@param font_size integer?
+function this:change(lang_file, font_size)
     if not lang_file then
         local config_lang = self.ref.current.mod.lang
         lang_file = self.files[config_lang.file]
@@ -39,7 +40,7 @@ function this:change(lang_file)
         end
     end
 
-    lang_base.change(self, lang_file)
+    lang_base.change(self, lang_file, font_size or self.ref.current.mod.lang.font_size)
 end
 
 ---@param key string

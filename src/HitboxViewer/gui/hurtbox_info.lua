@@ -195,8 +195,8 @@ local function draw_monsters()
         local monster = sorted_monsters[i]
         local win_x = imgui.get_window_size().x
         local pos = imgui.get_cursor_pos()
-        local header_x = imgui.calc_text_size(monster.name).x + config.lang:get_font_size() * 2
-        local pad_x = config.lang:get_font_size()
+        local header_x = imgui.calc_text_size(monster.name).x + config.lang.font_size * 2
+        local pad_x = config.lang.font_size
         local pad_y = 3
 
         if imgui.collapsing_header(string.format("%s##%s", monster.name, monster.id)) then

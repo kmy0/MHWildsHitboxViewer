@@ -67,6 +67,7 @@
 ---@class (exact) ModLanguage
 ---@field file string
 ---@field fallback boolean
+---@field font_size integer
 
 ---@class (exact) ModSettings
 ---@field lang ModLanguage
@@ -100,6 +101,7 @@ return function(default_color, default_highlight_color, default_collision_color)
             lang = {
                 file = "en-us",
                 fallback = true,
+                font_size = 16,
             },
             enabled_hitboxes = true,
             enabled_hurtboxes = true,

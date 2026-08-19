@@ -93,6 +93,24 @@ local function draw_lang_menu()
     set:menu_item(gui_util.tr("menu.language.fallback"), "mod.lang.fallback")
     util_imgui.tooltip(config.lang:tr("menu.language.fallback_tooltip"))
 
+    imgui.indent(2)
+    draw_menu(gui_util.tr("menu.language.font_size.name"), function()
+        imgui.spacing()
+
+        if set:slider_int("##font_size_slider", "mod.lang.font_size", 8, 48) then
+            config_lang.font_size = math.min(math.max(config_lang.font_size, 8), 48)
+        end
+
+        imgui.same_line()
+
+        if imgui.button(gui_util.tr("menu.language.font_size.button_apply")) then
+            config.lang:change(nil, config_lang.font_size)
+        end
+
+        imgui.spacing()
+    end)
+    imgui.unindent(2)
+
     imgui.pop_style_var(1)
 end
 

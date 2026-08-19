@@ -6,6 +6,7 @@
 ---@field default LangFile
 ---@field current LangFile
 ---@field path string
+---@field font_size integer
 ---@field default_font_size integer
 ---@field default_font_file string?
 
@@ -36,6 +37,7 @@ function this:new(default_lang, path, default_lang_file_name, default_font_size,
         current = default_lang,
         default_font_size = default_font_size or 16,
         default_font_file = default_font_file,
+        font_size = default_font_size or 16,
     }
 
     setmetatable(o, self)
@@ -44,7 +46,8 @@ function this:new(default_lang, path, default_lang_file_name, default_font_size,
     return o
 end
 
-function this:load()
+---@param font_size integer?
+function this:load(font_size)
     json.dump_file(util_misc.join_paths(self.path, self.default_file_name), self.default)
 
     local files = fs.glob(util_misc.join_paths_b(self.path, ".*json"))
@@ -56,23 +59,17 @@ function this:load()
     end
 
     table.sort(self.sorted)
-    self:change(self.default)
-end
-
-function this:get_font_size()
-    if self.current._font and self.current._font.size then
-        return self.current._font.size
-    end
-
-    return self.default_font_size
+    self:change(self.default, font_size)
 end
 
 ---@param lang_file LangFile
-function this:change(lang_file)
+---@param font_size integer?
+function this:change(lang_file, font_size)
     local font = lang_file._font or {}
+    self.font_size = font_size or font.size or self.default_font_size
     self.font = imgui.load_font(
         font.name or self.default_font_file,
-        font.size or self.default_font_size,
+        font_size or font.size or self.default_font_size,
         { 0x1, 0xFFFF, 0 }
     )
     self.current = lang_file
@@ -87,6 +84,13 @@ function this:tr(key)
     end
 
     return string.format("Bad key: %s", key)
+end
+
+---@param key string
+---@return boolean
+function this:exists(key)
+    local ret = util_table.get_by_key(self.current, key)
+    return type(ret) == "string"
 end
 
 return this

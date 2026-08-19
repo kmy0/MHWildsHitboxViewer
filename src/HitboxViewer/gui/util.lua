@@ -14,7 +14,7 @@ end
 
 ---@return number
 function this.get_item_width()
-    return config.lang:get_font_size() * 16
+    return config.lang.font_size * 16
 end
 
 ---@param n integer
@@ -22,7 +22,7 @@ end
 function this.get_row_height(n)
     local frame_padding = 3
     local item_spacing = 2
-    return (config.lang:get_font_size() + frame_padding * 2 + item_spacing * (n - 1)) * n
+    return (config.lang.font_size + frame_padding * 2 + item_spacing * (n - 1)) * n
 end
 
 ---@param n string | number

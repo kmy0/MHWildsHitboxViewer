@@ -36,7 +36,7 @@ local function draw_box_table(config_key, keys, type_names, disable_trail)
         for i = 1, #col_keys do
             local key = config.lang:tr("mod.table_generic_settings." .. col_keys[i])
             local size = math.max(
-                imgui.calc_text_size(key).x + config.lang:get_font_size(),
+                imgui.calc_text_size(key).x + config.lang.font_size,
                 col_sizes[config_key][i] or 0
             )
             imgui.table_setup_column(key, nil, size)
@@ -104,7 +104,7 @@ local function draw_box_table(config_key, keys, type_names, disable_trail)
                 imgui.push_item_width(gui_util.get_item_width())
                 set:color_edit("##" .. item_config_key, item_config_key)
                 col_sizes[config_key][5] = math.max(
-                    imgui.calc_item_width() + config.lang:get_font_size(),
+                    imgui.calc_item_width() + config.lang.font_size,
                     col_sizes[config_key][5] or 0
                 )
                 imgui.pop_item_width()
