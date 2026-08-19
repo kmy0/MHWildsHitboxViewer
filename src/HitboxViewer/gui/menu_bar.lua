@@ -80,7 +80,10 @@ local function draw_lang_menu()
 
     for i = 1, #config.lang.sorted do
         local menu_item = config.lang.sorted[i]
-        if util_imgui.menu_item(menu_item, config_lang.file == menu_item) then
+        if
+            util_imgui.menu_item(menu_item, config_lang.file == menu_item)
+            and config_lang.file ~= menu_item
+        then
             config_lang.file = menu_item
             config.lang:change()
             state.translate_combo()
