@@ -81,7 +81,8 @@ function this:_log(level, message)
 
     local timestamp = os.date("%Y-%m-%d %H:%M:%S")
     local level_name = self.level_names[level]
-    local formatted_message = string.format("[%s] [%s] [%s] %s%s", timestamp, self.name, level_name, message, rep)
+    local formatted_message =
+        string.format("[%s] [%s] [%s] %s%s", timestamp, self.name, level_name, message, rep)
 
     if self.console_output then
         log.debug(formatted_message)
@@ -129,6 +130,19 @@ end
 ---@param level LoggerLevel
 function this:set_level(level)
     self.level = level
+end
+
+---@return string?
+function this:get_last_error()
+    if util_table.empty(self.error_cache) then
+        return
+    end
+
+    local errors = util_table.sort(util_table.keys(self.error_cache), function(a, b)
+        return self.error_cache[a] < self.error_cache[b]
+    end)
+
+    return errors[#errors]
 end
 
 ---@return string?

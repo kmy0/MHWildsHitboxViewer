@@ -46,9 +46,16 @@ function this:new(default_lang, path, default_lang_file_name, default_font_size,
     return o
 end
 
+---@return boolean
+function this:try_create_default_file()
+    local path = util_misc.join_paths(self.path, self.default_file_name)
+    json.dump_file(path, self.default)
+    return json.load_file(path) ~= nil
+end
+
 ---@param font_size integer?
 function this:load(font_size)
-    json.dump_file(util_misc.join_paths(self.path, self.default_file_name), self.default)
+    self:try_create_default_file()
 
     local files = fs.glob(util_misc.join_paths_b(self.path, ".*json"))
     for i = 1, #files do
