@@ -142,7 +142,7 @@ function this:get_last_error()
         return self.error_cache[a] < self.error_cache[b]
     end)
 
-    return errors[#errors]
+    return errors[#errors - (#errors > 1 and 1 or 0)]
 end
 
 ---@return string?
